@@ -19,6 +19,14 @@ public class ControlTest {
         }
     }
 
+    static void forLoop2(int t) {
+        for (int i = 0; i < 1000; i++) {
+            for (int k=0;k<i;k++){
+                t += k;
+            }
+        }
+    }
+
     static void forLoop(int k) {
         for (int i = 0; i < 1000; i++) {
             k += i;
@@ -27,7 +35,7 @@ public class ControlTest {
 
     public static void main(String[] args) {
         for (int i = 0; i < 99999; i++) {
-            forLoopWithIf(i);
+            forLoop(i);
         }
     }
 }

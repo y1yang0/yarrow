@@ -3,6 +3,7 @@ package com.kelthuzadx.yarrow.ir;
 import com.kelthuzadx.yarrow.bytecode.BytecodeStream;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.core.YarrowProperties.Debug;
+import com.kelthuzadx.yarrow.ir.hir.BlockStartInstr;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
 import jdk.vm.ci.meta.ExceptionHandler;
@@ -20,8 +21,8 @@ class CFG {
     private int codeSize;
     private byte[] code;
     private ExceptionHandler[] xhandler;
-    private Block[] bciToBlockMapping;
-    private Block[] blocks;
+    private BlockStartInstr[] bciToBlockMapping;
+    private BlockStartInstr[] blocks;
     private HashMap<Integer, Integer> loopMap;
     private int nextLoopIndex;
 
@@ -40,7 +41,7 @@ class CFG {
 
     }
 
-    static CFG build(HotSpotResolvedJavaMethod method) {
+    public static CFG build(HotSpotResolvedJavaMethod method) {
         CFG cfg = new CFG(method);
         cfg.mapBciToBlocks();
         cfg.uniqueBlocks();
@@ -55,10 +56,19 @@ class CFG {
         return cfg;
     }
 
-    private void mapBciToBlocks() {
-        this.bciToBlockMapping = new Block[this.codeSize];
+    public BlockStartInstr getEntryBlock(){
+        assert bciToBlockMapping[0]!=null : "should always contain a block to represent method entry";
+        return bciToBlockMapping[0];
+    }
 
-        Block currentBlock = null;
+    public BlockStartInstr[] getBlocks(){
+        return blocks;
+    }
+
+    private void mapBciToBlocks() {
+        this.bciToBlockMapping = new BlockStartInstr[this.codeSize];
+
+        BlockStartInstr currentBlock = null;
         BytecodeStream stream = new BytecodeStream(code, codeSize);
         while (stream.hasNext()) {
             int bci = stream.next();
@@ -136,8 +146,8 @@ class CFG {
                     break;
                 }
                 default: {
-                    if (!currentBlock.mayThrowEx()) {
-                        Block xh = handleException(bci);
+                    if (!currentBlock.isMayThrowEx()) {
+                        BlockStartInstr xh = handleException(bci);
                         if (xh != null) {
                             currentBlock = null;
                             bciToBlockMapping[bci].addSuccessor(xh);
@@ -152,29 +162,29 @@ class CFG {
     }
 
     private void uniqueBlocks() {
-        Set<Block> bs = new HashSet<>();
-        for (Block value : bciToBlockMapping) {
+        Set<BlockStartInstr> bs = new HashSet<>();
+        for (BlockStartInstr value : bciToBlockMapping) {
             if (value != null) {
                 bs.add(value);
             }
         }
-        this.blocks = bs.toArray(new Block[0]);
+        this.blocks = bs.toArray(new BlockStartInstr[0]);
     }
 
-    private Block createBlockAt(int bci) {
-        Block formerBlock = bciToBlockMapping[bci];
+    private BlockStartInstr createBlockAt(int bci) {
+        BlockStartInstr formerBlock = bciToBlockMapping[bci];
         if (formerBlock == null) {
-            bciToBlockMapping[bci] = new Block(globalBlockId++, bci);
+            bciToBlockMapping[bci] = new BlockStartInstr(globalBlockId++, bci);
             return bciToBlockMapping[bci];
         }
 
         if (bci != formerBlock.getStartBci()) {
             // Create new block after splitting former block
-            Block newBlock = new Block(globalBlockId++, bci);
+            BlockStartInstr newBlock = new BlockStartInstr(globalBlockId++, bci);
             newBlock.setStartBci(bci);
             newBlock.setEndBci(formerBlock.getEndBci());
             formerBlock.setEndBci(bci - 1);
-            for (Block formerBlockSuccessor : formerBlock.getSuccessor()) {
+            for (BlockStartInstr formerBlockSuccessor : formerBlock.getSuccessor()) {
                 newBlock.addSuccessor(formerBlockSuccessor);
             }
             formerBlock.removeSuccessor();
@@ -189,11 +199,11 @@ class CFG {
         }
     }
 
-    private Block handleException(int bci) {
-        Block lastXHandler = null;
+    private BlockStartInstr handleException(int bci) {
+        BlockStartInstr lastXHandler = null;
         for (ExceptionHandler xh : xhandler) {
             if (xh.getStartBCI() <= bci && bci < xh.getEndBCI()) {
-                Block xBlock = createBlockAt(xh.getHandlerBCI());
+                BlockStartInstr xBlock = createBlockAt(xh.getHandlerBCI());
                 xBlock.setXhandler(xh);
                 bciToBlockMapping[xh.getHandlerBCI()] = xBlock;
                 if (xh.isCatchAll()) {
@@ -206,14 +216,14 @@ class CFG {
         return lastXHandler;
     }
 
-    private int identifyLoop(Set<Integer> visit, Set<Integer> active, Block block) {
-        int id = block.getId();
+    private int identifyLoop(Set<Integer> visit, Set<Integer> active, BlockStartInstr blockStart) {
+        int id = blockStart.getBlockId();
 
         if (visit.contains(id)) {
             if (active.contains(id)) {
                 loopMap.put(id, 1 << nextLoopIndex);
                 nextLoopIndex++;
-                block.setLoopHeader(true);
+                blockStart.setLoopHeader(true);
             }
             return loopMap.get(id);
         }
@@ -221,14 +231,14 @@ class CFG {
         visit.add(id);
         active.add(id);
         int loopState = 0;
-        for (Block sux : block.getSuccessor()) {
+        for (BlockStartInstr sux : blockStart.getSuccessor()) {
             loopState |= identifyLoop(visit, active, sux);
         }
         if (!active.remove(id)) {
             throw new YarrowError("Active set is corrupted");
         }
 
-        if (block.isLoopHeader()) {
+        if (blockStart.isLoopHeader()) {
             loopState &= ~loopMap.get(id); // clear loop header block bit so that
         }
 
@@ -251,17 +261,17 @@ class CFG {
 
     private void printAllBlockRange() {
         Logger.logf("{}", "=====All block ranges=====>");
-        for (Block block : blocks) {
+        for (BlockStartInstr block : blocks) {
             Logger.logf("{}", block.toString());
         }
     }
 
     private void printAllBlock() {
         Logger.logf("{}", "=====All blocks=====>");
-        for (Block block : blocks) {
+        for (BlockStartInstr block : blocks) {
             String flag = block.isLoopHeader() ? "[LH]" : "";
-            flag += isLoopBlock(block.getId()) ? "[L]" : "";
-            Logger.logf("#{} {}{", block.getId(), flag);
+            flag += isLoopBlock(block.getBlockId()) ? "[L]" : "";
+            Logger.logf("#{} {}{", block.getBlockId(), flag);
             BytecodeStream bs = new BytecodeStream(code, codeSize);
             bs.reset(block.getStartBci());
             while (bs.hasNext()) {
@@ -272,7 +282,7 @@ class CFG {
                 }
             }
             Logger.logf("} => {}", block.getSuccessor().stream().map(
-                    b -> "#" + b.getId()
+                    b -> "#" + b.getBlockId()
             ).collect(Collectors.toList()));
         }
     }

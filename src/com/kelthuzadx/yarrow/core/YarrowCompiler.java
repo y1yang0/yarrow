@@ -1,7 +1,7 @@
 package com.kelthuzadx.yarrow.core;
 
 
-import com.kelthuzadx.yarrow.ir.GraphBuilder;
+import com.kelthuzadx.yarrow.ir.HirBuilder;
 import jdk.vm.ci.code.CompilationRequest;
 import jdk.vm.ci.code.CompilationRequestResult;
 import jdk.vm.ci.hotspot.HotSpotCompilationRequestResult;
@@ -23,7 +23,7 @@ public class YarrowCompiler implements JVMCICompiler {
         if (method.hasCompiledCodeAtLevel(YarrowHotSpotConfigAccess.CompLevel_full_optimization)) {
             return HotSpotCompilationRequestResult.success(0);
         }
-        new GraphBuilder(method).build();
+        new HirBuilder(method).build();
         System.exit(0);
         return HotSpotCompilationRequestResult.success(0);
     }

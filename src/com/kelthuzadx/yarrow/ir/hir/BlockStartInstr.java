@@ -1,4 +1,4 @@
-package com.kelthuzadx.yarrow.ir;
+package com.kelthuzadx.yarrow.ir.hir;
 
 import jdk.vm.ci.meta.ExceptionHandler;
 
@@ -7,17 +7,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class Block {
-    private int id;
+public class BlockStartInstr extends Instruction {
+    private int blockId;
     private int startBci;
     private int endBci;
-    private List<Block> successor;
+    private List<BlockStartInstr> successor;
     private boolean mayThrowEx;
     private boolean loopHeader;
     private ExceptionHandler xhandler;
 
-    Block(int id, int bci) {
-        this.id = id;
+    BlockStartInstr(int blockId, int bci) {
+        this.blockId = blockId;
         this.startBci = this.endBci = bci;
         this.successor = new ArrayList<>();
         this.mayThrowEx = false;
@@ -40,11 +40,11 @@ public class Block {
         this.startBci = startBci;
     }
 
-    public void addSuccessor(Block block) {
+    public void addSuccessor(BlockStartInstr block) {
         this.successor.add(block);
     }
 
-    public List<Block> getSuccessor() {
+    public List<BlockStartInstr> getSuccessor() {
         return successor;
     }
 
@@ -60,7 +60,7 @@ public class Block {
         this.loopHeader = loopHeader;
     }
 
-    public boolean mayThrowEx() {
+    public boolean isMayThrowEx() {
         return mayThrowEx;
     }
 
@@ -68,8 +68,8 @@ public class Block {
         this.mayThrowEx = mayThrowEx;
     }
 
-    public int getId() {
-        return id;
+    public int getBlockId() {
+        return blockId;
     }
 
     public ExceptionHandler getXhandler() {
@@ -82,25 +82,25 @@ public class Block {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Block) {
-            return ((Block) obj).id == this.id;
+        if (obj instanceof BlockStartInstr) {
+            return ((BlockStartInstr) obj).blockId == this.blockId;
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(blockId);
     }
 
     @Override
     public String toString() {
         String successorString = successor.stream().map(
-                b -> "#" + b.getId() + " " + (b.xhandler != null ? "!" : "") + "[" + b.getStartBci() + "," + b.getEndBci() + "]"
+                b -> "#" + b.getBlockId() + " " + (b.xhandler != null ? "!" : "") + "[" + b.getStartBci() + "," + b.getEndBci() + "]"
         ).collect(Collectors.toList()).toString();
 
         return "#" +
-                id +
+                blockId +
                 " " +
                 (xhandler != null ? "!" : "") +
                 "[" +

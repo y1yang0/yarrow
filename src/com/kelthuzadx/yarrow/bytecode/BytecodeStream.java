@@ -13,7 +13,6 @@ public class BytecodeStream implements Iterator<Integer> {
     private int nextBci;
     private boolean isWide;
     private int data;
-    private boolean traceBytecode;
     private String bcString;
 
     public BytecodeStream(byte[] code, int codeSize) {
@@ -28,6 +27,7 @@ public class BytecodeStream implements Iterator<Integer> {
         return codeSize != nextBci;
     }
 
+    // consume current bytecode and return next byte code index
     @Override
     public Integer next() {
         isWide = false;
