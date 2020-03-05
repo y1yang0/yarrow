@@ -1,14 +1,10 @@
-package com.kelthuzadx.yarrow.ir;
+package com.kelthuzadx.yarrow.bytecode;
 
-import com.kelthuzadx.yarrow.core.Bytecode;
-import com.kelthuzadx.yarrow.core.YarrowProperties.*;
-import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.util.Logger;
-import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
 
 import java.util.Iterator;
 
-import static com.kelthuzadx.yarrow.core.Bytecode.*;
+import static com.kelthuzadx.yarrow.bytecode.Bytecode.*;
 
 public class BytecodeStream implements Iterator<Integer> {
     private final int codeSize;
@@ -17,9 +13,11 @@ public class BytecodeStream implements Iterator<Integer> {
     private int nextBci;
     private boolean isWide;
     private int data;
+    private boolean traceBytecode;
+    private String bcString;
 
     public BytecodeStream(byte[] code, int codeSize) {
-        assert code.length==codeSize:"bytecode array has unexpected length";
+        assert code.length == codeSize : "bytecode array has unexpected length";
         this.codeSize = codeSize;
         this.code = code;
         reset(0);
@@ -34,7 +32,7 @@ public class BytecodeStream implements Iterator<Integer> {
     public Integer next() {
         isWide = false;
         bci = nextBci;
-        int c = code[bci]&0xff;
+        int c = code[bci] & 0xff;
 
         StringBuilder sb = new StringBuilder();
         sb.append(bci).append(":").append(Bytecode.getBytecodeName(c));
@@ -251,11 +249,11 @@ public class BytecodeStream implements Iterator<Integer> {
                 break;
             case TABLESWITCH:
                 TableSwitch ts = new TableSwitch();
-                nextBci = bci + ts.align()+ 12 + ts.getNumOfCase()*4;
+                nextBci = bci + ts.align() + 12 + ts.getNumOfCase() * 4;
                 break;
             case LOOKUPSWITCH:
                 LookupSwitch ls = new LookupSwitch();
-                nextBci = bci + ls.align() + 8 + ls.getNumOfCase()*8;
+                nextBci = bci + ls.align() + 8 + ls.getNumOfCase() * 8;
                 break;
             case INVOKEVIRTUAL:
             case INVOKESPECIAL:
@@ -287,9 +285,7 @@ public class BytecodeStream implements Iterator<Integer> {
             default:
                 Logger.error("Incorrect bytecode was fed");
         }
-        if(Debug.TraceBytecode){
-            Logger.logf("{}",sb.toString());
-        }
+        this.bcString = sb.toString();
         return bci;
     }
 
@@ -309,11 +305,15 @@ public class BytecodeStream implements Iterator<Integer> {
     }
 
     public int currentBytecode() {
-        return code[bci]&0xff;
+        return code[bci] & 0xff;
     }
 
-    public int peekNextBci(){
+    public int peekNextBci() {
         return nextBci;
+    }
+
+    public String getCurrentBytecodeString() {
+        return bcString;
     }
 
     private int readS2(int i) {
@@ -388,8 +388,8 @@ public class BytecodeStream implements Iterator<Integer> {
     }
 
     public final class TableSwitch {
-        public int align(){
-            return (4-bci%4)%4;
+        public int align() {
+            return (4 - bci % 4) % 4;
         }
 
         public int getDefaultDest() {
@@ -401,11 +401,11 @@ public class BytecodeStream implements Iterator<Integer> {
         }
 
         public int getHighKey() {
-            return readS4(bci + align()+8);
+            return readS4(bci + align() + 8);
         }
 
         public int getLowKey() {
-            return readS4(bci + align()+4);
+            return readS4(bci + align() + 4);
         }
 
         public int getKeyDest(int index) {
@@ -414,23 +414,23 @@ public class BytecodeStream implements Iterator<Integer> {
     }
 
     public final class LookupSwitch {
-        public int align(){
-            return (4-bci%4)%4;
+        public int align() {
+            return (4 - bci % 4) % 4;
         }
 
         public int getDefaultDest() {
-            int a= align();
-            int r = bci+align();
+            int a = align();
+            int r = bci + align();
             int x = readS4(r);
             return readS4(bci + align());
         }
 
         public int getNumOfCase() {
-            return readS4(bci + align()+4);
+            return readS4(bci + align() + 4);
         }
 
         public int getMatch(int index) {
-            return readS4(bci + align() + 8 + index * 8 );
+            return readS4(bci + align() + 8 + index * 8);
         }
 
         public int getOffset(int index) {

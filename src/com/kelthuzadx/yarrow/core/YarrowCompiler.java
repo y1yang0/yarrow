@@ -2,7 +2,6 @@ package com.kelthuzadx.yarrow.core;
 
 
 import com.kelthuzadx.yarrow.ir.GraphBuilder;
-import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.code.CompilationRequest;
 import jdk.vm.ci.code.CompilationRequestResult;
 import jdk.vm.ci.hotspot.HotSpotCompilationRequestResult;

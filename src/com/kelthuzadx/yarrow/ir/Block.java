@@ -13,6 +13,7 @@ public class Block {
     private int endBci;
     private List<Block> successor;
     private boolean mayThrowEx;
+    private boolean loopHeader;
     private ExceptionHandler xhandler;
 
     Block(int id, int bci) {
@@ -20,18 +21,19 @@ public class Block {
         this.startBci = this.endBci = bci;
         this.successor = new ArrayList<>();
         this.mayThrowEx = false;
+        this.loopHeader = false;
     }
 
     public int getEndBci() {
         return endBci;
     }
 
-    public int getStartBci() {
-        return startBci;
-    }
-
     public void setEndBci(int endBci) {
         this.endBci = endBci;
+    }
+
+    public int getStartBci() {
+        return startBci;
     }
 
     public void setStartBci(int startBci) {
@@ -50,6 +52,14 @@ public class Block {
         this.successor.clear();
     }
 
+    public boolean isLoopHeader() {
+        return loopHeader;
+    }
+
+    public void setLoopHeader(boolean loopHeader) {
+        this.loopHeader = loopHeader;
+    }
+
     public boolean mayThrowEx() {
         return mayThrowEx;
     }
@@ -62,18 +72,18 @@ public class Block {
         return id;
     }
 
-    public void setXhandler(ExceptionHandler xhandler) {
-        this.xhandler = xhandler;
-    }
-
     public ExceptionHandler getXhandler() {
         return xhandler;
     }
 
+    public void setXhandler(ExceptionHandler xhandler) {
+        this.xhandler = xhandler;
+    }
+
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof Block){
-            return ((Block)obj).id == this.id;
+        if (obj instanceof Block) {
+            return ((Block) obj).id == this.id;
         }
         return false;
     }
@@ -86,7 +96,7 @@ public class Block {
     @Override
     public String toString() {
         String successorString = successor.stream().map(
-                b-> "#"+b.getId()+" "+(b.xhandler!=null?"!":"")+"["+b.getStartBci()+","+b.getEndBci()+"]"
+                b -> "#" + b.getId() + " " + (b.xhandler != null ? "!" : "") + "[" + b.getStartBci() + "," + b.getEndBci() + "]"
         ).collect(Collectors.toList()).toString();
 
         return "#" +

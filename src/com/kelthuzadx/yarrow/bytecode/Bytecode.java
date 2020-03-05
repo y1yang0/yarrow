@@ -1,4 +1,4 @@
-package com.kelthuzadx.yarrow.core;
+package com.kelthuzadx.yarrow.bytecode;
 
 import java.lang.reflect.Field;
 
@@ -210,7 +210,7 @@ public class Bytecode {
     public static final int ILLEGAL = 255;
     public static final int END = 256;
 
-    public static String getBytecodeName(int bc){
+    public static String getBytecodeName(int bc) {
         Field[] fs = Bytecode.class.getFields();
         try {
             for (Field field : fs) {
@@ -219,7 +219,7 @@ public class Bytecode {
                     return field.getName().toLowerCase();
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return "<NotFound>";

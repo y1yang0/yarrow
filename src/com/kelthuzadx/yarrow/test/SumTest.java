@@ -1,7 +1,7 @@
 package com.kelthuzadx.yarrow.test;
 
 public class SumTest {
-//            0 : #0[0,3] => [#9[4,7]]
+    //            0 : #0[0,3] => [#9[4,7]]
 //            1 : #0[0,3] => [#9[4,7]]
 //            2 : #0[0,3] => [#9[4,7]]
 //            3 : #0[0,3] => [#9[4,7]]
@@ -96,22 +96,28 @@ public class SumTest {
         int r = base;
         for (int i = 0; i < 10; i++) {
             r += i * 1 / 1;
-            switch (r){
+            switch (r) {
                 case 3:
-                    r +=34;break;
+                    r += 34;
+                    break;
                 case 4:
-                    r /= 23;break;
+                    r /= 23;
+                    break;
                 case 5:
-                    r -= 32;break;
+                    r -= 32;
+                    break;
                 case 6:
-                    r %= 2353;break;
+                    r %= 2353;
+                    break;
                 default:
-                    r *= 223;break;
+                    r *= 223;
+                    break;
             }
         }
         return r;
     }
-//            0 : #0[0,3] => [#8[4,7]]
+
+    //            0 : #0[0,3] => [#8[4,7]]
 //            1 : #0[0,3] => [#8[4,7]]
 //            2 : #0[0,3] => [#8[4,7]]
 //            3 : #0[0,3] => [#8[4,7]]
@@ -193,24 +199,25 @@ public class SumTest {
         int r = base;
         for (int i = 0; i < 10; i++) {
             r += i * 1 / 1;
-            switch (r){
+            switch (r) {
                 case 13:
-                    r +=124;
+                    r += 124;
                     break;
                 case 14:
-                    r+=126;
+                    r += 126;
                     break;
                 case 19:
-                    r+=1;
+                    r += 1;
                 default:
-                    r+=1;
+                    r += 1;
                     break;
 
             }
         }
         return r;
     }
-//        0 : #0[0,3] => [#3[4,7]]
+
+    //        0 : #0[0,3] => [#3[4,7]]
 //        1 : #0[0,3] => [#3[4,7]]
 //        2 : #0[0,3] => [#3[4,7]]
 //        3 : #0[0,3] => [#3[4,7]]
