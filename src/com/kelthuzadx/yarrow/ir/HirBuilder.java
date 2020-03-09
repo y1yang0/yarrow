@@ -6,13 +6,16 @@ import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.ir.hir.BlockStartInstr;
 import com.kelthuzadx.yarrow.ir.hir.ConstantInstr;
 import com.kelthuzadx.yarrow.ir.hir.Instruction;
+import com.kelthuzadx.yarrow.ir.hir.LoadIndexInstr;
 import com.kelthuzadx.yarrow.ir.value.Value;
 import com.kelthuzadx.yarrow.ir.value.ValueType;
+import com.kelthuzadx.yarrow.util.BasicType;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
 import jdk.vm.ci.meta.JavaConstant;
 import jdk.vm.ci.meta.JavaKind;
 import jdk.vm.ci.meta.JavaType;
 
+import java.io.PrintWriter;
 import java.util.*;
 
 public class HirBuilder {
@@ -371,22 +374,103 @@ public class HirBuilder {
                     }
                     state.push(temp);
                 }
-                case Bytecode::_dload_0        : load_local(doubleType, 0); break;
-                case Bytecode::_dload_1        : load_local(doubleType, 1); break;
-                case Bytecode::_dload_2        : load_local(doubleType, 2); break;
-                case Bytecode::_dload_3        : load_local(doubleType, 3); break;
-                case Bytecode::_aload_0        : load_local(objectType, 0); break;
-                case Bytecode::_aload_1        : load_local(objectType, 1); break;
-                case Bytecode::_aload_2        : load_local(objectType, 2); break;
-                case Bytecode::_aload_3        : load_local(objectType, 3); break;
-                case Bytecode::_iaload         : load_indexed(T_INT   ); break;
-                case Bytecode::_laload         : load_indexed(T_LONG  ); break;
-                case Bytecode::_faload         : load_indexed(T_FLOAT ); break;
-                case Bytecode::_daload         : load_indexed(T_DOUBLE); break;
-                case Bytecode::_aaload         : load_indexed(T_OBJECT); break;
-                case Bytecode::_baload         : load_indexed(T_BYTE  ); break;
-                case Bytecode::_caload         : load_indexed(T_CHAR  ); break;
-                case Bytecode::_saload         : load_indexed(T_SHORT ); break;
+                case Bytecode.IALOAD:{
+                    Instruction index = state.pop();
+                    Instruction array = state.pop();
+                    Instruction length = null;
+                    if(!array.isType(ValueType.Array) || !index.isType(ValueType.Int)){
+                        throw new YarrowError("type error");
+                    }
+                    LoadIndexInstr instr = new LoadIndexInstr(array,index,null, BasicType.T_INT);
+                    appendInstr(instr);
+                    state.push(instr);
+                    break;
+                }
+                case Bytecode.LALOAD:{
+                    Instruction index = state.pop();
+                    Instruction array = state.pop();
+                    Instruction length = null;
+                    if(!array.isType(ValueType.Array) || !index.isType(ValueType.Long)){
+                        throw new YarrowError("type error");
+                    }
+                    LoadIndexInstr instr = new LoadIndexInstr(array,index,null,BasicType.T_LONG);
+                    appendInstr(instr);
+                    state.push(instr);
+                    break;
+                }
+                case Bytecode.FALOAD:{
+                    Instruction index = state.pop();
+                    Instruction array = state.pop();
+                    Instruction length = null;
+                    if(!array.isType(ValueType.Array) || !index.isType(ValueType.Float)){
+                        throw new YarrowError("type error");
+                    }
+                    LoadIndexInstr instr = new LoadIndexInstr(array,index,null,BasicType.T_FLOAT);
+                    appendInstr(instr);
+                    state.push(instr);
+                    break;
+                }
+                case Bytecode.DALOAD:{
+                    Instruction index = state.pop();
+                    Instruction array = state.pop();
+                    Instruction length = null;
+                    if(!array.isType(ValueType.Array) || !index.isType(ValueType.Double)){
+                        throw new YarrowError("type error");
+                    }
+                    LoadIndexInstr instr = new LoadIndexInstr(array,index,null,BasicType.T_DOUBLE);
+                    appendInstr(instr);
+                    state.push(instr);
+                    break;
+                }
+                case Bytecode.AALOAD:{
+                    Instruction index = state.pop();
+                    Instruction array = state.pop();
+                    Instruction length = null;
+                    if(!array.isType(ValueType.Array) || !index.isType(ValueType.Object)){
+                        throw new YarrowError("type error");
+                    }
+                    LoadIndexInstr instr = new LoadIndexInstr(array,index,null,BasicType.T_OBJECT);
+                    appendInstr(instr);
+                    state.push(instr);
+                    break;
+                }
+                case Bytecode.BALOAD:{
+                    Instruction index = state.pop();
+                    Instruction array = state.pop();
+                    Instruction length = null;
+                    if(!array.isType(ValueType.Array) || !index.isType(ValueType.Int)){
+                        throw new YarrowError("type error");
+                    }
+                    LoadIndexInstr instr = new LoadIndexInstr(array,index,null,BasicType.T_BYTE);
+                    appendInstr(instr);
+                    state.push(instr);
+                    break;
+                }
+                case Bytecode.CALOAD:{
+                    Instruction index = state.pop();
+                    Instruction array = state.pop();
+                    Instruction length = null;
+                    if(!array.isType(ValueType.Array) || !index.isType(ValueType.Int)){
+                        throw new YarrowError("type error");
+                    }
+                    LoadIndexInstr instr = new LoadIndexInstr(array,index,null,BasicType.T_CHAR);
+                    appendInstr(instr);
+                    state.push(instr);
+                    break;
+                }
+                case Bytecode.SALOAD:{
+                    Instruction index = state.pop();
+                    Instruction array = state.pop();
+                    Instruction length = null;
+                    if(!array.isType(ValueType.Array) || !index.isType(ValueType.Int)){
+                        throw new YarrowError("type error");
+                    }
+                    LoadIndexInstr instr = new LoadIndexInstr(array,index,null,BasicType.T_SHORT);
+                    appendInstr(instr);
+                    state.push(instr);
+                    break;
+                }
+                
                 case Bytecode::_istore         : store_local(intType   , s.get_index()); break;
                 case Bytecode::_lstore         : store_local(longType  , s.get_index()); break;
                 case Bytecode::_fstore         : store_local(floatType , s.get_index()); break;
