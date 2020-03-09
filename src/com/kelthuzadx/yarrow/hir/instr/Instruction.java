@@ -1,7 +1,7 @@
-package com.kelthuzadx.yarrow.ir.hir;
+package com.kelthuzadx.yarrow.hir.instr;
 
-import com.kelthuzadx.yarrow.ir.value.Value;
-import com.kelthuzadx.yarrow.ir.value.ValueType;
+import com.kelthuzadx.yarrow.hir.value.Value;
+import com.kelthuzadx.yarrow.hir.value.ValueType;
 
 public class Instruction {
     private int id;

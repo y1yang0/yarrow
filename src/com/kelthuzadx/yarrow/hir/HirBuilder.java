@@ -1,18 +1,22 @@
-package com.kelthuzadx.yarrow.ir;
+package com.kelthuzadx.yarrow.hir;
 
 import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.bytecode.BytecodeStream;
 import com.kelthuzadx.yarrow.core.YarrowError;
-import com.kelthuzadx.yarrow.ir.hir.*;
-import com.kelthuzadx.yarrow.ir.value.Value;
-import com.kelthuzadx.yarrow.ir.value.ValueType;
-import com.kelthuzadx.yarrow.util.Errors;
+import com.kelthuzadx.yarrow.hir.instr.*;
+import com.kelthuzadx.yarrow.hir.value.Value;
+import com.kelthuzadx.yarrow.hir.value.ValueType;
+import com.kelthuzadx.yarrow.util.CompilerErrors;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
 import jdk.vm.ci.meta.JavaConstant;
 import jdk.vm.ci.meta.JavaType;
 
 import java.util.*;
 
+
+/**
+ * HirBuilder performs an abstract interpretation, it would transform java bytecode to compiler HIR.
+ */
 public class HirBuilder {
     private HotSpotResolvedJavaMethod method;
 
@@ -145,58 +149,59 @@ public class HirBuilder {
                 case Bytecode.DUP2_X1:
                 case Bytecode.DUP2_X2:duplicate(state,opcode);break;
                 case Bytecode.SWAP:swap(state);break;
-                case Bytecode::_iadd           : arithmetic_op(intType   , code); break;
-                case Bytecode::_ladd           : arithmetic_op(longType  , code); break;
-                case Bytecode::_fadd           : arithmetic_op(floatType , code); break;
-                case Bytecode::_dadd           : arithmetic_op(doubleType, code); break;
-                case Bytecode::_isub           : arithmetic_op(intType   , code); break;
-                case Bytecode::_lsub           : arithmetic_op(longType  , code); break;
-                case Bytecode::_fsub           : arithmetic_op(floatType , code); break;
-                case Bytecode::_dsub           : arithmetic_op(doubleType, code); break;
-                case Bytecode::_imul           : arithmetic_op(intType   , code); break;
-                case Bytecode::_lmul           : arithmetic_op(longType  , code); break;
-                case Bytecode::_fmul           : arithmetic_op(floatType , code); break;
-                case Bytecode::_dmul           : arithmetic_op(doubleType, code); break;
-                case Bytecode::_idiv           : arithmetic_op(intType   , code, copy_state_for_exception()); break;
-                case Bytecode::_ldiv           : arithmetic_op(longType  , code, copy_state_for_exception()); break;
-                case Bytecode::_fdiv           : arithmetic_op(floatType , code); break;
-                case Bytecode::_ddiv           : arithmetic_op(doubleType, code); break;
-                case Bytecode::_irem           : arithmetic_op(intType   , code, copy_state_for_exception()); break;
-                case Bytecode::_lrem           : arithmetic_op(longType  , code, copy_state_for_exception()); break;
-                case Bytecode::_frem           : arithmetic_op(floatType , code); break;
-                case Bytecode::_drem           : arithmetic_op(doubleType, code); break;
-                case Bytecode::_ineg           : negate_op(intType   ); break;
-                case Bytecode::_lneg           : negate_op(longType  ); break;
-                case Bytecode::_fneg           : negate_op(floatType ); break;
-                case Bytecode::_dneg           : negate_op(doubleType); break;
-                case Bytecode::_ishl           : shift_op(intType , code); break;
-                case Bytecode::_lshl           : shift_op(longType, code); break;
-                case Bytecode::_ishr           : shift_op(intType , code); break;
-                case Bytecode::_lshr           : shift_op(longType, code); break;
-                case Bytecode::_iushr          : shift_op(intType , code); break;
-                case Bytecode::_lushr          : shift_op(longType, code); break;
-                case Bytecode::_iand           : logic_op(intType , code); break;
-                case Bytecode::_land           : logic_op(longType, code); break;
-                case Bytecode::_ior            : logic_op(intType , code); break;
-                case Bytecode::_lor            : logic_op(longType, code); break;
-                case Bytecode::_ixor           : logic_op(intType , code); break;
-                case Bytecode::_lxor           : logic_op(longType, code); break;
-                case Bytecode::_iinc           : increment(); break;
-                case Bytecode::_i2l            : convert(code, T_INT   , T_LONG  ); break;
-                case Bytecode::_i2f            : convert(code, T_INT   , T_FLOAT ); break;
-                case Bytecode::_i2d            : convert(code, T_INT   , T_DOUBLE); break;
-                case Bytecode::_l2i            : convert(code, T_LONG  , T_INT   ); break;
-                case Bytecode::_l2f            : convert(code, T_LONG  , T_FLOAT ); break;
-                case Bytecode::_l2d            : convert(code, T_LONG  , T_DOUBLE); break;
-                case Bytecode::_f2i            : convert(code, T_FLOAT , T_INT   ); break;
-                case Bytecode::_f2l            : convert(code, T_FLOAT , T_LONG  ); break;
-                case Bytecode::_f2d            : convert(code, T_FLOAT , T_DOUBLE); break;
-                case Bytecode::_d2i            : convert(code, T_DOUBLE, T_INT   ); break;
-                case Bytecode::_d2l            : convert(code, T_DOUBLE, T_LONG  ); break;
-                case Bytecode::_d2f            : convert(code, T_DOUBLE, T_FLOAT ); break;
-                case Bytecode::_i2b            : convert(code, T_INT   , T_BYTE  ); break;
-                case Bytecode::_i2c            : convert(code, T_INT   , T_CHAR  ); break;
-                case Bytecode::_i2s            : convert(code, T_INT   , T_SHORT ); break;
+                case Bytecode.IADD:
+                case Bytecode.ISUB:
+                case Bytecode.IMUL:
+                case Bytecode.IDIV:
+                case Bytecode.IREM:arithmetic(state,ValueType.Int,opcode);break;
+                case Bytecode.LADD:
+                case Bytecode.LSUB:
+                case Bytecode.LMUL:
+                case Bytecode.LDIV:
+                case Bytecode.LREM:arithmetic(state,ValueType.Long,opcode);break;
+                case Bytecode.FADD:
+                case Bytecode.FSUB:
+                case Bytecode.FMUL:
+                case Bytecode.FDIV:
+                case Bytecode.FREM:arithmetic(state,ValueType.Float,opcode);break;
+                case Bytecode.DADD:
+                case Bytecode.DSUB:
+                case Bytecode.DMUL:
+                case Bytecode.DDIV:
+                case Bytecode.DREM:arithmetic(state,ValueType.Double,opcode);break;
+                case Bytecode.INEG:negate(state,ValueType.Int);break;
+                case Bytecode.LNEG:negate(state,ValueType.Long);break;
+                case Bytecode.FNEG:negate(state,ValueType.Float);break;
+                case Bytecode.DNEG:negate(state,ValueType.Double);break;
+                case Bytecode.ISHL:
+                case Bytecode.ISHR:
+                case Bytecode.IUSHR: shift(state,ValueType.Int,opcode);break;
+                case Bytecode.LSHL:
+                case Bytecode.LSHR:
+                case Bytecode.LUSHR: shift(state,ValueType.Long,opcode);break;
+                case Bytecode.IAND:
+                case Bytecode.IOR:
+                case Bytecode.IXOR:logic(state,ValueType.Int,opcode);break;
+                case Bytecode.LAND:
+                case Bytecode.LOR:
+                case Bytecode.LXOR:logic(state,ValueType.Long,opcode);break;
+                case Bytecode.IINC:increment(state,bs.getIINC());break;
+                case Bytecode.I2L:typeCast(state,ValueType.Int,ValueType.Long,opcode);break;
+                case Bytecode.I2F:typeCast(state,ValueType.Int,ValueType.Float,opcode);break;
+                case Bytecode.I2D:typeCast(state,ValueType.Int,ValueType.Double,opcode);break;
+                case Bytecode.L2I:typeCast(state,ValueType.Long,ValueType.Int,opcode);break;
+                case Bytecode.L2F:typeCast(state,ValueType.Long,ValueType.Float,opcode);break;
+                case Bytecode.L2D:typeCast(state,ValueType.Long,ValueType.Double,opcode);break;
+                case Bytecode.F2I:typeCast(state,ValueType.Float,ValueType.Int,opcode);break;
+                case Bytecode.F2L:typeCast(state,ValueType.Float,ValueType.Long,opcode);break;
+                case Bytecode.F2D:typeCast(state,ValueType.Float,ValueType.Double,opcode);break;
+                case Bytecode.D2I:typeCast(state,ValueType.Double,ValueType.Int,opcode);break;
+                case Bytecode.D2L:typeCast(state,ValueType.Double,ValueType.Long,opcode);break;
+                case Bytecode.D2F:typeCast(state,ValueType.Double,ValueType.Float,opcode);break;
+                case Bytecode.I2B:typeCast(state,ValueType.Int,ValueType.Byte,opcode);break;
+                case Bytecode.I2C:typeCast(state,ValueType.Int,ValueType.Char,opcode);break;
+                case Bytecode.I2S:typeCast(state,ValueType.Int,ValueType.Short,opcode);break;
+
                 case Bytecode::_lcmp           : compare_op(longType  , code); break;
                 case Bytecode::_fcmpl          : compare_op(floatType , code); break;
                 case Bytecode::_fcmpg          : compare_op(floatType , code); break;
@@ -252,7 +257,7 @@ public class HirBuilder {
                 case Bytecode::_goto_w         : _goto(s.cur_bci(), s.get_far_dest()); break;
                 case Bytecode::_jsr_w          : jsr(s.get_far_dest()); break;
                 case Bytecode.BREAKPOINT       :
-                default                        : throw new YarrowError("Should not reach here"); break;
+                default                        : CompilerErrors.shouldNotReachHere();
             }
         }
     }
@@ -402,7 +407,7 @@ public class HirBuilder {
                 break;
             }
             default:
-                Errors.shouldNotReachHere();
+                CompilerErrors.shouldNotReachHere();
         }
     }
 
@@ -413,6 +418,75 @@ public class HirBuilder {
         state.push(temp1);
     }
 
+    private void arithmetic(VmState state, ValueType type,int opcode){
+        Instruction right = state.pop();
+        Instruction left = state.pop();
+        if(!right.isType(type) || !right.isType(type)){
+            throw new YarrowError("type error");
+        }
+        ArithmeticInstr instr = new ArithmeticInstr(opcode,left,right);
+        appendInstr(instr);
+        state.push(instr);
+    }
+
+    private void negate(VmState state, ValueType type){
+        Instruction temp = state.pop();
+        if(!temp.isType(type)){
+            throw new YarrowError("type error");
+        }
+        NegateInstr instr = new NegateInstr(temp);
+        appendInstr(instr);
+        state.push(instr);
+    }
+
+    private void shift(VmState state, ValueType type, int opcode){
+        Instruction right = state.pop();
+        Instruction left = state.pop();
+        if(!right.isType(ValueType.Int) || !left.isType(type)){
+            throw new YarrowError("type error");
+        }
+        ShiftInstr instr = new ShiftInstr(opcode,left,right);
+        appendInstr(instr);
+        state.push(instr);
+    }
+
+    private void logic(VmState state, ValueType type, int opcode){
+        Instruction right = state.pop();
+        Instruction left = state.pop();
+        if(!right.isType(type) || !left.isType(type)){
+            throw new YarrowError("type error");
+        }
+        LogicInstr instr = new LogicInstr(opcode,left,right);
+        appendInstr(instr);
+        state.push(instr);
+    }
+
+    private void increment(VmState state, BytecodeStream.IINC iinc){
+        // increment local variable by constant
+        int index = iinc.getIncrementIndex();
+        int constant = iinc.getIncrementConst();
+
+        load(state,ValueType.Int,index);
+        ConstantInstr instr = new ConstantInstr(new Value(ValueType.Int,constant));
+        appendInstr(instr);
+        state.push(instr);
+        arithmetic(state,ValueType.Int,Bytecode.IADD);
+        store(state,ValueType.Int,index);
+    }
+
+    private void typeCast(VmState state,  ValueType fromType, ValueType toType, int opcode){
+        Instruction from = state.pop();
+        if(!from.isType(fromType)){
+            throw new YarrowError("type error");
+        }
+        ValueType t = toType;
+        if(t==ValueType.Byte || t==ValueType.Char|| t==ValueType.Short){
+            t = ValueType.Int;
+        }
+        TypeCastInstr instr = new TypeCastInstr(opcode,from,t);
+        appendInstr(instr);
+        state.push(instr);
+    }
 }
 
 

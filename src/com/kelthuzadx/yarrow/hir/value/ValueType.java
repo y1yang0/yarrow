@@ -1,4 +1,4 @@
-package com.kelthuzadx.yarrow.ir.value;
+package com.kelthuzadx.yarrow.hir.value;
 
 public enum ValueType {
     Int,

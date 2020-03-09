@@ -1,6 +1,6 @@
-package com.kelthuzadx.yarrow.ir;
+package com.kelthuzadx.yarrow.hir;
 
-import com.kelthuzadx.yarrow.ir.hir.Instruction;
+import com.kelthuzadx.yarrow.hir.instr.Instruction;
 
 import java.util.ArrayList;
 import java.util.List;

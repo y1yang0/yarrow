@@ -1,7 +1,7 @@
 package com.kelthuzadx.yarrow.core;
 
 
-import com.kelthuzadx.yarrow.ir.HirBuilder;
+import com.kelthuzadx.yarrow.hir.HirBuilder;
 import jdk.vm.ci.code.CompilationRequest;
 import jdk.vm.ci.code.CompilationRequestResult;
 import jdk.vm.ci.hotspot.HotSpotCompilationRequestResult;

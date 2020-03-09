@@ -1,6 +1,6 @@
-package com.kelthuzadx.yarrow.ir.hir;
+package com.kelthuzadx.yarrow.hir.instr;
 
-import com.kelthuzadx.yarrow.ir.value.ValueType;
+import com.kelthuzadx.yarrow.hir.value.ValueType;
 
 public class StoreIndexInstr extends Instruction {
     private Instruction array;

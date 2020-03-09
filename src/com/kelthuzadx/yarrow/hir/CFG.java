@@ -1,9 +1,9 @@
-package com.kelthuzadx.yarrow.ir;
+package com.kelthuzadx.yarrow.hir;
 
 import com.kelthuzadx.yarrow.bytecode.BytecodeStream;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.core.YarrowProperties.Debug;
-import com.kelthuzadx.yarrow.ir.hir.BlockStartInstr;
+import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
 import jdk.vm.ci.meta.ExceptionHandler;

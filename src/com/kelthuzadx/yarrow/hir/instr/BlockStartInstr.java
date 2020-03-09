@@ -1,4 +1,4 @@
-package com.kelthuzadx.yarrow.ir.hir;
+package com.kelthuzadx.yarrow.hir.instr;
 
 import jdk.vm.ci.meta.ExceptionHandler;
 
