@@ -6,6 +6,7 @@ import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.ir.hir.*;
 import com.kelthuzadx.yarrow.ir.value.Value;
 import com.kelthuzadx.yarrow.ir.value.ValueType;
+import com.kelthuzadx.yarrow.util.Errors;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
 import jdk.vm.ci.meta.JavaConstant;
 import jdk.vm.ci.meta.JavaType;
@@ -48,151 +49,27 @@ public class HirBuilder {
         while (bs.hasNext()){
             int opcode = bs.next();
             switch (opcode) {
-                case Bytecode.NOP              : { break;}
-                case Bytecode.ACONST_NULL    : {
-                    ConstantInstr instr = new ConstantInstr(new Value(ValueType.Object,null));
-                    appendInstr(instr);
-                    state.push(instr);
-                    break;
-                }
-                case Bytecode.ICONST_M1:{
-                    ConstantInstr instr = new ConstantInstr(new Value(ValueType.Int,-1));
-                    appendInstr(instr);
-                    state.push(instr);
-                    break;
-                }
-                case Bytecode.ICONST_0: {
-                    ConstantInstr instr = new ConstantInstr(new Value(ValueType.Int,0));
-                    appendInstr(instr);
-                    state.push(instr);
-                    break;
-                }
-                case Bytecode.ICONST_1:
-                {
-                    ConstantInstr instr = new ConstantInstr(new Value(ValueType.Int,1));
-                    appendInstr(instr);
-                    state.push(instr);
-                    break;
-                }
-                case Bytecode.ICONST_2:{
-                    ConstantInstr instr = new ConstantInstr(new Value(ValueType.Int,2));
-                    appendInstr(instr);
-                    state.push(instr);
-                    break;
-                }
-                case Bytecode.ICONST_3:{
-                    ConstantInstr instr = new ConstantInstr(new Value(ValueType.Int,3));
-                    appendInstr(instr);
-                    state.push(instr);
-                    break;
-                }
-                case Bytecode.ICONST_4:{
-                    ConstantInstr instr = new ConstantInstr(new Value(ValueType.Int,4));
-                    appendInstr(instr);
-                    state.push(instr);
-                    break;
-                }
-                case Bytecode.ICONST_5:{
-                    ConstantInstr instr = new ConstantInstr(new Value(ValueType.Int,5));
-                    appendInstr(instr);
-                    state.push(instr);
-                    break;
-                }
-                case Bytecode.LCONST_0: {
-                    ConstantInstr instr = new ConstantInstr(new Value(ValueType.Long,0f));
-                    appendInstr(instr);
-                    state.push(instr);
-                    break;
-                }
-                case Bytecode.LCONST_1:
-                {
-                    ConstantInstr instr = new ConstantInstr(new Value(ValueType.Long,1f));
-                    appendInstr(instr);
-                    state.push(instr);
-                    break;
-                }
-                case Bytecode.FCONST_0: {
-                    ConstantInstr instr = new ConstantInstr(new Value(ValueType.Float,0.0f));
-                    appendInstr(instr);
-                    state.push(instr);
-                    break;
-                }
-                case Bytecode.FCONST_1:
-                {
-                    ConstantInstr instr = new ConstantInstr(new Value(ValueType.Float,1.0f));
-                    appendInstr(instr);
-                    state.push(instr);
-                    break;
-                }
-                case Bytecode.FCONST_2:{
-                    ConstantInstr instr = new ConstantInstr(new Value(ValueType.Float,2.0f));
-                    appendInstr(instr);
-                    state.push(instr);
-                    break;
-                }
-                case Bytecode.DCONST_0: {
-                    ConstantInstr instr = new ConstantInstr(new Value(ValueType.Double,0.0d));
-                    appendInstr(instr);
-                    state.push(instr);
-                    break;
-                }
-                case Bytecode.DCONST_1:
-                {
-                    ConstantInstr instr = new ConstantInstr(new Value(ValueType.Double,1.0d));
-                    appendInstr(instr);
-                    state.push(instr);
-                    break;
-                }
-                case Bytecode.BIPUSH:{
-                    Value temp = new Value(ValueType.Int,(byte)bs.getBytecodeData());
-                    ConstantInstr instr = new ConstantInstr(temp);
-                    appendInstr(instr);
-                    state.push(instr);
-                    break;
-                }
-                case Bytecode.SIPUSH:{
-                    Value temp = new Value(ValueType.Int,(short)bs.getBytecodeData());
-                    ConstantInstr instr = new ConstantInstr(temp);
-                    appendInstr(instr);
-                    state.push(instr);
-                    break;
-                }
+                case Bytecode.NOP: break;
+                case Bytecode.ACONST_NULL:loadConst(state,ValueType.Object,null);break;
+                case Bytecode.ICONST_M1:loadConst(state,ValueType.Int,-1);break;
+                case Bytecode.ICONST_0:loadConst(state,ValueType.Int,0);break;
+                case Bytecode.ICONST_1:loadConst(state,ValueType.Int,1);break;
+                case Bytecode.ICONST_2:loadConst(state,ValueType.Int,2);break;
+                case Bytecode.ICONST_3:loadConst(state,ValueType.Int,3);break;
+                case Bytecode.ICONST_4:loadConst(state,ValueType.Int,4);break;
+                case Bytecode.ICONST_5:loadConst(state,ValueType.Int,5);break;
+                case Bytecode.LCONST_0:loadConst(state,ValueType.Long,0L);break;
+                case Bytecode.LCONST_1:loadConst(state,ValueType.Long,1L);break;
+                case Bytecode.FCONST_0:loadConst(state,ValueType.Float,0.0f);break;
+                case Bytecode.FCONST_1:loadConst(state,ValueType.Float,1.0f);break;
+                case Bytecode.FCONST_2:loadConst(state,ValueType.Float,2.0f);break;
+                case Bytecode.DCONST_0:loadConst(state,ValueType.Double,0.0d);break;
+                case Bytecode.DCONST_1:loadConst(state,ValueType.Double,1.0d);break;
+                case Bytecode.BIPUSH:loadConst(state,ValueType.Int,(byte)bs.getBytecodeData());break;
+                case Bytecode.SIPUSH:loadConst(state,ValueType.Int,(short)bs.getBytecodeData());break;
                 case Bytecode.LDC:
                 case Bytecode.LDC_W:
-                case Bytecode.LDC2_W:{
-                    Value temp = null;
-                    Object item = method.getConstantPool().lookupConstant(bs.getBytecodeData());
-                    if(item instanceof JavaConstant){
-                        switch (((JavaConstant) item).getJavaKind()){
-                            case Boolean:
-                            case Byte:
-                            case Char:
-                            case Short:
-                            case Int:
-                                temp = new Value(ValueType.Int,((JavaConstant)item).asInt());
-                                break;
-                            case Long:
-                                temp = new Value(ValueType.Long,((JavaConstant)item).asLong());
-                                break;
-                            case Float:
-                                temp = new Value(ValueType.Long,((JavaConstant)item).asFloat());
-                                break;
-                            case Double:
-                                temp = new Value(ValueType.Long,((JavaConstant)item).asDouble());
-                                break;
-                            default:
-                                throw new YarrowError("unexpect scenario");
-                        }
-                    }else if (item instanceof JavaType){
-                        item = new Value(ValueType.Array, item);
-                    }else{
-                        temp = new Value(ValueType.Object,item);
-                    }
-                    ConstantInstr instr = new ConstantInstr(temp);
-                    appendInstr(instr);
-                    state.push(instr);
-                    break;
-                }
+                case Bytecode.LDC2_W:ldc(state,bs.getBytecodeData());break;
                 case Bytecode.ILOAD:load(state,ValueType.Int,bs.getBytecodeData());break;
                 case Bytecode.LLOAD:load(state,ValueType.Long,bs.getBytecodeData());break;
                 case Bytecode.FLOAD:load(state,ValueType.Float,bs.getBytecodeData());break;
@@ -259,15 +136,15 @@ public class HirBuilder {
                 case Bytecode.BASTORE:storeArray(state,ValueType.Byte);break;
                 case Bytecode.CASTORE:storeArray(state,ValueType.Char);break;
                 case Bytecode.SASTORE:storeArray(state,ValueType.Short);break;
-                case Bytecode::_pop            : // fall through
-                case Bytecode::_pop2           : // fall through
-                case Bytecode::_dup            : // fall through
-                case Bytecode::_dup_x1         : // fall through
-                case Bytecode::_dup_x2         : // fall through
-                case Bytecode::_dup2           : // fall through
-                case Bytecode::_dup2_x1        : // fall through
-                case Bytecode::_dup2_x2        : // fall through
-                case Bytecode::_swap           : stack_op(code); break;
+                case Bytecode.POP:state.pop();break;
+                case Bytecode.POP2:state.pop();state.pop();break;
+                case Bytecode.DUP:
+                case Bytecode.DUP_X1:
+                case Bytecode.DUP_X2:
+                case Bytecode.DUP2:
+                case Bytecode.DUP2_X1:
+                case Bytecode.DUP2_X2:duplicate(state,opcode);break;
+                case Bytecode.SWAP:swap(state);break;
                 case Bytecode::_iadd           : arithmetic_op(intType   , code); break;
                 case Bytecode::_ladd           : arithmetic_op(longType  , code); break;
                 case Bytecode::_fadd           : arithmetic_op(floatType , code); break;
@@ -385,6 +262,46 @@ public class HirBuilder {
         lastInstr = curInstr;
     }
 
+    private <T> void loadConst(VmState state, ValueType type, T value){
+        ConstantInstr instr = new ConstantInstr(new Value(type,value));
+        appendInstr(instr);
+        state.push(instr);
+    }
+
+    private void ldc(VmState state, int index){
+        Value temp = null;
+        Object item = method.getConstantPool().lookupConstant(index);
+        if(item instanceof JavaConstant){
+            switch (((JavaConstant) item).getJavaKind()){
+                case Boolean:
+                case Byte:
+                case Char:
+                case Short:
+                case Int:
+                    temp = new Value(ValueType.Int,((JavaConstant)item).asInt());
+                    break;
+                case Long:
+                    temp = new Value(ValueType.Long,((JavaConstant)item).asLong());
+                    break;
+                case Float:
+                    temp = new Value(ValueType.Long,((JavaConstant)item).asFloat());
+                    break;
+                case Double:
+                    temp = new Value(ValueType.Long,((JavaConstant)item).asDouble());
+                    break;
+                default:
+                    throw new YarrowError("unexpect scenario");
+            }
+        }else if (item instanceof JavaType){
+            item = new Value(ValueType.Array, item);
+        }else{
+            temp = new Value(ValueType.Object,item);
+        }
+        ConstantInstr instr = new ConstantInstr(temp);
+        appendInstr(instr);
+        state.push(instr);
+    }
+
     private void load(VmState state, ValueType type, int index){
         Instruction temp = state.get(index);
         if(!temp.isType(ValueType.Int)){
@@ -424,6 +341,78 @@ public class HirBuilder {
         StoreIndexInstr instr = new StoreIndexInstr(array,index,null,type,value);
         appendInstr(instr);
     }
+
+    private void duplicate(VmState state, int opcode){
+        switch (opcode){
+            case Bytecode.DUP:{
+                Instruction temp = state.pop();
+                state.push(temp);
+                state.push(temp);
+                break;
+            }
+            case Bytecode.DUP_X1:{
+                Instruction temp = state.pop();
+                Instruction temp2 = state.pop();
+                state.push(temp);
+                state.push(temp2);
+                state.push(temp);
+                break;
+            }
+            case Bytecode.DUP_X2:{
+                Instruction temp = state.pop();
+                Instruction temp2 = state.pop();
+                Instruction temp3 = state.pop();
+                state.push(temp);
+                state.push(temp3);
+                state.push(temp2);
+                state.push(temp);
+                break;
+            }
+            case Bytecode.DUP2:{
+                Instruction temp = state.pop();
+                Instruction temp2 = state.pop();
+                state.push(temp);
+                state.push(temp2);
+                state.push(temp);
+                state.push(temp2);
+                break;
+            }
+            case Bytecode.DUP2_X1:{
+                Instruction temp = state.pop();
+                Instruction temp2 = state.pop();
+                Instruction temp3 = state.pop();
+                state.push(temp2);
+                state.push(temp);
+                state.push(temp3);
+                state.push(temp2);
+                state.push(temp);
+                break;
+            }
+            case Bytecode.DUP2_X2:{
+                Instruction temp = state.pop();
+                Instruction temp2 = state.pop();
+                Instruction temp3 = state.pop();
+                Instruction temp4 = state.pop();
+                state.push(temp2);
+                state.push(temp);
+                state.push(temp4);
+                state.push(temp3);
+                state.push(temp2);
+                state.push(temp);
+                break;
+            }
+            default:
+                Errors.shouldNotReachHere();
+        }
+    }
+
+    private void swap(VmState state){
+        Instruction temp = state.pop();
+        Instruction temp1 = state.pop();
+        state.push(temp);
+        state.push(temp1);
+    }
+
 }
 
 
