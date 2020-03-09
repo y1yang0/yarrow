@@ -8,4 +8,9 @@ public enum ValueType {
     Object,
     Array,
     Void,
+    Boolean,
+    Byte,
+    Char,
+    Short,
+    Illegal
 }
