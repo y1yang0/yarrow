@@ -201,12 +201,12 @@ public class HirBuilder {
                 case Bytecode.I2B:typeCast(state,ValueType.Int,ValueType.Byte,opcode);break;
                 case Bytecode.I2C:typeCast(state,ValueType.Int,ValueType.Char,opcode);break;
                 case Bytecode.I2S:typeCast(state,ValueType.Int,ValueType.Short,opcode);break;
+                case Bytecode.LCMP:compare(state,ValueType.Long,opcode);break;
+                case Bytecode.FCMPL:
+                case Bytecode.FCMPG:compare(state,ValueType.Float,opcode);break;
+                case Bytecode.DCMPL:
+                case Bytecode.DCMPG:compare(state,ValueType.Double,opcode);break;
 
-                case Bytecode::_lcmp           : compare_op(longType  , code); break;
-                case Bytecode::_fcmpl          : compare_op(floatType , code); break;
-                case Bytecode::_fcmpg          : compare_op(floatType , code); break;
-                case Bytecode::_dcmpl          : compare_op(doubleType, code); break;
-                case Bytecode::_dcmpg          : compare_op(doubleType, code); break;
                 case Bytecode::_ifeq           : if_zero(intType   , If::eql); break;
                 case Bytecode::_ifne           : if_zero(intType   , If::neq); break;
                 case Bytecode::_iflt           : if_zero(intType   , If::lss); break;
@@ -484,6 +484,17 @@ public class HirBuilder {
             t = ValueType.Int;
         }
         TypeCastInstr instr = new TypeCastInstr(opcode,from,t);
+        appendInstr(instr);
+        state.push(instr);
+    }
+
+    private void compare(VmState state, ValueType type, int opcode){
+        Instruction right = state.pop();
+        Instruction left = state.pop();
+        if(!right.isType(type) || !right.isType(type)){
+            throw new YarrowError("type error");
+        }
+        CompareInstr instr = new CompareInstr(opcode,left,right);
         appendInstr(instr);
         state.push(instr);
     }
