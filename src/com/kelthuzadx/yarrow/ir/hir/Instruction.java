@@ -1,11 +1,12 @@
 package com.kelthuzadx.yarrow.ir.hir;
 
 import com.kelthuzadx.yarrow.ir.value.Value;
+import com.kelthuzadx.yarrow.ir.value.ValueType;
 
 public class Instruction {
     private int id;
     private Instruction next;
-    private Value type;
+    private Value value;
 
     Instruction(){}
 
@@ -13,8 +14,12 @@ public class Instruction {
         this.next = next;
     }
 
-    public void setType(Value type) {
-        this.type = type;
+    public void setValue(Value value) {
+        this.value = value;
+    }
+
+    public boolean isType(ValueType type){
+        return this.value.isType(type);
     }
 }
 

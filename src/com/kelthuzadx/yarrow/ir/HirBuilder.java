@@ -166,8 +166,7 @@ public class HirBuilder {
                     Value temp = null;
                     Object item = method.getConstantPool().lookupConstant(bs.getBytecodeData());
                     if(item instanceof JavaConstant){
-                    }else if (item instanceof JavaType){
-                        switch (((JavaType) item).getJavaKind()){
+                        switch (((JavaConstant) item).getJavaKind()){
                             case Boolean:
                             case Byte:
                             case Char:
@@ -187,6 +186,8 @@ public class HirBuilder {
                             default:
                                 throw new YarrowError("unexpect scenario");
                         }
+                    }else if (item instanceof JavaType){
+                        item = new Value(ValueType.Array, item);
                     }else{
                         temp = new Value(ValueType.Object,item);
                     }
@@ -195,23 +196,181 @@ public class HirBuilder {
                     state.push(instr);
                     break;
                 }
-                case Bytecode::_iload          : load_local(intType     , s.get_index()); break;
-                case Bytecode::_lload          : load_local(longType    , s.get_index()); break;
-                case Bytecode::_fload          : load_local(floatType   , s.get_index()); break;
-                case Bytecode::_dload          : load_local(doubleType  , s.get_index()); break;
-                case Bytecode::_aload          : load_local(instanceType, s.get_index()); break;
-                case Bytecode::_iload_0        : load_local(intType   , 0); break;
-                case Bytecode::_iload_1        : load_local(intType   , 1); break;
-                case Bytecode::_iload_2        : load_local(intType   , 2); break;
-                case Bytecode::_iload_3        : load_local(intType   , 3); break;
-                case Bytecode::_lload_0        : load_local(longType  , 0); break;
-                case Bytecode::_lload_1        : load_local(longType  , 1); break;
-                case Bytecode::_lload_2        : load_local(longType  , 2); break;
-                case Bytecode::_lload_3        : load_local(longType  , 3); break;
-                case Bytecode::_fload_0        : load_local(floatType , 0); break;
-                case Bytecode::_fload_1        : load_local(floatType , 1); break;
-                case Bytecode::_fload_2        : load_local(floatType , 2); break;
-                case Bytecode::_fload_3        : load_local(floatType , 3); break;
+                case Bytecode.ILOAD:{
+                    Instruction temp = state.get(bs.getBytecodeData());
+                    if(!temp.isType(ValueType.Int)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.LLOAD:{
+                    Instruction temp = state.get(bs.getBytecodeData());
+                    if(!temp.isType(ValueType.Long)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.FLOAD:{
+                    Instruction temp = state.get(bs.getBytecodeData());
+                    if(!temp.isType(ValueType.Float)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.DLOAD:{
+                    Instruction temp = state.get(bs.getBytecodeData());
+                    if(!temp.isType(ValueType.Double)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.ALOAD:{
+                    Instruction temp = state.get(bs.getBytecodeData());
+                    if(!temp.isType(ValueType.Object)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.ILOAD_0:{
+                    Instruction temp = state.get(0);
+                    if(!temp.isType(ValueType.Int)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.ILOAD_1:{
+                    Instruction temp = state.get(1);
+                    if(!temp.isType(ValueType.Int)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.ILOAD_2:{
+                    Instruction temp = state.get(2);
+                    if(!temp.isType(ValueType.Int)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.ILOAD_3:{
+                    Instruction temp = state.get(3);
+                    if(!temp.isType(ValueType.Int)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.LLOAD_0:{
+                    Instruction temp = state.get(0);
+                    if(!temp.isType(ValueType.Long)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.LLOAD_1:{
+                    Instruction temp = state.get(1);
+                    if(!temp.isType(ValueType.Long)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.LLOAD_2:{
+                    Instruction temp = state.get(2);
+                    if(!temp.isType(ValueType.Long)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.LLOAD_3:{
+                    Instruction temp = state.get(3);
+                    if(!temp.isType(ValueType.Long)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.FLOAD_0:{
+                    Instruction temp = state.get(0);
+                    if(!temp.isType(ValueType.Float)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.FLOAD_1:{
+                    Instruction temp = state.get(1);
+                    if(!temp.isType(ValueType.Float)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.FLOAD_2:{
+                    Instruction temp = state.get(2);
+                    if(!temp.isType(ValueType.Float)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.FLOAD_3:{
+                    Instruction temp = state.get(3);
+                    if(!temp.isType(ValueType.Float)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.DLOAD_0:{
+                    Instruction temp = state.get(0);
+                    if(!temp.isType(ValueType.Double)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.DLOAD_1:{
+                    Instruction temp = state.get(1);
+                    if(!temp.isType(ValueType.Double)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.DLOAD_2:{
+                    Instruction temp = state.get(2);
+                    if(!temp.isType(ValueType.Double)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.DLOAD_3:{
+                    Instruction temp = state.get(3);
+                    if(!temp.isType(ValueType.Double)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.ALOAD_0:{
+                    Instruction temp = state.get(0);
+                    if(!temp.isType(ValueType.Object)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.ALOAD_1:{
+                    Instruction temp = state.get(1);
+                    if(!temp.isType(ValueType.Object)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.ALOAD_2:{
+                    Instruction temp = state.get(2);
+                    if(!temp.isType(ValueType.Object)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
+                case Bytecode.ALOAD_3:{
+                    Instruction temp = state.get(3);
+                    if(!temp.isType(ValueType.Object)){
+                        throw new YarrowError("type error");
+                    }
+                    state.push(temp);
+                }
                 case Bytecode::_dload_0        : load_local(doubleType, 0); break;
                 case Bytecode::_dload_1        : load_local(doubleType, 1); break;
                 case Bytecode::_dload_2        : load_local(doubleType, 2); break;

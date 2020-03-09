@@ -18,4 +18,7 @@ public class Value {
         this.value = Optional.ofNullable(value);
     }
 
+    public boolean isType(ValueType type){
+        return this.type == type;
+    }
 }
