@@ -686,6 +686,14 @@ public class HirBuilder {
         appendToBlock(instr);
         state.push(instr);
     }
+
+    private void arrayLength(VmState state){
+        Instruction array =  state.pop();
+        Assert.matchType(array,ValueType.Array);
+        ArrayLenInstr instr = new ArrayLenInstr(array);
+        appendToBlock(instr);
+        state.push(instr);
+    }
 }
 
 
