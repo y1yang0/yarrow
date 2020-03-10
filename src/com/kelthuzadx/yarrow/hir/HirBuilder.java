@@ -209,21 +209,21 @@ public class HirBuilder {
                 case Bytecode.FCMPG:compare(state,ValueType.Float,opcode);break;
                 case Bytecode.DCMPL:
                 case Bytecode.DCMPG:compare(state,ValueType.Double,opcode);break;
-                case Bytecode.IFEQ:
-                case Bytecode::_ifeq           : if_zero(intType   , If::eql); break;
-                case Bytecode::_ifne           : if_zero(intType   , If::neq); break;
-                case Bytecode::_iflt           : if_zero(intType   , If::lss); break;
-                case Bytecode::_ifge           : if_zero(intType   , If::geq); break;
-                case Bytecode::_ifgt           : if_zero(intType   , If::gtr); break;
-                case Bytecode::_ifle           : if_zero(intType   , If::leq); break;
-                case Bytecode::_if_icmpeq      : if_same(intType   , If::eql); break;
-                case Bytecode::_if_icmpne      : if_same(intType   , If::neq); break;
-                case Bytecode::_if_icmplt      : if_same(intType   , If::lss); break;
-                case Bytecode::_if_icmpge      : if_same(intType   , If::geq); break;
-                case Bytecode::_if_icmpgt      : if_same(intType   , If::gtr); break;
-                case Bytecode::_if_icmple      : if_same(intType   , If::leq); break;
-                case Bytecode::_if_acmpeq      : if_same(objectType, If::eql); break;
-                case Bytecode::_if_acmpne      : if_same(objectType, If::neq); break;
+                case Bytecode.IFEQ:branchIfZero(state,ValueType.Int,Cond.EQ,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IFNE:branchIfZero(state,ValueType.Int,Cond.NE,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IFLT:branchIfZero(state,ValueType.Int,Cond.LT,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IFGE:branchIfZero(state,ValueType.Int,Cond.GE,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IFGT:branchIfZero(state,ValueType.Int,Cond.GT,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IFLE:branchIfZero(state,ValueType.Int,Cond.LE,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ICMPEQ:branchIfSame(state,ValueType.Int,Cond.EQ,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ICMPNE:branchIfSame(state,ValueType.Int,Cond.NE,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ICMPLT:branchIfSame(state,ValueType.Int,Cond.LT,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ICMPGE:branchIfSame(state,ValueType.Int,Cond.GE,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ICMPGT:branchIfSame(state,ValueType.Int,Cond.GT,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ICMPLE:branchIfSame(state,ValueType.Int,Cond.LE,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ACMPEQ:branchIfSame(state,ValueType.Object,Cond.EQ,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ACMPNE:branchIfSame(state,ValueType.Object,Cond.NE,bs.getBytecodeData(),bs.peekNextBci());break;
+
                 case Bytecode::_goto           : _goto(s.cur_bci(), s.get_dest()); break;
                 case Bytecode::_jsr            : jsr(s.get_dest()); break;
                 case Bytecode::_ret            : ret(s.get_index()); break;
@@ -255,8 +255,8 @@ public class HirBuilder {
                 case Bytecode::_monitorexit    : monitorexit (apop(), s.cur_bci()); break;
                 case Bytecode::_wide           : ShouldNotReachHere(); break;
                 case Bytecode::_multianewarray : new_multi_array(s.cur_bcp()[3]); break;
-                case Bytecode::_ifnull         : if_null(objectType, If::eql); break;
-                case Bytecode::_ifnonnull      : if_null(objectType, If::neq); break;
+                case Bytecode.IFNULL:branchIfNull(state,ValueType.Object,Cond.EQ,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IFNONNULL:branchIfNull(state,ValueType.Object,Cond.NE,bs.getBytecodeData(),bs.peekNextBci());break;
                 case Bytecode::_goto_w         : _goto(s.cur_bci(), s.get_far_dest()); break;
                 case Bytecode::_jsr_w          : jsr(s.get_far_dest()); break;
                 case Bytecode.BREAKPOINT       :
