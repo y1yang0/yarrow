@@ -660,7 +660,7 @@ public class HirBuilder {
     private void newTypeArray(VmState state, int elementType){
         Instruction len = state.pop();
         Assert.matchType(len,ValueType.Int);
-        ValueType type=null;
+        ValueType type = null;
         switch (elementType){
             case 4:type=ValueType.Boolean;break;
             case 5:type=ValueType.Char;break;
@@ -701,6 +701,25 @@ public class HirBuilder {
         ThrowInstr instr = new ThrowInstr(new ArrayList<>(),exception);
         appendToBlock(instr);
     }
+
+    private void checkCast(VmState state,int index){
+        JavaType klass = method.getConstantPool().lookupType(index,-1);
+        Instruction object = state.pop();
+        Assert.matchType(object,ValueType.Object);
+        CheckCastInstr instr = new CheckCastInstr(klass,object);
+        appendToBlock(instr);
+        state.push(instr);
+    }
+
+    private void instanceOf(VmState state,int index){
+        JavaType klass = method.getConstantPool().lookupType(index,-1);
+        Instruction object = state.pop();
+        Assert.matchType(object,ValueType.Object);
+        InstanceOfInstr instr = new InstanceOfInstr(klass,object);
+        appendToBlock(instr);
+        state.push(instr);
+    }
+
 }
 
 
