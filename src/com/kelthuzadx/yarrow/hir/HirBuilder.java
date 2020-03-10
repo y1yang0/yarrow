@@ -249,9 +249,9 @@ public class HirBuilder {
                 case Bytecode.INVOKESTATIC:
                 case Bytecode.INVOKEINTERFACE:
                 case Bytecode.INVOKEDYNAMIC:call(state);break;
-                case Bytecode::_new            : new_instance(s.get_index_u2()); break;
-                case Bytecode::_newarray       : new_type_array(); break;
-                case Bytecode::_anewarray      : new_object_array(); break;
+                case Bytecode.NEW:newInstance(state,bs.getBytecodeData());break;
+                case Bytecode.NEWARRAY:newTypeArray(state,bs.getBytecodeData());break;
+                case Bytecode.ANEWARRAY:newObjectArray(state,bs.getBytecodeData());break;
                 case Bytecode::_arraylength    : { ValueStack* state_before = copy_state_for_exception(); ipush(append(new ArrayLength(apop(), state_before))); break; }
                 case Bytecode::_athrow         : throw_op(s.cur_bci()); break;
                 case Bytecode.CHECKCAST:
@@ -648,6 +648,43 @@ public class HirBuilder {
 
 
     private void call(VmState state) {
+    }
+
+    private void newInstance(VmState state, int index){
+        JavaType klass = method.getConstantPool().lookupType(index,-1);
+        NewInstr instr = new NewInstr(klass);
+        appendToBlock(instr);
+        state.push(instr);
+    }
+
+    private void newTypeArray(VmState state, int elementType){
+        Instruction len = state.pop();
+        Assert.matchType(len,ValueType.Int);
+        ValueType type=null;
+        switch (elementType){
+            case 4:type=ValueType.Boolean;break;
+            case 5:type=ValueType.Char;break;
+            case 6:type=ValueType.Float;break;
+            case 7:type=ValueType.Double;break;
+            case 8:type=ValueType.Byte;break;
+            case 9:type=ValueType.Short;break;
+            case 10:type=ValueType.Int;break;
+            case 11:type=ValueType.Long;break;
+            default:CompilerErrors.shouldNotReachHere();
+        }
+        NewTypeArrayInstr instr = new NewTypeArrayInstr(len,type);
+        appendToBlock(instr);
+        state.push(instr);
+    }
+
+    private void newObjectArray(VmState state,int index){
+        Instruction len = state.pop();
+        Assert.matchType(len,ValueType.Int);
+        JavaType klass = method.getConstantPool().lookupType(index,-1);
+
+        NewObjectArrayInstr instr = new NewObjectArrayInstr(len,klass);
+        appendToBlock(instr);
+        state.push(instr);
     }
 }
 

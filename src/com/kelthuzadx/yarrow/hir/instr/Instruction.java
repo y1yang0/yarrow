@@ -9,7 +9,15 @@ public class Instruction {
     private Value value;
 
     Instruction(){
-        value = new Value(ValueType.Illegal);
+        this.id = IdGenerator.next();
+        this.value = new Value(ValueType.Illegal);
+        this.next = null;
+    }
+
+    Instruction(Value value){
+        this.id = IdGenerator.next();
+        this.value = value;
+        this.next = null;
     }
 
     public void setNext(Instruction next) {
@@ -22,6 +30,14 @@ public class Instruction {
 
     public boolean isType(ValueType type){
         return this.value.isType(type);
+    }
+
+    private static class IdGenerator{
+        private static int id;
+
+        static int next(){
+            return id++;
+        }
     }
 }
 
