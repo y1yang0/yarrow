@@ -2,11 +2,11 @@ package com.kelthuzadx.yarrow.hir;
 
 import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.bytecode.BytecodeStream;
-import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.*;
 import com.kelthuzadx.yarrow.hir.value.Cond;
 import com.kelthuzadx.yarrow.hir.value.Value;
 import com.kelthuzadx.yarrow.hir.value.ValueType;
+import com.kelthuzadx.yarrow.util.Assert;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
 import jdk.vm.ci.meta.JavaConstant;
@@ -54,7 +54,8 @@ public class HirBuilder {
         BytecodeStream bs =new BytecodeStream(method.getCode(),method.getCodeSize());
         bs.reset(block.getStartBci());
         while (bs.hasNext()){
-            int opcode = bs.next();
+            int curBci = bs.next();
+            int opcode = bs.currentBytecode();
             switch (opcode) {
                 case Bytecode.NOP: break;
                 case Bytecode.ACONST_NULL:loadConst(state,ValueType.Object,null);break;
@@ -226,7 +227,9 @@ public class HirBuilder {
                 case Bytecode.GOTO:goTo(state,bs.getBytecodeData());break;
                 case Bytecode.JSR:
                 case Bytecode.RET:CompilerErrors.unsupported();
-                case Bytecode.TABLESWITCH:
+                case Bytecode.TABLESWITCH:tableSwitch(state,bs.getTableSwitch(),curBci);
+                case Bytecode.LOOKUPSWITCH:lookupSwitch(state,bs.getLookupSwitch(),curBci);
+
                 case Bytecode::_tableswitch    : table_switch(); break;
                 case Bytecode::_lookupswitch   : lookup_switch(); break;
                 case Bytecode::_ireturn        : method_return(ipop(), ignore_return); break;
@@ -264,14 +267,14 @@ public class HirBuilder {
         }
     }
 
-    private void appendInstr(Instruction curInstr){
+    private void appendToBlock(Instruction curInstr){
         lastInstr.setNext(curInstr);
         lastInstr = curInstr;
     }
 
     private <T> void loadConst(VmState state, ValueType type, T value){
         ConstantInstr instr = new ConstantInstr(new Value(type,value));
-        appendInstr(instr);
+        appendToBlock(instr);
         state.push(instr);
     }
 
@@ -297,7 +300,7 @@ public class HirBuilder {
                     temp = new Value(ValueType.Long,((JavaConstant)item).asDouble());
                     break;
                 default:
-                    throw new YarrowError("unexpect scenario");
+                    CompilerErrors.shouldNotReachHere();
             }
         }else if (item instanceof JavaType){
             item = new Value(ValueType.Array, item);
@@ -305,34 +308,29 @@ public class HirBuilder {
             temp = new Value(ValueType.Object,item);
         }
         ConstantInstr instr = new ConstantInstr(temp);
-        appendInstr(instr);
+        appendToBlock(instr);
         state.push(instr);
     }
 
     private void load(VmState state, ValueType type, int index){
         Instruction temp = state.get(index);
-        if(!temp.isType(ValueType.Int)){
-            throw new YarrowError("type error");
-        }
+        Assert.matchType(temp,ValueType.Int);
         state.push(temp);
     }
 
     private void loadArray(VmState state, ValueType type){
         Instruction index = state.pop();
         Instruction array = state.pop();
-        if(!array.isType(ValueType.Array) || !index.isType(ValueType.Int)){
-            throw new YarrowError("type error");
-        }
+        Assert.matchType(array,ValueType.Array);
+        Assert.matchType(index,ValueType.Int);
         LoadIndexInstr instr = new LoadIndexInstr(array,index,null, type);
-        appendInstr(instr);
+        appendToBlock(instr);
         state.push(instr);
     }
 
     private void store(VmState state, ValueType type, int index){
         Instruction temp = state.pop();
-        if(!temp.isType(ValueType.Int)){
-            throw new YarrowError("type error");
-        }
+        Assert.matchType(temp,ValueType.Int);
         state.set(index,temp);
     }
 
@@ -340,13 +338,10 @@ public class HirBuilder {
         Instruction value = state.pop();
         Instruction index = state.pop();
         Instruction array = state.pop();
-
-        if(!index.isType(ValueType.Int) || !value.isType(type)){
-            throw new YarrowError("type error");
-        }
-
+        Assert.matchType(index,ValueType.Int);
+        Assert.matchType(value,type);
         StoreIndexInstr instr = new StoreIndexInstr(array,index,null,type,value);
-        appendInstr(instr);
+        appendToBlock(instr);
     }
 
     private void duplicate(VmState state, int opcode){
@@ -423,43 +418,38 @@ public class HirBuilder {
     private void arithmetic(VmState state, ValueType type,int opcode){
         Instruction right = state.pop();
         Instruction left = state.pop();
-        if(!right.isType(type) || !right.isType(type)){
-            throw new YarrowError("type error");
-        }
+        Assert.matchType(left,type);
+        Assert.matchType(right,type);
         ArithmeticInstr instr = new ArithmeticInstr(opcode,left,right);
-        appendInstr(instr);
+        appendToBlock(instr);
         state.push(instr);
     }
 
     private void negate(VmState state, ValueType type){
         Instruction temp = state.pop();
-        if(!temp.isType(type)){
-            throw new YarrowError("type error");
-        }
+        Assert.matchType(temp,type);
         NegateInstr instr = new NegateInstr(temp);
-        appendInstr(instr);
+        appendToBlock(instr);
         state.push(instr);
     }
 
     private void shift(VmState state, ValueType type, int opcode){
         Instruction right = state.pop();
         Instruction left = state.pop();
-        if(!right.isType(ValueType.Int) || !left.isType(type)){
-            throw new YarrowError("type error");
-        }
+        Assert.matchType(right,ValueType.Int);
+        Assert.matchType(left,type);
         ShiftInstr instr = new ShiftInstr(opcode,left,right);
-        appendInstr(instr);
+        appendToBlock(instr);
         state.push(instr);
     }
 
     private void logic(VmState state, ValueType type, int opcode){
         Instruction right = state.pop();
         Instruction left = state.pop();
-        if(!right.isType(type) || !left.isType(type)){
-            throw new YarrowError("type error");
-        }
+        Assert.matchType(right,type);
+        Assert.matchType(left,type);
         LogicInstr instr = new LogicInstr(opcode,left,right);
-        appendInstr(instr);
+        appendToBlock(instr);
         state.push(instr);
     }
 
@@ -471,7 +461,7 @@ public class HirBuilder {
         load(state,ValueType.Int,index);
 
         ConstantInstr instr = new ConstantInstr(new Value(ValueType.Int,constant));
-        appendInstr(instr);
+        appendToBlock(instr);
         state.push(instr);
 
         arithmetic(state,ValueType.Int,Bytecode.IADD);
@@ -481,53 +471,45 @@ public class HirBuilder {
 
     private void typeCast(VmState state,  ValueType fromType, ValueType toType, int opcode){
         Instruction from = state.pop();
-        if(!from.isType(fromType)){
-            throw new YarrowError("type error");
-        }
+        Assert.matchType(from,fromType);
         ValueType t = toType;
         if(t==ValueType.Byte || t==ValueType.Char|| t==ValueType.Short){
             t = ValueType.Int;
         }
         TypeCastInstr instr = new TypeCastInstr(opcode,from,t);
-        appendInstr(instr);
+        appendToBlock(instr);
         state.push(instr);
     }
 
     private void compare(VmState state, ValueType type, int opcode){
         Instruction right = state.pop();
         Instruction left = state.pop();
-        if(!right.isType(type) || !right.isType(type)){
-            throw new YarrowError("type error");
-        }
+        Assert.matchType(left,type);
+        Assert.matchType(right,type);
         CompareInstr instr = new CompareInstr(opcode,left,right);
-        appendInstr(instr);
+        appendToBlock(instr);
         state.push(instr);
     }
 
     private void branchIfZero(VmState state, ValueType type, Cond cond, int trueBci, int falseBci){
         Instruction left = state.pop();
         ConstantInstr right = new ConstantInstr(new Value(ValueType.Int,0));
-        if(!left.isType(type)){
-            throw new YarrowError("type error");
-        }
+        Assert.matchType(left,type);
         branchIf(state,left,right,cond,trueBci,falseBci);
     }
 
     private void branchIfNull(VmState state, ValueType type, Cond cond, int trueBci, int falseBci){
         Instruction left = state.pop();
         ConstantInstr right = new ConstantInstr(new Value(ValueType.Object,null));
-        if(!left.isType(type)){
-            throw new YarrowError("type error");
-        }
+        Assert.matchType(left,type);
         branchIf(state,left,right,cond,trueBci,falseBci);
     }
 
     private void branchIfSame(VmState state, ValueType type, Cond cond, int trueBci, int falseBci){
         Instruction left = state.pop();
         Instruction right = state.pop();
-        if(!left.isType(type)||!right.isType(type)){
-            throw new YarrowError("type error");
-        }
+        Assert.matchType(left,type);
+        Assert.matchType(right,type);
         branchIf(state,left,right,cond,trueBci,falseBci);
     }
 
@@ -537,7 +519,7 @@ public class HirBuilder {
             add(cfg.blockContain(falseBci));
         }};
         IfInstr instr = new IfInstr(succ,left,right,cond);
-        appendInstr(instr);
+        appendToBlock(instr);
     }
 
     private void goTo(VmState state, int destBci){
@@ -545,7 +527,7 @@ public class HirBuilder {
             add(cfg.blockContain(destBci));
         }};
         GotoInstr instr = new GotoInstr(succ);
-        appendInstr(instr);
+        appendToBlock(instr);
     }
 
     private void tableSwitch(VmState state, BytecodeStream.TableSwitch sw, int curBci){
@@ -557,7 +539,29 @@ public class HirBuilder {
             i++;
         }
         succ.set(i,cfg.blockContain(sw.getDefaultDest()+curBci));
-        
+
+        Instruction index = state.pop();
+        Assert.matchType(index,ValueType.Int);
+        TableSwitchInstr instr = new TableSwitchInstr(succ,index,sw.getLowKey(),sw.getHighKey());
+        appendToBlock(instr);
+    }
+
+    private void lookupSwitch(VmState state, BytecodeStream.LookupSwitch sw, int curBci){
+        int len = sw.getNumOfCase();
+        ArrayList<BlockStartInstr> succ = new ArrayList<>(len+1);
+        int[] key = new int[len];
+        int i=0;
+        while(i<len){
+            key[i] = sw.getMatch(i);
+            succ.set(i,cfg.blockContain(sw.getOffset(i)+curBci));
+            i++;
+        }
+        succ.set(i,cfg.blockContain(sw.getDefaultDest()+curBci));
+
+        Instruction index = state.pop();
+        Assert.matchType(index,ValueType.Int);
+        LookupSwitchInstr instr = new LookupSwitchInstr(succ,index,key);
+        appendToBlock(instr);
     }
 }
 
