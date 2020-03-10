@@ -56,9 +56,11 @@ class CFG {
         return cfg;
     }
 
-    public BlockStartInstr getEntryBlock(){
-        assert bciToBlockMapping[0]!=null : "should always contain a block to represent method entry";
-        return bciToBlockMapping[0];
+    public BlockStartInstr blockContain(int bci){
+        if(bci<0 || bci>=bciToBlockMapping.length){
+            throw new YarrowError("invalid bytecode index "+bci);
+        }
+        return bciToBlockMapping[bci];
     }
 
     public BlockStartInstr[] getBlocks(){

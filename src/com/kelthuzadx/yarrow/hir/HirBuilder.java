@@ -21,6 +21,8 @@ import java.util.*;
 public class HirBuilder {
     private HotSpotResolvedJavaMethod method;
 
+    private CFG cfg;
+
     private Instruction lastInstr;
 
     public HirBuilder(HotSpotResolvedJavaMethod method) {
@@ -30,12 +32,12 @@ public class HirBuilder {
 
     public HirBuilder build() {
         // construct cfg and detect reducible loops
-        CFG cfg = CFG.build(method);
+        cfg = CFG.build(method);
 
         // doing abstract interpretation by iterating all blocks in CFG
         Map<Integer,Boolean> visit = new HashMap<>(cfg.getBlocks().length);
         Queue<BlockStartInstr> workList = new ArrayDeque<>();
-        workList.add(cfg.getEntryBlock());
+        workList.add(cfg.blockContain(0));
         while (!workList.isEmpty()){
             BlockStartInstr blockStart = workList.remove();
             if(!visit.containsKey(blockStart.getBlockId())){
@@ -207,7 +209,7 @@ public class HirBuilder {
                 case Bytecode.FCMPG:compare(state,ValueType.Float,opcode);break;
                 case Bytecode.DCMPL:
                 case Bytecode.DCMPG:compare(state,ValueType.Double,opcode);break;
-
+                case Bytecode.IFEQ:
                 case Bytecode::_ifeq           : if_zero(intType   , If::eql); break;
                 case Bytecode::_ifne           : if_zero(intType   , If::neq); break;
                 case Bytecode::_iflt           : if_zero(intType   , If::lss); break;
@@ -503,35 +505,40 @@ public class HirBuilder {
         state.push(instr);
     }
 
-    private void branchIfZero(VmState state, ValueType type, Cond cond){
+    private void branchIfZero(VmState state, ValueType type, Cond cond, int trueBci, int falseBci){
         Instruction left = state.pop();
         ConstantInstr right = new ConstantInstr(new Value(ValueType.Int,0));
         if(!left.isType(type)){
             throw new YarrowError("type error");
         }
-        branchIf(state,left,right,cond);
+        branchIf(state,left,right,cond,trueBci,falseBci);
     }
 
-    private void branchIfNull(VmState state, ValueType type, Cond cond){
+    private void branchIfNull(VmState state, ValueType type, Cond cond, int trueBci, int falseBci){
         Instruction left = state.pop();
         ConstantInstr right = new ConstantInstr(new Value(ValueType.Object,null));
         if(!left.isType(type)){
             throw new YarrowError("type error");
         }
-        branchIf(state,left,right,cond);
+        branchIf(state,left,right,cond,trueBci,falseBci);
     }
 
-    private void branchIfSame(VmState state, ValueType type, Cond cond){
+    private void branchIfSame(VmState state, ValueType type, Cond cond, int trueBci, int falseBci){
         Instruction left = state.pop();
         Instruction right = state.pop();
         if(!left.isType(type)||!right.isType(type)){
             throw new YarrowError("type error");
         }
-        branchIf(state,left,right,cond);
+        branchIf(state,left,right,cond,trueBci,falseBci);
     }
 
-    private void branchIf(VmState state,Instruction left, Instruction right, Cond cond){
-
+    private void branchIf(VmState state,Instruction left, Instruction right, Cond cond, int trueBci, int falseBci){
+        ArrayList<BlockStartInstr> succ = new ArrayList<BlockStartInstr>(){{
+           add(cfg.blockContain(trueBci));
+           add(cfg.blockContain(falseBci));
+        }};
+        IfInstr instr = new IfInstr(succ,left,right,cond);
+        appendInstr(instr);
     }
 }
 
