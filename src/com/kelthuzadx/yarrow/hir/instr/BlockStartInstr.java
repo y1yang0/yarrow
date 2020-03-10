@@ -16,7 +16,7 @@ public class BlockStartInstr extends Instruction {
     private boolean loopHeader;
     private ExceptionHandler xhandler;
 
-    BlockStartInstr(int blockId, int bci) {
+    public BlockStartInstr(int blockId, int bci) {
         this.blockId = blockId;
         this.startBci = this.endBci = bci;
         this.successor = new ArrayList<>();

@@ -11,7 +11,7 @@ import java.io.PrintStream;
 public class YarrowCompilerFactory extends HotSpotJVMCICompilerFactory {
 
     public YarrowCompilerFactory() {
-        Logger.logf("{}", "Create Yarrow compiler factory");
+        Logger.logf("====={}=====", "Create Yarrow compiler factory");
     }
 
 
@@ -22,7 +22,6 @@ public class YarrowCompilerFactory extends HotSpotJVMCICompilerFactory {
 
     @Override
     public void onSelection() {
-        Logger.logf("{}", "Select yarrow compiler factory");
         try {
             Class.forName("com.kelthuzadx.yarrow.core.YarrowProperties");
         } catch (ClassNotFoundException e) {
