@@ -10,6 +10,7 @@ import com.kelthuzadx.yarrow.util.Assert;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
 import jdk.vm.ci.meta.JavaConstant;
+import jdk.vm.ci.meta.JavaKind;
 import jdk.vm.ci.meta.JavaType;
 
 import java.util.*;
@@ -229,14 +230,15 @@ public class HirBuilder {
                 case Bytecode.JSR:
                 case Bytecode.RET:
                 case Bytecode.JSR_W: CompilerErrors.unsupported();
-                case Bytecode.TABLESWITCH:tableSwitch(state,bs.getTableSwitch(),curBci);
-                case Bytecode.LOOKUPSWITCH:lookupSwitch(state,bs.getLookupSwitch(),curBci);
-                case Bytecode::_ireturn        : method_return(ipop(), ignore_return); break;
-                case Bytecode::_lreturn        : method_return(lpop(), ignore_return); break;
-                case Bytecode::_freturn        : method_return(fpop(), ignore_return); break;
-                case Bytecode::_dreturn        : method_return(dpop(), ignore_return); break;
-                case Bytecode::_areturn        : method_return(apop(), ignore_return); break;
-                case Bytecode::_return         : method_return(NULL  , ignore_return); break;
+                case Bytecode.TABLESWITCH:tableSwitch(state,bs.getTableSwitch(),curBci);break;
+                case Bytecode.LOOKUPSWITCH:lookupSwitch(state,bs.getLookupSwitch(),curBci);break;
+                case Bytecode.IRETURN:returnOp(state,ValueType.Int,false);break;
+                case Bytecode.LRETURN:returnOp(state,ValueType.Long,false);break;
+                case Bytecode.FRETURN:returnOp(state,ValueType.Float,false);break;
+                case Bytecode.DRETURN:returnOp(state,ValueType.Double,false);break;
+                case Bytecode.ARETURN:returnOp(state,ValueType.Object,false);break;
+                case Bytecode.RETURN:returnOp(state,ValueType.Illegal,true);break;
+ 
                 case Bytecode::_getstatic      : // fall through
                 case Bytecode::_putstatic      : // fall through
                 case Bytecode::_getfield       : // fall through
@@ -561,8 +563,47 @@ public class HirBuilder {
         appendToBlock(instr);
     }
 
-    private void returnOp(ValueType type){
-        method.
+    private void returnOp(VmState state, ValueType type, boolean justReturn){
+        Instruction val = null;
+        if(!justReturn) {
+            val = state.pop();
+            Assert.matchType(val,type);
+        }
+
+        JavaKind returnKind = method.getSignature().getReturnKind();
+        switch (returnKind){
+            case Byte:{
+                ConstantInstr mask = new ConstantInstr(new Value(ValueType.Int,0xFF));
+                appendToBlock(mask);
+                LogicInstr t = new LogicInstr(Bytecode.IAND,mask,val);
+                appendToBlock(t);
+                val = t;
+                break;
+            }
+            case Short:
+            case Char:{
+                ConstantInstr mask = new ConstantInstr(new Value(ValueType.Int,0xFFFF));
+                appendToBlock(mask);
+                LogicInstr t = new LogicInstr(Bytecode.IAND,mask,val);
+                appendToBlock(t);
+                val = t;
+                break;
+            }
+            case Boolean:{
+                ConstantInstr mask = new ConstantInstr(new Value(ValueType.Int,1));
+                appendToBlock(mask);
+                LogicInstr t = new LogicInstr(Bytecode.IAND,mask,val);
+                appendToBlock(t);
+                val = t;
+                break;
+            }
+            default:
+                break;
+        }
+
+        ReturnInstr instr = new ReturnInstr(val);
+        appendToBlock(instr);
+
     }
 }
 
