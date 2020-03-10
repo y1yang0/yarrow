@@ -10,6 +10,7 @@ import com.kelthuzadx.yarrow.util.Assert;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
 import jdk.vm.ci.meta.JavaConstant;
+import jdk.vm.ci.meta.JavaField;
 import jdk.vm.ci.meta.JavaKind;
 import jdk.vm.ci.meta.JavaType;
 
@@ -238,7 +239,10 @@ public class HirBuilder {
                 case Bytecode.DRETURN:returnOp(state,ValueType.Double,false);break;
                 case Bytecode.ARETURN:returnOp(state,ValueType.Object,false);break;
                 case Bytecode.RETURN:returnOp(state,ValueType.Illegal,true);break;
- 
+                case Bytecode.GETSTATIC:
+                case Bytecode.GETFIELD:
+                case Bytecode.PUTSTATIC:
+                case Bytecode.PUTFIELD:
                 case Bytecode::_getstatic      : // fall through
                 case Bytecode::_putstatic      : // fall through
                 case Bytecode::_getfield       : // fall through
@@ -603,7 +607,14 @@ public class HirBuilder {
 
         ReturnInstr instr = new ReturnInstr(val);
         appendToBlock(instr);
+    }
 
+    private void accessField(VmState state, int index, int opcode){
+        ConstantInstr holder = null;
+        JavaField field = method.getConstantPool().lookupField(index,method,opcode);
+        if(opcode==Bytecode.PUTSTATIC || opcode==Bytecode.GETSTATIC){
+            holder = new ConstantInstr(new Value(ValueType.Object,field.getJavaKind().toJavaClass()));
+        }
     }
 }
 
