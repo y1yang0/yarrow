@@ -252,8 +252,8 @@ public class HirBuilder {
                 case Bytecode.NEW:newInstance(state,bs.getBytecodeData());break;
                 case Bytecode.NEWARRAY:newTypeArray(state,bs.getBytecodeData());break;
                 case Bytecode.ANEWARRAY:newObjectArray(state,bs.getBytecodeData());break;
-                case Bytecode::_arraylength    : { ValueStack* state_before = copy_state_for_exception(); ipush(append(new ArrayLength(apop(), state_before))); break; }
-                case Bytecode::_athrow         : throw_op(s.cur_bci()); break;
+                case Bytecode.ARRAYLENGTH:arrayLength(state);break;
+                case Bytecode.ATHROW:athrow(state);break;
                 case Bytecode.CHECKCAST:
                 case Bytecode.INSTANCEOF:
                 case Bytecode.MONITORENTER:
@@ -693,6 +693,13 @@ public class HirBuilder {
         ArrayLenInstr instr = new ArrayLenInstr(array);
         appendToBlock(instr);
         state.push(instr);
+    }
+
+    private void athrow(VmState state){
+        Instruction exception = state.pop();
+        Assert.matchType(exception,ValueType.Object);
+        ThrowInstr instr = new ThrowInstr(new ArrayList<>(),exception);
+        appendToBlock(instr);
     }
 }
 
