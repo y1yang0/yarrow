@@ -223,10 +223,10 @@ public class HirBuilder {
                 case Bytecode.IF_ICMPLE:branchIfSame(state,ValueType.Int,Cond.LE,bs.getBytecodeData(),bs.peekNextBci());break;
                 case Bytecode.IF_ACMPEQ:branchIfSame(state,ValueType.Object,Cond.EQ,bs.getBytecodeData(),bs.peekNextBci());break;
                 case Bytecode.IF_ACMPNE:branchIfSame(state,ValueType.Object,Cond.NE,bs.getBytecodeData(),bs.peekNextBci());break;
-
-                case Bytecode::_goto           : _goto(s.cur_bci(), s.get_dest()); break;
-                case Bytecode::_jsr            : jsr(s.get_dest()); break;
-                case Bytecode::_ret            : ret(s.get_index()); break;
+                case Bytecode.GOTO:goTo(state,bs.getBytecodeData());break;
+                case Bytecode.JSR:
+                case Bytecode.RET:CompilerErrors.unsupported();
+                case Bytecode.TABLESWITCH:
                 case Bytecode::_tableswitch    : table_switch(); break;
                 case Bytecode::_lookupswitch   : lookup_switch(); break;
                 case Bytecode::_ireturn        : method_return(ipop(), ignore_return); break;
@@ -259,7 +259,6 @@ public class HirBuilder {
                 case Bytecode.IFNONNULL:branchIfNull(state,ValueType.Object,Cond.NE,bs.getBytecodeData(),bs.peekNextBci());break;
                 case Bytecode::_goto_w         : _goto(s.cur_bci(), s.get_far_dest()); break;
                 case Bytecode::_jsr_w          : jsr(s.get_far_dest()); break;
-                case Bytecode.BREAKPOINT       :
                 default                        : CompilerErrors.shouldNotReachHere();
             }
         }
@@ -533,12 +532,32 @@ public class HirBuilder {
     }
 
     private void branchIf(VmState state,Instruction left, Instruction right, Cond cond, int trueBci, int falseBci){
-        ArrayList<BlockStartInstr> succ = new ArrayList<BlockStartInstr>(){{
-           add(cfg.blockContain(trueBci));
-           add(cfg.blockContain(falseBci));
+        ArrayList<BlockStartInstr> succ = new ArrayList<>() {{
+            add(cfg.blockContain(trueBci));
+            add(cfg.blockContain(falseBci));
         }};
         IfInstr instr = new IfInstr(succ,left,right,cond);
         appendInstr(instr);
+    }
+
+    private void goTo(VmState state, int destBci){
+        ArrayList<BlockStartInstr> succ = new ArrayList<>() {{
+            add(cfg.blockContain(destBci));
+        }};
+        GotoInstr instr = new GotoInstr(succ);
+        appendInstr(instr);
+    }
+
+    private void tableSwitch(VmState state, BytecodeStream.TableSwitch sw, int curBci){
+        int len = sw.getNumOfCase();
+        ArrayList<BlockStartInstr> succ = new ArrayList<>(len+1);
+        int i=0;
+        while(i<len){
+            succ.set(i,cfg.blockContain(sw.getKeyDest(i)+curBci));
+            i++;
+        }
+        succ.set(i,cfg.blockContain(sw.getDefaultDest()+curBci));
+        
     }
 }
 
