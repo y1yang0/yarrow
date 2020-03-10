@@ -224,14 +224,13 @@ public class HirBuilder {
                 case Bytecode.IF_ICMPLE:branchIfSame(state,ValueType.Int,Cond.LE,bs.getBytecodeData(),bs.peekNextBci());break;
                 case Bytecode.IF_ACMPEQ:branchIfSame(state,ValueType.Object,Cond.EQ,bs.getBytecodeData(),bs.peekNextBci());break;
                 case Bytecode.IF_ACMPNE:branchIfSame(state,ValueType.Object,Cond.NE,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.GOTO:goTo(state,bs.getBytecodeData());break;
+                case Bytecode.GOTO:
+                case Bytecode.GOTO_W:goTo(state,bs.getBytecodeData());break;
                 case Bytecode.JSR:
-                case Bytecode.RET:CompilerErrors.unsupported();
+                case Bytecode.RET:
+                case Bytecode.JSR_W: CompilerErrors.unsupported();
                 case Bytecode.TABLESWITCH:tableSwitch(state,bs.getTableSwitch(),curBci);
                 case Bytecode.LOOKUPSWITCH:lookupSwitch(state,bs.getLookupSwitch(),curBci);
-
-                case Bytecode::_tableswitch    : table_switch(); break;
-                case Bytecode::_lookupswitch   : lookup_switch(); break;
                 case Bytecode::_ireturn        : method_return(ipop(), ignore_return); break;
                 case Bytecode::_lreturn        : method_return(lpop(), ignore_return); break;
                 case Bytecode::_freturn        : method_return(fpop(), ignore_return); break;
@@ -260,8 +259,6 @@ public class HirBuilder {
                 case Bytecode::_multianewarray : new_multi_array(s.cur_bcp()[3]); break;
                 case Bytecode.IFNULL:branchIfNull(state,ValueType.Object,Cond.EQ,bs.getBytecodeData(),bs.peekNextBci());break;
                 case Bytecode.IFNONNULL:branchIfNull(state,ValueType.Object,Cond.NE,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode::_goto_w         : _goto(s.cur_bci(), s.get_far_dest()); break;
-                case Bytecode::_jsr_w          : jsr(s.get_far_dest()); break;
                 default                        : CompilerErrors.shouldNotReachHere();
             }
         }
@@ -562,6 +559,10 @@ public class HirBuilder {
         Assert.matchType(index,ValueType.Int);
         LookupSwitchInstr instr = new LookupSwitchInstr(succ,index,key);
         appendToBlock(instr);
+    }
+
+    private void returnOp(ValueType type){
+        method.
     }
 }
 
