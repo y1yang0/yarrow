@@ -4,6 +4,7 @@ import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.bytecode.BytecodeStream;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.*;
+import com.kelthuzadx.yarrow.hir.value.Cond;
 import com.kelthuzadx.yarrow.hir.value.Value;
 import com.kelthuzadx.yarrow.hir.value.ValueType;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
@@ -467,10 +468,13 @@ public class HirBuilder {
         int constant = iinc.getIncrementConst();
 
         load(state,ValueType.Int,index);
+
         ConstantInstr instr = new ConstantInstr(new Value(ValueType.Int,constant));
         appendInstr(instr);
         state.push(instr);
+
         arithmetic(state,ValueType.Int,Bytecode.IADD);
+
         store(state,ValueType.Int,index);
     }
 
@@ -497,6 +501,37 @@ public class HirBuilder {
         CompareInstr instr = new CompareInstr(opcode,left,right);
         appendInstr(instr);
         state.push(instr);
+    }
+
+    private void branchIfZero(VmState state, ValueType type, Cond cond){
+        Instruction left = state.pop();
+        ConstantInstr right = new ConstantInstr(new Value(ValueType.Int,0));
+        if(!left.isType(type)){
+            throw new YarrowError("type error");
+        }
+        branchIf(state,left,right,cond);
+    }
+
+    private void branchIfNull(VmState state, ValueType type, Cond cond){
+        Instruction left = state.pop();
+        ConstantInstr right = new ConstantInstr(new Value(ValueType.Object,null));
+        if(!left.isType(type)){
+            throw new YarrowError("type error");
+        }
+        branchIf(state,left,right,cond);
+    }
+
+    private void branchIfSame(VmState state, ValueType type, Cond cond){
+        Instruction left = state.pop();
+        Instruction right = state.pop();
+        if(!left.isType(type)||!right.isType(type)){
+            throw new YarrowError("type error");
+        }
+        branchIf(state,left,right,cond);
+    }
+
+    private void branchIf(VmState state,Instruction left, Instruction right, Cond cond){
+
     }
 }
 

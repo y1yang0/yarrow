@@ -8,7 +8,9 @@ public class Instruction {
     private Instruction next;
     private Value value;
 
-    Instruction(){}
+    Instruction(){
+        value = new Value(ValueType.Illegal);
+    }
 
     public void setNext(Instruction next) {
         this.next = next;
