@@ -1,5 +1,6 @@
 package com.kelthuzadx.yarrow.hir;
 
+import com.kelthuzadx.yarrow.hir.instr.InstanceOfInstr;
 import com.kelthuzadx.yarrow.hir.instr.Instruction;
 
 import java.util.ArrayList;
@@ -41,4 +42,13 @@ public class VmState {
         return local.get(index);
     }
 
+    public int lockPush(InstanceOfInstr object){
+        lock.add();
+        return lock.size()-1;
+    }
+
+    public int lockPop(){
+        lock.pop();
+        return lock.size()
+    }
 }

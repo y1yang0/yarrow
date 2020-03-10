@@ -1,5 +1,6 @@
 package com.kelthuzadx.yarrow.bytecode;
 
+import com.kelthuzadx.yarrow.util.Assert;
 import com.kelthuzadx.yarrow.util.Logger;
 
 import java.util.Iterator;
@@ -329,42 +330,46 @@ public class BytecodeStream implements Iterator<Integer> {
     }
 
     public IINC getIINC() {
-        assert code[bci] == IINC : "expect IINC";
+        Assert.matchInt(code[bci],IINC);
         return new IINC();
     }
 
     public TableSwitch getTableSwitch() {
-        assert code[bci] == TABLESWITCH : "expect TABLESWITCH";
+        Assert.matchInt(code[bci],TABLESWITCH);
         return new TableSwitch();
     }
 
     public LookupSwitch getLookupSwitch() {
-        assert code[bci] == LOOKUPSWITCH : "expect LOOKUPSWITCH";
+        Assert.matchInt(code[bci],LOOKUPSWITCH);
         return new LookupSwitch();
     }
 
     public InvokeDynamic getInvokeDynamic() {
-        assert code[bci] == INVOKEDYNAMIC : "expect INVOKEDYNAMIC";
+        Assert.matchInt(code[bci],INVOKEDYNAMIC);
         return new InvokeDynamic();
     }
 
     public InvokeInterface getInvokeInterface() {
-        assert code[bci] == INVOKEINTERFACE : "expect INVOKEINTERFACE";
+        Assert.matchInt(code[bci],INVOKEINTERFACE);
         return new InvokeInterface();
     }
 
     public InvokeVirtual getInvokeVirtual() {
-        assert code[bci] == INVOKEVIRTUAL : "expect INVOKEVIRTUAL";
+        Assert.matchInt(code[bci],INVOKEVIRTUAL);
         return new InvokeVirtual();
     }
 
     public InvokeSpecial getInvokeSpecial() {
-        assert code[bci] == INVOKESPECIAL : "expect INVOKESPECIAL";
+        Assert.matchInt(code[bci],INVOKESPECIAL);
         return new InvokeSpecial();
     }
 
     public InvokeStatic getInvokeStatic() {
         return new InvokeStatic();
+    }
+
+    public MultiNewArray getMultiNewArray(){
+        return new MultiNewArray();
     }
 
 

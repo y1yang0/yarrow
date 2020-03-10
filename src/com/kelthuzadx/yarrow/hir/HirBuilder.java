@@ -254,12 +254,12 @@ public class HirBuilder {
                 case Bytecode.ANEWARRAY:newObjectArray(state,bs.getBytecodeData());break;
                 case Bytecode.ARRAYLENGTH:arrayLength(state);break;
                 case Bytecode.ATHROW:athrow(state);break;
-                case Bytecode.CHECKCAST:
-                case Bytecode.INSTANCEOF:
+                case Bytecode.CHECKCAST:checkCast(state,bs.getBytecodeData());break;
+                case Bytecode.INSTANCEOF:instanceOf(state,bs.getBytecodeData());break;
                 case Bytecode.MONITORENTER:
                 case Bytecode.MONITOREXIT:CompilerErrors.unsupported();
                 case Bytecode.WIDE:CompilerErrors.shouldNotReachHere();
-                case Bytecode::_multianewarray : new_multi_array(s.cur_bcp()[3]); break;
+                case Bytecode.MULTIANEWARRAY:multiNewArray(state,bs.getMultiNewArray());break;
                 case Bytecode.IFNULL:branchIfNull(state,ValueType.Object,Cond.EQ,bs.getBytecodeData(),bs.peekNextBci());break;
                 case Bytecode.IFNONNULL:branchIfNull(state,ValueType.Object,Cond.NE,bs.getBytecodeData(),bs.peekNextBci());break;
                 default                        : CompilerErrors.shouldNotReachHere();
@@ -720,6 +720,30 @@ public class HirBuilder {
         state.push(instr);
     }
 
+    private void monitorEnter(VmState state){
+        Instruction object = state.pop();
+        Assert.matchType(object,ValueType.Object);
+        state.lockPush(object);
+    }
+
+    private void monitorExit(VmState state){
+        state.lockPop();
+    }
+
+    private void multiNewArray(VmState state, BytecodeStream.MultiNewArray mna){
+        JavaType klass = method.getConstantPool().lookupType(mna.getConstPoolIndex(),-1);
+        int dimension = mna.getDimension();
+        Instruction[] dimenInstrs = new Instruction[dimension];
+        for(int i=dimension-1;i>=0;i--){
+            Instruction di = state.pop();
+            Assert.matchType(di,ValueType.Int);
+            dimenInstrs[i] = di;
+        }
+
+        MultiNewArrayInstr instr = new MultiNewArrayInstr(klass,dimenInstrs);
+        appendToBlock(instr);
+        state.push(instr);
+    }
 }
 
 
