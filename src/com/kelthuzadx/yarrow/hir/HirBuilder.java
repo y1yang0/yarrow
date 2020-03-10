@@ -8,6 +8,7 @@ import com.kelthuzadx.yarrow.hir.value.Value;
 import com.kelthuzadx.yarrow.hir.value.ValueType;
 import com.kelthuzadx.yarrow.util.Assert;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
+import jdk.vm.ci.hotspot.HotSpotResolvedJavaField;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
 import jdk.vm.ci.meta.JavaConstant;
 import jdk.vm.ci.meta.JavaField;
@@ -242,26 +243,22 @@ public class HirBuilder {
                 case Bytecode.GETSTATIC:
                 case Bytecode.GETFIELD:
                 case Bytecode.PUTSTATIC:
-                case Bytecode.PUTFIELD:
-                case Bytecode::_getstatic      : // fall through
-                case Bytecode::_putstatic      : // fall through
-                case Bytecode::_getfield       : // fall through
-                case Bytecode::_putfield       : access_field(code); break;
-                case Bytecode::_invokevirtual  : // fall through
-                case Bytecode::_invokespecial  : // fall through
-                case Bytecode::_invokestatic   : // fall through
-                case Bytecode::_invokedynamic  : // fall through
-                case Bytecode::_invokeinterface: invoke(code); break;
+                case Bytecode.PUTFIELD:accessField(state,bs.getBytecodeData(),opcode);break;
+                case Bytecode.INVOKEVIRTUAL:
+                case Bytecode.INVOKESPECIAL:
+                case Bytecode.INVOKESTATIC:
+                case Bytecode.INVOKEINTERFACE:
+                case Bytecode.INVOKEDYNAMIC:call(state);break;
                 case Bytecode::_new            : new_instance(s.get_index_u2()); break;
                 case Bytecode::_newarray       : new_type_array(); break;
                 case Bytecode::_anewarray      : new_object_array(); break;
                 case Bytecode::_arraylength    : { ValueStack* state_before = copy_state_for_exception(); ipush(append(new ArrayLength(apop(), state_before))); break; }
                 case Bytecode::_athrow         : throw_op(s.cur_bci()); break;
-                case Bytecode::_checkcast      : check_cast(s.get_index_u2()); break;
-                case Bytecode::_instanceof     : instance_of(s.get_index_u2()); break;
-                case Bytecode::_monitorenter   : monitorenter(apop(), s.cur_bci()); break;
-                case Bytecode::_monitorexit    : monitorexit (apop(), s.cur_bci()); break;
-                case Bytecode::_wide           : ShouldNotReachHere(); break;
+                case Bytecode.CHECKCAST:
+                case Bytecode.INSTANCEOF:
+                case Bytecode.MONITORENTER:
+                case Bytecode.MONITOREXIT:CompilerErrors.unsupported();
+                case Bytecode.WIDE:CompilerErrors.shouldNotReachHere();
                 case Bytecode::_multianewarray : new_multi_array(s.cur_bcp()[3]); break;
                 case Bytecode.IFNULL:branchIfNull(state,ValueType.Object,Cond.EQ,bs.getBytecodeData(),bs.peekNextBci());break;
                 case Bytecode.IFNONNULL:branchIfNull(state,ValueType.Object,Cond.NE,bs.getBytecodeData(),bs.peekNextBci());break;
@@ -610,11 +607,47 @@ public class HirBuilder {
     }
 
     private void accessField(VmState state, int index, int opcode){
-        ConstantInstr holder = null;
+        ConstantInstr holder=null;
         JavaField field = method.getConstantPool().lookupField(index,method,opcode);
         if(opcode==Bytecode.PUTSTATIC || opcode==Bytecode.GETSTATIC){
             holder = new ConstantInstr(new Value(ValueType.Object,field.getJavaKind().toJavaClass()));
+            appendToBlock(holder);
         }
+        switch (opcode){
+            case Bytecode.GETSTATIC:{
+                LoadFieldInstr instr = new LoadFieldInstr(holder,((HotSpotResolvedJavaField)field).getOffset(),field);
+                appendToBlock(instr);
+                state.push(instr);
+                break;
+            }
+            case Bytecode.PUTSTATIC:{
+                Instruction val = state.pop();
+                StoreFieldInstr instr = new StoreFieldInstr(holder,((HotSpotResolvedJavaField)field).getOffset(),field,val);
+                appendToBlock(instr);
+                break;
+            }
+            case Bytecode.GETFIELD:{
+                Instruction object = state.pop();
+                Assert.matchType(object,ValueType.Object);
+                LoadFieldInstr instr = new LoadFieldInstr(object,((HotSpotResolvedJavaField)field).getOffset(),field);
+                appendToBlock(instr);
+                state.push(instr);
+                break;
+            }
+            case Bytecode.PUTFIELD:{
+                Instruction val = state.pop();
+                Instruction object = state.pop();
+                Assert.matchType(object,ValueType.Object);
+                StoreFieldInstr instr = new StoreFieldInstr(object,((HotSpotResolvedJavaField)field).getOffset(),field,val);
+                appendToBlock(instr);
+                break;
+            }
+            default:CompilerErrors.shouldNotReachHere();
+        }
+    }
+
+
+    private void call(VmState state) {
     }
 }
 

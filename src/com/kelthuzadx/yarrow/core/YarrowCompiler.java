@@ -27,4 +27,8 @@ public class YarrowCompiler implements JVMCICompiler {
         System.exit(0);
         return HotSpotCompilationRequestResult.success(0);
     }
+
+    public JVMCIRuntime getRuntime() {
+        return runtime;
+    }
 }

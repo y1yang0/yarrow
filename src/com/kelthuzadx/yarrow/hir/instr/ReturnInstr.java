@@ -6,7 +6,7 @@ public class ReturnInstr extends BlockEndInstr {
     private Instruction returnValue;
 
     public ReturnInstr(Instruction returnValue) {
-        super(null/*no successor*/);
+        super(null);
         this.returnValue = returnValue;
     }
 }
