@@ -721,13 +721,9 @@ public class HirBuilder {
     }
 
     private void monitorEnter(VmState state){
-        Instruction object = state.pop();
-        Assert.matchType(object,ValueType.Object);
-        state.lockPush(object);
     }
 
     private void monitorExit(VmState state){
-        state.lockPop();
     }
 
     private void multiNewArray(VmState state, BytecodeStream.MultiNewArray mna){

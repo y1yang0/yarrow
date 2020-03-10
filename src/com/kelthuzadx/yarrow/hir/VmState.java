@@ -43,12 +43,10 @@ public class VmState {
     }
 
     public int lockPush(InstanceOfInstr object){
-        lock.add();
-        return lock.size()-1;
+        return 0;
     }
 
     public int lockPop(){
-        lock.pop();
-        return lock.size()
+        return 0;
     }
 }

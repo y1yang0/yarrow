@@ -10,5 +10,5 @@ public class LookupSwitchInstr extends BlockEndInstr {
         super(successor);
         this.index = index;
         this.key = key;
-    }￿
+    }
 }
