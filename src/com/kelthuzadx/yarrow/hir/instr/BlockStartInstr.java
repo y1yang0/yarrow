@@ -96,9 +96,13 @@ public class BlockStartInstr extends Instruction {
     }
 
     public void merge(VmState state){
-        if(state==null){
-            VmState newState = state.copy();
+        if(this.state==null){
+            this.state = state.copy();
         }
+    }
+
+    public VmState getVmState() {
+        return state;
     }
 
     @Override

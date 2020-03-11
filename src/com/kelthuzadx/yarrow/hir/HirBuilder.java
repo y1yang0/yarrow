@@ -36,22 +36,26 @@ public class HirBuilder {
 
         // doing abstract interpretation by iterating all blocks in CFG
         Logger.logf("=====Abstract interpretation=====>");
-        VmState state = new VmState(method.getMaxStackSize(),method.getMaxLocals());
         Map<Integer,Boolean> visit = new HashMap<>(cfg.getBlocks().length);
         Queue<BlockStartInstr> workList = new ArrayDeque<>();
-        workList.add(cfg.blockContain(0));
+        BlockStartInstr methodEntryBlock = cfg.blockContain(0);
+        methodEntryBlock.merge(new VmState(method.getMaxStackSize(),method.getMaxLocals()));
+        workList.add(methodEntryBlock);
+
         while (!workList.isEmpty()){
             BlockStartInstr blockStart = workList.remove();
             if(!visit.containsKey(blockStart.getBlockId())){
                 visit.put(blockStart.getBlockId(),true);
                 lastInstr = blockStart;
-                fulfillBlock(state, blockStart);
+                fulfillBlock(blockStart);
             }
         }
         return this;
     }
 
-    private void fulfillBlock(VmState state, BlockStartInstr block){
+    private void fulfillBlock(BlockStartInstr block){
+        VmState state = block.getVmState();
+
         BytecodeStream bs =new BytecodeStream(method.getCode(),block.getStartBci(),block.getEndBci());
         while (bs.hasNext()){
             int curBci = bs.next();
@@ -274,6 +278,7 @@ public class HirBuilder {
         block.setBlockEnd((BlockEndInstr)lastInstr);
 
         for(BlockStartInstr succ:((BlockEndInstr)lastInstr).getSuccessor()){
+            succ.merge(block.getVmState());
         }
 
     }
@@ -737,9 +742,6 @@ public class HirBuilder {
         MultiNewArrayInstr instr = new MultiNewArrayInstr(klass,dimenInstrs);
         appendToBlock(instr);
         state.push(instr);
-    }
-
-    private void propagateVmState() {
     }
 }
 
