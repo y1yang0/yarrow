@@ -1,6 +1,6 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
-import com.kelthuzadx.yarrow.hir.value.ValueType;
+import com.kelthuzadx.yarrow.hir.ValueType;
 
 public class LoadIndexInstr extends Instruction {
     private Instruction array;

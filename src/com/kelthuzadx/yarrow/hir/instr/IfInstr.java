@@ -1,6 +1,6 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
-import com.kelthuzadx.yarrow.hir.value.Cond;
+import com.kelthuzadx.yarrow.hir.Cond;
 
 import java.util.List;
 

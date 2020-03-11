@@ -1,42 +1,50 @@
 package com.kelthuzadx.yarrow.bytecode;
 
 import com.kelthuzadx.yarrow.util.Assert;
-import com.kelthuzadx.yarrow.util.Logger;
+import com.kelthuzadx.yarrow.util.CompilerErrors;
 
 import java.util.Iterator;
 
 import static com.kelthuzadx.yarrow.bytecode.Bytecode.*;
 
 public class BytecodeStream implements Iterator<Integer> {
-    private final int codeSize;
     private final byte[] code;
-    private int bci;
+    private int curBci;
+    private int endBci;
     private int nextBci;
-    private boolean isWide;
     private int data;
     private String bcString;
+    private boolean isWide;
 
-    public BytecodeStream(byte[] code, int codeSize) {
-        assert code.length == codeSize : "bytecode array has unexpected length";
-        this.codeSize = codeSize;
+    public BytecodeStream(byte[] code) {
         this.code = code;
-        reset(0);
+        reset(0, code.length-1);
+    }
+
+    public BytecodeStream(byte[] code, int startBci, int endBci) {
+        this.code = code;
+        reset(startBci, endBci);
+    }
+
+    public BytecodeStream(byte[] code, int startBci) {
+        this.code = code;
+        reset(startBci, code.length);
     }
 
     @Override
     public boolean hasNext() {
-        return codeSize != nextBci;
+        return nextBci <= endBci;
     }
 
     // consume current bytecode and return next byte code index
     @Override
     public Integer next() {
         isWide = false;
-        bci = nextBci;
-        int c = code[bci] & 0xff;
+        curBci = nextBci;
+        int c = code[curBci] & 0xff;
 
         StringBuilder sb = new StringBuilder();
-        sb.append(bci).append(":").append(Bytecode.getBytecodeName(c));
+        sb.append(curBci).append(":").append(Bytecode.getBytecodeName(c));
         switch (c) {
             case NOP:
             case ACONST_NULL:
@@ -185,7 +193,7 @@ public class BytecodeStream implements Iterator<Integer> {
             case ATHROW:
             case MONITORENTER:
             case MONITOREXIT:
-                nextBci = bci + 1;
+                nextBci = curBci + 1;
                 break;
             case BIPUSH:
             case LDC:
@@ -201,9 +209,9 @@ public class BytecodeStream implements Iterator<Integer> {
             case ASTORE:
             case RET:
             case NEWARRAY:
-                data = code[bci + 1];
+                data = code[curBci + 1];
                 sb.append(" ").append(data);
-                nextBci = bci + 2;
+                nextBci = curBci + 2;
                 break;
             case SIPUSH:
             case IFEQ:
@@ -234,67 +242,61 @@ public class BytecodeStream implements Iterator<Integer> {
             case IFNONNULL:
             case IINC: {
                 if (c == LDC_W || c == LDC2_W) {
-                    data = readU2(bci + 1);
+                    data = readU2(curBci + 1);
                 } else {
-                    data = readS2(bci + 1);
+                    data = readS2(curBci + 1);
                 }
                 sb.append(" ").append(data);
-                nextBci = bci + 3;
+                nextBci = curBci + 3;
                 break;
             }
             case GOTO_W:
             case JSR_W:
-                data = readS4(bci + 1);
+                data = readS4(curBci + 1);
                 sb.append(" ").append(data);
-                nextBci = bci + 5;
+                nextBci = curBci + 5;
                 break;
             case TABLESWITCH:
                 TableSwitch ts = new TableSwitch();
-                nextBci = bci + ts.align() + 12 + ts.getNumOfCase() * 4;
+                nextBci = curBci + ts.align() + 12 + ts.getNumOfCase() * 4;
                 break;
             case LOOKUPSWITCH:
                 LookupSwitch ls = new LookupSwitch();
-                nextBci = bci + ls.align() + 8 + ls.getNumOfCase() * 8;
+                nextBci = curBci + ls.align() + 8 + ls.getNumOfCase() * 8;
                 break;
             case INVOKEVIRTUAL:
             case INVOKESPECIAL:
             case INVOKESTATIC:
-                nextBci = bci + 3;
+                nextBci = curBci + 3;
                 break;
             case INVOKEINTERFACE:
             case INVOKEDYNAMIC:
-                nextBci = bci + 5;
+                nextBci = curBci + 5;
                 break;
             case WIDE:
                 isWide = true;
-                bci = bci + 1;
-                sb.append(" ").append(code[bci]);
-                if (code[bci] == IINC) {
-                    nextBci = bci + 5;
+                curBci = curBci + 1;
+                sb.append(" ").append(code[curBci]);
+                if (code[curBci] == IINC) {
+                    nextBci = curBci + 5;
                 } else {
-                    data = readU2(bci + 1);
+                    data = readU2(curBci + 1);
                     sb.append(" ").append(data);
-                    nextBci = bci + 3;
+                    nextBci = curBci + 3;
                 }
                 break;
             case MULTIANEWARRAY:
-                nextBci = bci + 4;
+                nextBci = curBci + 4;
                 break;
             case BREAKPOINT:
             case ILLEGAL:
             case END:
             default:
-                Logger.error("Incorrect bytecode was fed");
+                CompilerErrors.shouldNotReachHere();
         }
         this.bcString = sb.toString();
-        return bci;
-    }
 
-    public void reset(int bci) {
-        this.bci = bci;
-        this.nextBci = bci;
-        this.isWide = false;
-        this.data = Integer.MIN_VALUE;
+        return curBci;
     }
 
     public boolean isWide() {
@@ -306,7 +308,7 @@ public class BytecodeStream implements Iterator<Integer> {
     }
 
     public int currentBytecode() {
-        return code[bci] & 0xff;
+        return code[curBci] & 0xff;
     }
 
     public int peekNextBci() {
@@ -315,6 +317,172 @@ public class BytecodeStream implements Iterator<Integer> {
 
     public String getCurrentBytecodeString() {
         return bcString;
+    }
+
+    public IINC getIINC() {
+        Assert.matchInt(code[curBci], IINC);
+        return new IINC();
+    }
+
+    public TableSwitch getTableSwitch() {
+        Assert.matchInt(code[curBci], TABLESWITCH);
+        return new TableSwitch();
+    }
+
+    public LookupSwitch getLookupSwitch() {
+        Assert.matchInt(code[curBci], LOOKUPSWITCH);
+        return new LookupSwitch();
+    }
+
+    public InvokeDynamic getInvokeDynamic() {
+        Assert.matchInt(code[curBci], INVOKEDYNAMIC);
+        return new InvokeDynamic();
+    }
+
+    public InvokeInterface getInvokeInterface() {
+        Assert.matchInt(code[curBci], INVOKEINTERFACE);
+        return new InvokeInterface();
+    }
+
+    public InvokeVirtual getInvokeVirtual() {
+        Assert.matchInt(code[curBci], INVOKEVIRTUAL);
+        return new InvokeVirtual();
+    }
+
+    public InvokeSpecial getInvokeSpecial() {
+        Assert.matchInt(code[curBci], INVOKESPECIAL);
+        return new InvokeSpecial();
+    }
+
+    public InvokeStatic getInvokeStatic() {
+        return new InvokeStatic();
+    }
+
+    public MultiNewArray getMultiNewArray() {
+        return new MultiNewArray();
+    }
+
+
+    public final class IINC {
+        public int getIncrementIndex() {
+            if (isWide) {
+                return readU2(curBci + 1);
+            } else {
+                return code[curBci + 1];
+            }
+        }
+
+        public int getIncrementConst() {
+            if (isWide) {
+                return readU2(curBci + 3);
+            } else {
+                return code[curBci + 2];
+            }
+        }
+
+    }
+
+    public final class TableSwitch {
+        public int align() {
+            return (4 - curBci % 4) % 4;
+        }
+
+        public int getDefaultDest() {
+            return readS4(curBci + align());
+        }
+
+        public int getNumOfCase() {
+            return getHighKey() - getLowKey() + 1;
+        }
+
+        public int getHighKey() {
+            return readS4(curBci + align() + 8);
+        }
+
+        public int getLowKey() {
+            return readS4(curBci + align() + 4);
+        }
+
+        public int getKeyDest(int index) {
+            return readS4(curBci + align() + 12 + index * 4);
+        }
+    }
+
+    public final class LookupSwitch {
+        public int align() {
+            return (4 - curBci % 4) % 4;
+        }
+
+        public int getDefaultDest() {
+            int a = align();
+            int r = curBci + align();
+            int x = readS4(r);
+            return readS4(curBci + align());
+        }
+
+        public int getNumOfCase() {
+            return readS4(curBci + align() + 4);
+        }
+
+        public int getMatch(int index) {
+            return readS4(curBci + align() + 8 + index * 8);
+        }
+
+        public int getOffset(int index) {
+            return readS4(curBci + align() + 8 + index * 8 + 4);
+        }
+    }
+
+    public final class InvokeDynamic {
+        public int getConstPoolIndex() {
+            return readS2(curBci + 1);
+        }
+    }
+
+    public final class InvokeInterface {
+        public int getConstPoolIndex() {
+            return readS2(curBci + 1);
+        }
+
+        public int getCount() {
+            return code[curBci + 3];
+        }
+    }
+
+    public final class InvokeVirtual {
+        public int getConstPoolIndex() {
+            return readS2(curBci + 1);
+        }
+    }
+
+    public final class InvokeSpecial {
+        public int getConstPoolIndex() {
+            return readS2(curBci + 1);
+        }
+    }
+
+    public final class InvokeStatic {
+        public int getConstPoolIndex() {
+            return readS2(curBci + 1);
+        }
+    }
+
+    public final class MultiNewArray {
+        public int getConstPoolIndex() {
+            return readU2(curBci + 1);
+        }
+
+        public int getDimension() {
+            return code[curBci + 3];
+        }
+    }
+
+    private void reset(int startBci, int endBci) {
+        this.curBci = startBci;
+        this.endBci = endBci;
+        this.nextBci = 0;
+        this.isWide = false;
+        this.data = Integer.MIN_VALUE;
     }
 
     private int readS2(int i) {
@@ -327,164 +495,6 @@ public class BytecodeStream implements Iterator<Integer> {
 
     private int readS4(int i) {
         return (code[i] << 24) | ((code[i + 1] & 0xff) << 16) | ((code[i + 2] & 0xff) << 8) | (code[i + 3] & 0xff);
-    }
-
-    public IINC getIINC() {
-        Assert.matchInt(code[bci],IINC);
-        return new IINC();
-    }
-
-    public TableSwitch getTableSwitch() {
-        Assert.matchInt(code[bci],TABLESWITCH);
-        return new TableSwitch();
-    }
-
-    public LookupSwitch getLookupSwitch() {
-        Assert.matchInt(code[bci],LOOKUPSWITCH);
-        return new LookupSwitch();
-    }
-
-    public InvokeDynamic getInvokeDynamic() {
-        Assert.matchInt(code[bci],INVOKEDYNAMIC);
-        return new InvokeDynamic();
-    }
-
-    public InvokeInterface getInvokeInterface() {
-        Assert.matchInt(code[bci],INVOKEINTERFACE);
-        return new InvokeInterface();
-    }
-
-    public InvokeVirtual getInvokeVirtual() {
-        Assert.matchInt(code[bci],INVOKEVIRTUAL);
-        return new InvokeVirtual();
-    }
-
-    public InvokeSpecial getInvokeSpecial() {
-        Assert.matchInt(code[bci],INVOKESPECIAL);
-        return new InvokeSpecial();
-    }
-
-    public InvokeStatic getInvokeStatic() {
-        return new InvokeStatic();
-    }
-
-    public MultiNewArray getMultiNewArray(){
-        return new MultiNewArray();
-    }
-
-
-    public final class IINC {
-        public int getIncrementIndex() {
-            if (isWide) {
-                return readU2(bci + 1);
-            } else {
-                return code[bci + 1];
-            }
-        }
-
-        public int getIncrementConst() {
-            if (isWide) {
-                return readU2(bci + 3);
-            } else {
-                return code[bci + 2];
-            }
-        }
-
-    }
-
-    public final class TableSwitch {
-        public int align() {
-            return (4 - bci % 4) % 4;
-        }
-
-        public int getDefaultDest() {
-            return readS4(bci + align());
-        }
-
-        public int getNumOfCase() {
-            return getHighKey() - getLowKey() + 1;
-        }
-
-        public int getHighKey() {
-            return readS4(bci + align() + 8);
-        }
-
-        public int getLowKey() {
-            return readS4(bci + align() + 4);
-        }
-
-        public int getKeyDest(int index) {
-            return readS4(bci + align() + 12 + index * 4);
-        }
-    }
-
-    public final class LookupSwitch {
-        public int align() {
-            return (4 - bci % 4) % 4;
-        }
-
-        public int getDefaultDest() {
-            int a = align();
-            int r = bci + align();
-            int x = readS4(r);
-            return readS4(bci + align());
-        }
-
-        public int getNumOfCase() {
-            return readS4(bci + align() + 4);
-        }
-
-        public int getMatch(int index) {
-            return readS4(bci + align() + 8 + index * 8);
-        }
-
-        public int getOffset(int index) {
-            return readS4(bci + align() + 8 + index * 8 + 4);
-        }
-    }
-
-    public final class InvokeDynamic {
-        public int getConstPoolIndex() {
-            return readS2(bci + 1);
-        }
-    }
-
-    public final class InvokeInterface {
-        public int getConstPoolIndex() {
-            return readS2(bci + 1);
-        }
-
-        public int getCount() {
-            return code[bci + 3];
-        }
-    }
-
-    public final class InvokeVirtual {
-        public int getConstPoolIndex() {
-            return readS2(bci + 1);
-        }
-    }
-
-    public final class InvokeSpecial {
-        public int getConstPoolIndex() {
-            return readS2(bci + 1);
-        }
-    }
-
-    public final class InvokeStatic {
-        public int getConstPoolIndex() {
-            return readS2(bci + 1);
-        }
-    }
-
-    public final class MultiNewArray {
-        public int getConstPoolIndex() {
-            return readU2(bci + 1);
-        }
-
-        public int getDimension() {
-            return code[bci + 3];
-        }
     }
 
 }

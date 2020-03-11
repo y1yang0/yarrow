@@ -3,11 +3,9 @@ package com.kelthuzadx.yarrow.hir;
 import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.bytecode.BytecodeStream;
 import com.kelthuzadx.yarrow.hir.instr.*;
-import com.kelthuzadx.yarrow.hir.value.Cond;
-import com.kelthuzadx.yarrow.hir.value.Value;
-import com.kelthuzadx.yarrow.hir.value.ValueType;
 import com.kelthuzadx.yarrow.util.Assert;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
+import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaField;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
 import jdk.vm.ci.meta.JavaConstant;
@@ -16,7 +14,6 @@ import jdk.vm.ci.meta.JavaKind;
 import jdk.vm.ci.meta.JavaType;
 
 import java.util.*;
-
 
 /**
  * HirBuilder performs an abstract interpretation, it would transform java bytecode to compiler HIR.
@@ -38,6 +35,8 @@ public class HirBuilder {
         cfg = CFG.build(method);
 
         // doing abstract interpretation by iterating all blocks in CFG
+        Logger.logf("=====Abstract interpretation=====>");
+        VmState state = new VmState(method.getMaxStackSize(),method.getMaxLocals());
         Map<Integer,Boolean> visit = new HashMap<>(cfg.getBlocks().length);
         Queue<BlockStartInstr> workList = new ArrayDeque<>();
         workList.add(cfg.blockContain(0));
@@ -45,7 +44,6 @@ public class HirBuilder {
             BlockStartInstr blockStart = workList.remove();
             if(!visit.containsKey(blockStart.getBlockId())){
                 visit.put(blockStart.getBlockId(),true);
-                VmState state = new VmState();
                 lastInstr = blockStart;
                 fulfillBlock(state, blockStart);
             }
@@ -54,11 +52,11 @@ public class HirBuilder {
     }
 
     private void fulfillBlock(VmState state, BlockStartInstr block){
-        BytecodeStream bs =new BytecodeStream(method.getCode(),method.getCodeSize());
-        bs.reset(block.getStartBci());
+        BytecodeStream bs =new BytecodeStream(method.getCode(),block.getStartBci(),block.getEndBci());
         while (bs.hasNext()){
             int curBci = bs.next();
             int opcode = bs.currentBytecode();
+            Logger.logf("{}",bs.getCurrentBytecodeString());
             switch (opcode) {
                 case Bytecode.NOP: break;
                 case Bytecode.ACONST_NULL:loadConst(state,ValueType.Object,null);break;

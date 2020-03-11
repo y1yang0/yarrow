@@ -10,24 +10,17 @@ import java.util.Stack;
 @SuppressWarnings("unused")
 public class VmState {
     private Stack<Instruction> stack;
-    private List<Instruction> local;
+    private Instruction[] local;
     private List<Instruction> lock;
-
-    public VmState(){
-        stack = new Stack<>();
-        local = new ArrayList<>();
-        lock = new ArrayList<>();
-    }
 
     public VmState(int stackSize, int localSize){
         stack = new Stack<>();
-        stack.ensureCapacity(stackSize);
-        local = new ArrayList<>(localSize);
+        local = new Instruction[localSize];
         lock =  new ArrayList<>();
     }
 
     public void push(Instruction instr){
-        stack.add(instr);
+        stack.push(instr);
     }
 
     public Instruction pop(){
@@ -35,11 +28,11 @@ public class VmState {
     }
 
     public void set(int index, Instruction instr){
-        local.set(index,instr);
+        local[index] = instr;
     }
 
     public Instruction get(int index){
-        return local.get(index);
+        return local[index];
     }
 
     public int lockPush(InstanceOfInstr object){

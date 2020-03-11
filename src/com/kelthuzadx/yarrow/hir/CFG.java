@@ -71,7 +71,7 @@ class CFG {
         this.bciToBlockMapping = new BlockStartInstr[this.codeSize];
 
         BlockStartInstr currentBlock = null;
-        BytecodeStream stream = new BytecodeStream(code, codeSize);
+        BytecodeStream stream = new BytecodeStream(code);
         while (stream.hasNext()) {
             int bci = stream.next();
             if (currentBlock == null) {
@@ -274,8 +274,7 @@ class CFG {
             String flag = block.isLoopHeader() ? "[LH]" : "";
             flag += isLoopBlock(block.getBlockId()) ? "[L]" : "";
             Logger.logf("#{} {}{", block.getBlockId(), flag);
-            BytecodeStream bs = new BytecodeStream(code, codeSize);
-            bs.reset(block.getStartBci());
+            BytecodeStream bs = new BytecodeStream(code,block.getStartBci());
             while (bs.hasNext()) {
                 int bci = bs.next();
                 Logger.logf(" {}", bs.getCurrentBytecodeString());
