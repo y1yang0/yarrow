@@ -2,10 +2,10 @@ package com.kelthuzadx.yarrow.util;
 
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.Instruction;
-import com.kelthuzadx.yarrow.hir.ValueType;
+import jdk.vm.ci.meta.JavaKind;
 
 public class Assert {
-    public static void matchType(Instruction value, ValueType rhs){
+    public static void matchType(Instruction value, JavaKind rhs){
         if(!value.isType(rhs)){
             throw new YarrowError("Type Mismatch");
         }

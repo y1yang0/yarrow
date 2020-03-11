@@ -1,7 +1,5 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
-import com.kelthuzadx.yarrow.hir.ValueType;
-
 public class TypeCastInstr extends Instruction{
     private int opcode;
     private Instruction from;

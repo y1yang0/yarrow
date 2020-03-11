@@ -1,14 +1,15 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
-import com.kelthuzadx.yarrow.hir.ValueType;
+import com.kelthuzadx.yarrow.hir.Value;
+import jdk.vm.ci.meta.JavaKind;
 
-public class LoadIndexInstr extends Instruction {
-    private Instruction array;
+public class LoadIndexInstr extends AccessArrayInstr {
     private Instruction index;
     private Instruction length;
-    private ValueType elementType;
+    private JavaKind elementType;
 
-    public LoadIndexInstr(Instruction array, Instruction index, Instruction length, ValueType elementType){
+    public LoadIndexInstr(Instruction array, Instruction index, Instruction length, JavaKind elementType){
+        super(new Value(),array);
         this.index = index;
         this.length = length;
         this.elementType = elementType;

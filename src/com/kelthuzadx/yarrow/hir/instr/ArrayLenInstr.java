@@ -1,9 +1,11 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
-public class ArrayLenInstr extends Instruction {
-    private Instruction array;
+import com.kelthuzadx.yarrow.hir.Value;
+import jdk.vm.ci.meta.JavaKind;
+
+public class ArrayLenInstr extends AccessArrayInstr {
 
     public ArrayLenInstr(Instruction array){
-        this.array=array;
+        super(new Value(JavaKind.Int),array);
     }
 }

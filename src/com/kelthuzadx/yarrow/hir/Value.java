@@ -1,24 +1,31 @@
 package com.kelthuzadx.yarrow.hir;
 
 
+import jdk.vm.ci.meta.JavaKind;
+import jdk.vm.ci.meta.JavaType;
+
 import java.util.Optional;
 
 public class Value {
-    private ValueType type;
+    private JavaKind type;
     private Optional<Object> value;
 
-    public Value(ValueType type){
+    public Value(JavaKind type){
         this.type = type;
         this.value = Optional.empty();
     }
 
-    public Value(ValueType type, Object value){
+    public Value(JavaKind type, Object value){
         this.type = type;
         // to support special "null" value
         this.value = Optional.ofNullable(value);
     }
 
-    public boolean isType(ValueType type){
+    public boolean isType(JavaKind type){
         return this.type == type;
+    }
+
+    public JavaKind getType() {
+        return type;
     }
 }

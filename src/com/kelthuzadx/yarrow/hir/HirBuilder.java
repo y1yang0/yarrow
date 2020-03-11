@@ -59,92 +59,92 @@ public class HirBuilder {
             Logger.logf("{}",bs.getCurrentBytecodeString());
             switch (opcode) {
                 case Bytecode.NOP: break;
-                case Bytecode.ACONST_NULL:loadConst(state,ValueType.Object,null);break;
-                case Bytecode.ICONST_M1:loadConst(state,ValueType.Int,-1);break;
-                case Bytecode.ICONST_0:loadConst(state,ValueType.Int,0);break;
-                case Bytecode.ICONST_1:loadConst(state,ValueType.Int,1);break;
-                case Bytecode.ICONST_2:loadConst(state,ValueType.Int,2);break;
-                case Bytecode.ICONST_3:loadConst(state,ValueType.Int,3);break;
-                case Bytecode.ICONST_4:loadConst(state,ValueType.Int,4);break;
-                case Bytecode.ICONST_5:loadConst(state,ValueType.Int,5);break;
-                case Bytecode.LCONST_0:loadConst(state,ValueType.Long,0L);break;
-                case Bytecode.LCONST_1:loadConst(state,ValueType.Long,1L);break;
-                case Bytecode.FCONST_0:loadConst(state,ValueType.Float,0.0f);break;
-                case Bytecode.FCONST_1:loadConst(state,ValueType.Float,1.0f);break;
-                case Bytecode.FCONST_2:loadConst(state,ValueType.Float,2.0f);break;
-                case Bytecode.DCONST_0:loadConst(state,ValueType.Double,0.0d);break;
-                case Bytecode.DCONST_1:loadConst(state,ValueType.Double,1.0d);break;
-                case Bytecode.BIPUSH:loadConst(state,ValueType.Int,(byte)bs.getBytecodeData());break;
-                case Bytecode.SIPUSH:loadConst(state,ValueType.Int,(short)bs.getBytecodeData());break;
+                case Bytecode.ACONST_NULL:loadConst(state,JavaKind.Object,null);break;
+                case Bytecode.ICONST_M1:loadConst(state,JavaKind.Int,-1);break;
+                case Bytecode.ICONST_0:loadConst(state,JavaKind.Int,0);break;
+                case Bytecode.ICONST_1:loadConst(state,JavaKind.Int,1);break;
+                case Bytecode.ICONST_2:loadConst(state,JavaKind.Int,2);break;
+                case Bytecode.ICONST_3:loadConst(state,JavaKind.Int,3);break;
+                case Bytecode.ICONST_4:loadConst(state,JavaKind.Int,4);break;
+                case Bytecode.ICONST_5:loadConst(state,JavaKind.Int,5);break;
+                case Bytecode.LCONST_0:loadConst(state,JavaKind.Long,0L);break;
+                case Bytecode.LCONST_1:loadConst(state,JavaKind.Long,1L);break;
+                case Bytecode.FCONST_0:loadConst(state,JavaKind.Float,0.0f);break;
+                case Bytecode.FCONST_1:loadConst(state,JavaKind.Float,1.0f);break;
+                case Bytecode.FCONST_2:loadConst(state,JavaKind.Float,2.0f);break;
+                case Bytecode.DCONST_0:loadConst(state,JavaKind.Double,0.0d);break;
+                case Bytecode.DCONST_1:loadConst(state,JavaKind.Double,1.0d);break;
+                case Bytecode.BIPUSH:loadConst(state,JavaKind.Int,(byte)bs.getBytecodeData());break;
+                case Bytecode.SIPUSH:loadConst(state,JavaKind.Int,(short)bs.getBytecodeData());break;
                 case Bytecode.LDC:
                 case Bytecode.LDC_W:
                 case Bytecode.LDC2_W:ldc(state,bs.getBytecodeData());break;
-                case Bytecode.ILOAD:load(state,ValueType.Int,bs.getBytecodeData());break;
-                case Bytecode.LLOAD:load(state,ValueType.Long,bs.getBytecodeData());break;
-                case Bytecode.FLOAD:load(state,ValueType.Float,bs.getBytecodeData());break;
-                case Bytecode.DLOAD:load(state,ValueType.Double,bs.getBytecodeData());break;
-                case Bytecode.ALOAD:load(state,ValueType.Object,bs.getBytecodeData());break;
-                case Bytecode.ILOAD_0:load(state,ValueType.Int,0);break;
-                case Bytecode.ILOAD_1:load(state,ValueType.Int,1);break;
-                case Bytecode.ILOAD_2:load(state,ValueType.Int,2);break;
-                case Bytecode.ILOAD_3:load(state,ValueType.Int,3);break;
-                case Bytecode.LLOAD_0:load(state,ValueType.Long,0);break;
-                case Bytecode.LLOAD_1:load(state,ValueType.Long,1);break;
-                case Bytecode.LLOAD_2:load(state,ValueType.Long,2);break;
-                case Bytecode.LLOAD_3:load(state,ValueType.Long,3);break;
-                case Bytecode.FLOAD_0:load(state,ValueType.Float,0);break;
-                case Bytecode.FLOAD_1:load(state,ValueType.Float,1);break;
-                case Bytecode.FLOAD_2:load(state,ValueType.Float,2);break;
-                case Bytecode.FLOAD_3:load(state,ValueType.Float,3);break;
-                case Bytecode.DLOAD_0:load(state,ValueType.Double,0);break;
-                case Bytecode.DLOAD_1:load(state,ValueType.Double,1);break;
-                case Bytecode.DLOAD_2:load(state,ValueType.Double,2);break;
-                case Bytecode.DLOAD_3:load(state,ValueType.Double,3);break;
-                case Bytecode.ALOAD_0:load(state,ValueType.Object,0);break;
-                case Bytecode.ALOAD_1:load(state,ValueType.Object,1);break;
-                case Bytecode.ALOAD_2:load(state,ValueType.Object,2);break;
-                case Bytecode.ALOAD_3:load(state,ValueType.Object,3);break;
-                case Bytecode.IALOAD:loadArray(state,ValueType.Int);break;
-                case Bytecode.LALOAD:loadArray(state,ValueType.Long);break;
-                case Bytecode.FALOAD:loadArray(state,ValueType.Float);break;
-                case Bytecode.DALOAD:loadArray(state,ValueType.Double);break;
-                case Bytecode.AALOAD:loadArray(state,ValueType.Object);break;
-                case Bytecode.BALOAD:loadArray(state,ValueType.Byte);break;
-                case Bytecode.CALOAD:loadArray(state,ValueType.Char);break;
-                case Bytecode.SALOAD:loadArray(state,ValueType.Short);break;
-                case Bytecode.ISTORE:store(state,ValueType.Int,bs.getBytecodeData());break;
-                case Bytecode.LSTORE:store(state,ValueType.Long,bs.getBytecodeData());break;
-                case Bytecode.FSTORE:store(state,ValueType.Float,bs.getBytecodeData());break;
-                case Bytecode.DSTORE:store(state,ValueType.Double,bs.getBytecodeData());break;
-                case Bytecode.ASTORE:store(state,ValueType.Object,bs.getBytecodeData());break;
-                case Bytecode.ISTORE_0:store(state,ValueType.Int,0);break;
-                case Bytecode.ISTORE_1:store(state,ValueType.Int,1);break;
-                case Bytecode.ISTORE_2:store(state,ValueType.Int,2);break;
-                case Bytecode.ISTORE_3:store(state,ValueType.Int,3);break;
-                case Bytecode.LSTORE_0:store(state,ValueType.Long,0);break;
-                case Bytecode.LSTORE_1:store(state,ValueType.Long,1);break;
-                case Bytecode.LSTORE_2:store(state,ValueType.Long,2);break;
-                case Bytecode.LSTORE_3:store(state,ValueType.Long,3);break;
-                case Bytecode.FSTORE_0:store(state,ValueType.Float,0);break;
-                case Bytecode.FSTORE_1:store(state,ValueType.Float,1);break;
-                case Bytecode.FSTORE_2:store(state,ValueType.Float,2);break;
-                case Bytecode.FSTORE_3:store(state,ValueType.Float,3);break;
-                case Bytecode.DSTORE_0:store(state,ValueType.Double,0);break;
-                case Bytecode.DSTORE_1:store(state,ValueType.Double,1);break;
-                case Bytecode.DSTORE_2:store(state,ValueType.Double,2);break;
-                case Bytecode.DSTORE_3:store(state,ValueType.Double,3);break;
-                case Bytecode.ASTORE_0:store(state,ValueType.Object,0);break;
-                case Bytecode.ASTORE_1:store(state,ValueType.Object,1);break;
-                case Bytecode.ASTORE_2:store(state,ValueType.Object,2);break;
-                case Bytecode.ASTORE_3:store(state,ValueType.Object,3);break;
-                case Bytecode.IASTORE:storeArray(state,ValueType.Int);break;
-                case Bytecode.LASTORE:storeArray(state,ValueType.Long);break;
-                case Bytecode.FASTORE:storeArray(state,ValueType.Float);break;
-                case Bytecode.DASTORE:storeArray(state,ValueType.Double);break;
-                case Bytecode.AASTORE:storeArray(state,ValueType.Object);break;
-                case Bytecode.BASTORE:storeArray(state,ValueType.Byte);break;
-                case Bytecode.CASTORE:storeArray(state,ValueType.Char);break;
-                case Bytecode.SASTORE:storeArray(state,ValueType.Short);break;
+                case Bytecode.ILOAD:load(state,JavaKind.Int,bs.getBytecodeData());break;
+                case Bytecode.LLOAD:load(state,JavaKind.Long,bs.getBytecodeData());break;
+                case Bytecode.FLOAD:load(state,JavaKind.Float,bs.getBytecodeData());break;
+                case Bytecode.DLOAD:load(state,JavaKind.Double,bs.getBytecodeData());break;
+                case Bytecode.ALOAD:load(state,JavaKind.Object,bs.getBytecodeData());break;
+                case Bytecode.ILOAD_0:load(state,JavaKind.Int,0);break;
+                case Bytecode.ILOAD_1:load(state,JavaKind.Int,1);break;
+                case Bytecode.ILOAD_2:load(state,JavaKind.Int,2);break;
+                case Bytecode.ILOAD_3:load(state,JavaKind.Int,3);break;
+                case Bytecode.LLOAD_0:load(state,JavaKind.Long,0);break;
+                case Bytecode.LLOAD_1:load(state,JavaKind.Long,1);break;
+                case Bytecode.LLOAD_2:load(state,JavaKind.Long,2);break;
+                case Bytecode.LLOAD_3:load(state,JavaKind.Long,3);break;
+                case Bytecode.FLOAD_0:load(state,JavaKind.Float,0);break;
+                case Bytecode.FLOAD_1:load(state,JavaKind.Float,1);break;
+                case Bytecode.FLOAD_2:load(state,JavaKind.Float,2);break;
+                case Bytecode.FLOAD_3:load(state,JavaKind.Float,3);break;
+                case Bytecode.DLOAD_0:load(state,JavaKind.Double,0);break;
+                case Bytecode.DLOAD_1:load(state,JavaKind.Double,1);break;
+                case Bytecode.DLOAD_2:load(state,JavaKind.Double,2);break;
+                case Bytecode.DLOAD_3:load(state,JavaKind.Double,3);break;
+                case Bytecode.ALOAD_0:load(state,JavaKind.Object,0);break;
+                case Bytecode.ALOAD_1:load(state,JavaKind.Object,1);break;
+                case Bytecode.ALOAD_2:load(state,JavaKind.Object,2);break;
+                case Bytecode.ALOAD_3:load(state,JavaKind.Object,3);break;
+                case Bytecode.IALOAD:loadArray(state,JavaKind.Int);break;
+                case Bytecode.LALOAD:loadArray(state,JavaKind.Long);break;
+                case Bytecode.FALOAD:loadArray(state,JavaKind.Float);break;
+                case Bytecode.DALOAD:loadArray(state,JavaKind.Double);break;
+                case Bytecode.AALOAD:loadArray(state,JavaKind.Object);break;
+                case Bytecode.BALOAD:loadArray(state,JavaKind.Byte);break;
+                case Bytecode.CALOAD:loadArray(state,JavaKind.Char);break;
+                case Bytecode.SALOAD:loadArray(state,JavaKind.Short);break;
+                case Bytecode.ISTORE:store(state,JavaKind.Int,bs.getBytecodeData());break;
+                case Bytecode.LSTORE:store(state,JavaKind.Long,bs.getBytecodeData());break;
+                case Bytecode.FSTORE:store(state,JavaKind.Float,bs.getBytecodeData());break;
+                case Bytecode.DSTORE:store(state,JavaKind.Double,bs.getBytecodeData());break;
+                case Bytecode.ASTORE:store(state,JavaKind.Object,bs.getBytecodeData());break;
+                case Bytecode.ISTORE_0:store(state,JavaKind.Int,0);break;
+                case Bytecode.ISTORE_1:store(state,JavaKind.Int,1);break;
+                case Bytecode.ISTORE_2:store(state,JavaKind.Int,2);break;
+                case Bytecode.ISTORE_3:store(state,JavaKind.Int,3);break;
+                case Bytecode.LSTORE_0:store(state,JavaKind.Long,0);break;
+                case Bytecode.LSTORE_1:store(state,JavaKind.Long,1);break;
+                case Bytecode.LSTORE_2:store(state,JavaKind.Long,2);break;
+                case Bytecode.LSTORE_3:store(state,JavaKind.Long,3);break;
+                case Bytecode.FSTORE_0:store(state,JavaKind.Float,0);break;
+                case Bytecode.FSTORE_1:store(state,JavaKind.Float,1);break;
+                case Bytecode.FSTORE_2:store(state,JavaKind.Float,2);break;
+                case Bytecode.FSTORE_3:store(state,JavaKind.Float,3);break;
+                case Bytecode.DSTORE_0:store(state,JavaKind.Double,0);break;
+                case Bytecode.DSTORE_1:store(state,JavaKind.Double,1);break;
+                case Bytecode.DSTORE_2:store(state,JavaKind.Double,2);break;
+                case Bytecode.DSTORE_3:store(state,JavaKind.Double,3);break;
+                case Bytecode.ASTORE_0:store(state,JavaKind.Object,0);break;
+                case Bytecode.ASTORE_1:store(state,JavaKind.Object,1);break;
+                case Bytecode.ASTORE_2:store(state,JavaKind.Object,2);break;
+                case Bytecode.ASTORE_3:store(state,JavaKind.Object,3);break;
+                case Bytecode.IASTORE:storeArray(state,JavaKind.Int);break;
+                case Bytecode.LASTORE:storeArray(state,JavaKind.Long);break;
+                case Bytecode.FASTORE:storeArray(state,JavaKind.Float);break;
+                case Bytecode.DASTORE:storeArray(state,JavaKind.Double);break;
+                case Bytecode.AASTORE:storeArray(state,JavaKind.Object);break;
+                case Bytecode.BASTORE:storeArray(state,JavaKind.Byte);break;
+                case Bytecode.CASTORE:storeArray(state,JavaKind.Char);break;
+                case Bytecode.SASTORE:storeArray(state,JavaKind.Short);break;
                 case Bytecode.POP:state.pop();break;
                 case Bytecode.POP2:state.pop();state.pop();break;
                 case Bytecode.DUP:
@@ -158,73 +158,73 @@ public class HirBuilder {
                 case Bytecode.ISUB:
                 case Bytecode.IMUL:
                 case Bytecode.IDIV:
-                case Bytecode.IREM:arithmetic(state,ValueType.Int,opcode);break;
+                case Bytecode.IREM:arithmetic(state,JavaKind.Int,opcode);break;
                 case Bytecode.LADD:
                 case Bytecode.LSUB:
                 case Bytecode.LMUL:
                 case Bytecode.LDIV:
-                case Bytecode.LREM:arithmetic(state,ValueType.Long,opcode);break;
+                case Bytecode.LREM:arithmetic(state,JavaKind.Long,opcode);break;
                 case Bytecode.FADD:
                 case Bytecode.FSUB:
                 case Bytecode.FMUL:
                 case Bytecode.FDIV:
-                case Bytecode.FREM:arithmetic(state,ValueType.Float,opcode);break;
+                case Bytecode.FREM:arithmetic(state,JavaKind.Float,opcode);break;
                 case Bytecode.DADD:
                 case Bytecode.DSUB:
                 case Bytecode.DMUL:
                 case Bytecode.DDIV:
-                case Bytecode.DREM:arithmetic(state,ValueType.Double,opcode);break;
-                case Bytecode.INEG:negate(state,ValueType.Int);break;
-                case Bytecode.LNEG:negate(state,ValueType.Long);break;
-                case Bytecode.FNEG:negate(state,ValueType.Float);break;
-                case Bytecode.DNEG:negate(state,ValueType.Double);break;
+                case Bytecode.DREM:arithmetic(state,JavaKind.Double,opcode);break;
+                case Bytecode.INEG:negate(state,JavaKind.Int);break;
+                case Bytecode.LNEG:negate(state,JavaKind.Long);break;
+                case Bytecode.FNEG:negate(state,JavaKind.Float);break;
+                case Bytecode.DNEG:negate(state,JavaKind.Double);break;
                 case Bytecode.ISHL:
                 case Bytecode.ISHR:
-                case Bytecode.IUSHR: shift(state,ValueType.Int,opcode);break;
+                case Bytecode.IUSHR: shift(state,JavaKind.Int,opcode);break;
                 case Bytecode.LSHL:
                 case Bytecode.LSHR:
-                case Bytecode.LUSHR: shift(state,ValueType.Long,opcode);break;
+                case Bytecode.LUSHR: shift(state,JavaKind.Long,opcode);break;
                 case Bytecode.IAND:
                 case Bytecode.IOR:
-                case Bytecode.IXOR:logic(state,ValueType.Int,opcode);break;
+                case Bytecode.IXOR:logic(state,JavaKind.Int,opcode);break;
                 case Bytecode.LAND:
                 case Bytecode.LOR:
-                case Bytecode.LXOR:logic(state,ValueType.Long,opcode);break;
+                case Bytecode.LXOR:logic(state,JavaKind.Long,opcode);break;
                 case Bytecode.IINC:increment(state,bs.getIINC());break;
-                case Bytecode.I2L:typeCast(state,ValueType.Int,ValueType.Long,opcode);break;
-                case Bytecode.I2F:typeCast(state,ValueType.Int,ValueType.Float,opcode);break;
-                case Bytecode.I2D:typeCast(state,ValueType.Int,ValueType.Double,opcode);break;
-                case Bytecode.L2I:typeCast(state,ValueType.Long,ValueType.Int,opcode);break;
-                case Bytecode.L2F:typeCast(state,ValueType.Long,ValueType.Float,opcode);break;
-                case Bytecode.L2D:typeCast(state,ValueType.Long,ValueType.Double,opcode);break;
-                case Bytecode.F2I:typeCast(state,ValueType.Float,ValueType.Int,opcode);break;
-                case Bytecode.F2L:typeCast(state,ValueType.Float,ValueType.Long,opcode);break;
-                case Bytecode.F2D:typeCast(state,ValueType.Float,ValueType.Double,opcode);break;
-                case Bytecode.D2I:typeCast(state,ValueType.Double,ValueType.Int,opcode);break;
-                case Bytecode.D2L:typeCast(state,ValueType.Double,ValueType.Long,opcode);break;
-                case Bytecode.D2F:typeCast(state,ValueType.Double,ValueType.Float,opcode);break;
-                case Bytecode.I2B:typeCast(state,ValueType.Int,ValueType.Byte,opcode);break;
-                case Bytecode.I2C:typeCast(state,ValueType.Int,ValueType.Char,opcode);break;
-                case Bytecode.I2S:typeCast(state,ValueType.Int,ValueType.Short,opcode);break;
-                case Bytecode.LCMP:compare(state,ValueType.Long,opcode);break;
+                case Bytecode.I2L:typeCast(state,JavaKind.Int,JavaKind.Long,opcode);break;
+                case Bytecode.I2F:typeCast(state,JavaKind.Int,JavaKind.Float,opcode);break;
+                case Bytecode.I2D:typeCast(state,JavaKind.Int,JavaKind.Double,opcode);break;
+                case Bytecode.L2I:typeCast(state,JavaKind.Long,JavaKind.Int,opcode);break;
+                case Bytecode.L2F:typeCast(state,JavaKind.Long,JavaKind.Float,opcode);break;
+                case Bytecode.L2D:typeCast(state,JavaKind.Long,JavaKind.Double,opcode);break;
+                case Bytecode.F2I:typeCast(state,JavaKind.Float,JavaKind.Int,opcode);break;
+                case Bytecode.F2L:typeCast(state,JavaKind.Float,JavaKind.Long,opcode);break;
+                case Bytecode.F2D:typeCast(state,JavaKind.Float,JavaKind.Double,opcode);break;
+                case Bytecode.D2I:typeCast(state,JavaKind.Double,JavaKind.Int,opcode);break;
+                case Bytecode.D2L:typeCast(state,JavaKind.Double,JavaKind.Long,opcode);break;
+                case Bytecode.D2F:typeCast(state,JavaKind.Double,JavaKind.Float,opcode);break;
+                case Bytecode.I2B:typeCast(state,JavaKind.Int,JavaKind.Byte,opcode);break;
+                case Bytecode.I2C:typeCast(state,JavaKind.Int,JavaKind.Char,opcode);break;
+                case Bytecode.I2S:typeCast(state,JavaKind.Int,JavaKind.Short,opcode);break;
+                case Bytecode.LCMP:compare(state,JavaKind.Long,opcode);break;
                 case Bytecode.FCMPL:
-                case Bytecode.FCMPG:compare(state,ValueType.Float,opcode);break;
+                case Bytecode.FCMPG:compare(state,JavaKind.Float,opcode);break;
                 case Bytecode.DCMPL:
-                case Bytecode.DCMPG:compare(state,ValueType.Double,opcode);break;
-                case Bytecode.IFEQ:branchIfZero(state,ValueType.Int,Cond.EQ,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IFNE:branchIfZero(state,ValueType.Int,Cond.NE,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IFLT:branchIfZero(state,ValueType.Int,Cond.LT,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IFGE:branchIfZero(state,ValueType.Int,Cond.GE,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IFGT:branchIfZero(state,ValueType.Int,Cond.GT,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IFLE:branchIfZero(state,ValueType.Int,Cond.LE,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IF_ICMPEQ:branchIfSame(state,ValueType.Int,Cond.EQ,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IF_ICMPNE:branchIfSame(state,ValueType.Int,Cond.NE,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IF_ICMPLT:branchIfSame(state,ValueType.Int,Cond.LT,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IF_ICMPGE:branchIfSame(state,ValueType.Int,Cond.GE,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IF_ICMPGT:branchIfSame(state,ValueType.Int,Cond.GT,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IF_ICMPLE:branchIfSame(state,ValueType.Int,Cond.LE,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IF_ACMPEQ:branchIfSame(state,ValueType.Object,Cond.EQ,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IF_ACMPNE:branchIfSame(state,ValueType.Object,Cond.NE,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.DCMPG:compare(state,JavaKind.Double,opcode);break;
+                case Bytecode.IFEQ:branchIfZero(state,JavaKind.Int,Cond.EQ,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IFNE:branchIfZero(state,JavaKind.Int,Cond.NE,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IFLT:branchIfZero(state,JavaKind.Int,Cond.LT,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IFGE:branchIfZero(state,JavaKind.Int,Cond.GE,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IFGT:branchIfZero(state,JavaKind.Int,Cond.GT,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IFLE:branchIfZero(state,JavaKind.Int,Cond.LE,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ICMPEQ:branchIfSame(state,JavaKind.Int,Cond.EQ,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ICMPNE:branchIfSame(state,JavaKind.Int,Cond.NE,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ICMPLT:branchIfSame(state,JavaKind.Int,Cond.LT,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ICMPGE:branchIfSame(state,JavaKind.Int,Cond.GE,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ICMPGT:branchIfSame(state,JavaKind.Int,Cond.GT,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ICMPLE:branchIfSame(state,JavaKind.Int,Cond.LE,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ACMPEQ:branchIfSame(state,JavaKind.Object,Cond.EQ,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ACMPNE:branchIfSame(state,JavaKind.Object,Cond.NE,bs.getBytecodeData(),bs.peekNextBci());break;
                 case Bytecode.GOTO:
                 case Bytecode.GOTO_W:goTo(state,bs.getBytecodeData());break;
                 case Bytecode.JSR:
@@ -232,12 +232,12 @@ public class HirBuilder {
                 case Bytecode.JSR_W: CompilerErrors.unsupported();
                 case Bytecode.TABLESWITCH:tableSwitch(state,bs.getTableSwitch(),curBci);break;
                 case Bytecode.LOOKUPSWITCH:lookupSwitch(state,bs.getLookupSwitch(),curBci);break;
-                case Bytecode.IRETURN:returnOp(state,ValueType.Int,false);break;
-                case Bytecode.LRETURN:returnOp(state,ValueType.Long,false);break;
-                case Bytecode.FRETURN:returnOp(state,ValueType.Float,false);break;
-                case Bytecode.DRETURN:returnOp(state,ValueType.Double,false);break;
-                case Bytecode.ARETURN:returnOp(state,ValueType.Object,false);break;
-                case Bytecode.RETURN:returnOp(state,ValueType.Illegal,true);break;
+                case Bytecode.IRETURN:returnOp(state,JavaKind.Int,false);break;
+                case Bytecode.LRETURN:returnOp(state,JavaKind.Long,false);break;
+                case Bytecode.FRETURN:returnOp(state,JavaKind.Float,false);break;
+                case Bytecode.DRETURN:returnOp(state,JavaKind.Double,false);break;
+                case Bytecode.ARETURN:returnOp(state,JavaKind.Object,false);break;
+                case Bytecode.RETURN:returnOp(state,JavaKind.Illegal,true);break;
                 case Bytecode.GETSTATIC:
                 case Bytecode.GETFIELD:
                 case Bytecode.PUTSTATIC:
@@ -258,8 +258,8 @@ public class HirBuilder {
                 case Bytecode.MONITOREXIT:CompilerErrors.unsupported();
                 case Bytecode.WIDE:CompilerErrors.shouldNotReachHere();
                 case Bytecode.MULTIANEWARRAY:multiNewArray(state,bs.getMultiNewArray());break;
-                case Bytecode.IFNULL:branchIfNull(state,ValueType.Object,Cond.EQ,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IFNONNULL:branchIfNull(state,ValueType.Object,Cond.NE,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IFNULL:branchIfNull(state,JavaKind.Object,Cond.EQ,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IFNONNULL:branchIfNull(state,JavaKind.Object,Cond.NE,bs.getBytecodeData(),bs.peekNextBci());break;
                 default                        : CompilerErrors.shouldNotReachHere();
             }
         }
@@ -270,7 +270,7 @@ public class HirBuilder {
         lastInstr = curInstr;
     }
 
-    private <T> void loadConst(VmState state, ValueType type, T value){
+    private <T> void loadConst(VmState state, JavaKind type, T value){
         ConstantInstr instr = new ConstantInstr(new Value(type,value));
         appendToBlock(instr);
         state.push(instr);
@@ -286,57 +286,55 @@ public class HirBuilder {
                 case Char:
                 case Short:
                 case Int:
-                    temp = new Value(ValueType.Int,((JavaConstant)item).asInt());
+                    temp = new Value(JavaKind.Int,((JavaConstant)item).asInt());
                     break;
                 case Long:
-                    temp = new Value(ValueType.Long,((JavaConstant)item).asLong());
+                    temp = new Value(JavaKind.Long,((JavaConstant)item).asLong());
                     break;
                 case Float:
-                    temp = new Value(ValueType.Long,((JavaConstant)item).asFloat());
+                    temp = new Value(JavaKind.Long,((JavaConstant)item).asFloat());
                     break;
                 case Double:
-                    temp = new Value(ValueType.Long,((JavaConstant)item).asDouble());
+                    temp = new Value(JavaKind.Long,((JavaConstant)item).asDouble());
                     break;
                 default:
                     CompilerErrors.shouldNotReachHere();
             }
-        }else if (item instanceof JavaType){
-            item = new Value(ValueType.Array, item);
         }else{
-            temp = new Value(ValueType.Object,item);
+            temp = new Value(JavaKind.Object,item);
         }
         ConstantInstr instr = new ConstantInstr(temp);
         appendToBlock(instr);
         state.push(instr);
     }
 
-    private void load(VmState state, ValueType type, int index){
+    private void load(VmState state, JavaKind type, int index){
         Instruction temp = state.get(index);
-        Assert.matchType(temp,ValueType.Int);
+        Assert.matchType(temp,JavaKind.Int);
         state.push(temp);
     }
 
-    private void loadArray(VmState state, ValueType type){
+    private void loadArray(VmState state, JavaKind type){
         Instruction index = state.pop();
         Instruction array = state.pop();
-        Assert.matchType(array,ValueType.Array);
-        Assert.matchType(index,ValueType.Int);
+        Assert.matchType(array,JavaKind.Object);
+        Assert.matchType(index,JavaKind.Int);
         LoadIndexInstr instr = new LoadIndexInstr(array,index,null, type);
         appendToBlock(instr);
         state.push(instr);
     }
 
-    private void store(VmState state, ValueType type, int index){
+    private void store(VmState state, JavaKind type, int index){
         Instruction temp = state.pop();
-        Assert.matchType(temp,ValueType.Int);
+        Assert.matchType(temp,JavaKind.Int);
         state.set(index,temp);
     }
 
-    private void storeArray(VmState state, ValueType type){
+    private void storeArray(VmState state, JavaKind type){
         Instruction value = state.pop();
         Instruction index = state.pop();
         Instruction array = state.pop();
-        Assert.matchType(index,ValueType.Int);
+        Assert.matchType(index,JavaKind.Int);
         Assert.matchType(value,type);
         StoreIndexInstr instr = new StoreIndexInstr(array,index,null,type,value);
         appendToBlock(instr);
@@ -413,7 +411,7 @@ public class HirBuilder {
         state.push(temp1);
     }
 
-    private void arithmetic(VmState state, ValueType type,int opcode){
+    private void arithmetic(VmState state, JavaKind type,int opcode){
         Instruction right = state.pop();
         Instruction left = state.pop();
         Assert.matchType(left,type);
@@ -423,7 +421,7 @@ public class HirBuilder {
         state.push(instr);
     }
 
-    private void negate(VmState state, ValueType type){
+    private void negate(VmState state, JavaKind type){
         Instruction temp = state.pop();
         Assert.matchType(temp,type);
         NegateInstr instr = new NegateInstr(temp);
@@ -431,17 +429,17 @@ public class HirBuilder {
         state.push(instr);
     }
 
-    private void shift(VmState state, ValueType type, int opcode){
+    private void shift(VmState state, JavaKind type, int opcode){
         Instruction right = state.pop();
         Instruction left = state.pop();
-        Assert.matchType(right,ValueType.Int);
+        Assert.matchType(right,JavaKind.Int);
         Assert.matchType(left,type);
         ShiftInstr instr = new ShiftInstr(opcode,left,right);
         appendToBlock(instr);
         state.push(instr);
     }
 
-    private void logic(VmState state, ValueType type, int opcode){
+    private void logic(VmState state, JavaKind type, int opcode){
         Instruction right = state.pop();
         Instruction left = state.pop();
         Assert.matchType(right,type);
@@ -456,30 +454,30 @@ public class HirBuilder {
         int index = iinc.getIncrementIndex();
         int constant = iinc.getIncrementConst();
 
-        load(state,ValueType.Int,index);
+        load(state,JavaKind.Int,index);
 
-        ConstantInstr instr = new ConstantInstr(new Value(ValueType.Int,constant));
+        ConstantInstr instr = new ConstantInstr(new Value(JavaKind.Int,constant));
         appendToBlock(instr);
         state.push(instr);
 
-        arithmetic(state,ValueType.Int,Bytecode.IADD);
+        arithmetic(state,JavaKind.Int,Bytecode.IADD);
 
-        store(state,ValueType.Int,index);
+        store(state,JavaKind.Int,index);
     }
 
-    private void typeCast(VmState state,  ValueType fromType, ValueType toType, int opcode){
+    private void typeCast(VmState state,  JavaKind fromType, JavaKind toType, int opcode){
         Instruction from = state.pop();
         Assert.matchType(from,fromType);
-        ValueType t = toType;
-        if(t==ValueType.Byte || t==ValueType.Char|| t==ValueType.Short){
-            t = ValueType.Int;
+        JavaKind t = toType;
+        if(t==JavaKind.Byte || t==JavaKind.Char|| t==JavaKind.Short){
+            t = JavaKind.Int;
         }
         TypeCastInstr instr = new TypeCastInstr(opcode,from,t);
         appendToBlock(instr);
         state.push(instr);
     }
 
-    private void compare(VmState state, ValueType type, int opcode){
+    private void compare(VmState state, JavaKind type, int opcode){
         Instruction right = state.pop();
         Instruction left = state.pop();
         Assert.matchType(left,type);
@@ -489,21 +487,21 @@ public class HirBuilder {
         state.push(instr);
     }
 
-    private void branchIfZero(VmState state, ValueType type, Cond cond, int trueBci, int falseBci){
+    private void branchIfZero(VmState state, JavaKind type, Cond cond, int trueBci, int falseBci){
         Instruction left = state.pop();
-        ConstantInstr right = new ConstantInstr(new Value(ValueType.Int,0));
+        ConstantInstr right = new ConstantInstr(new Value(JavaKind.Int,0));
         Assert.matchType(left,type);
         branchIf(state,left,right,cond,trueBci,falseBci);
     }
 
-    private void branchIfNull(VmState state, ValueType type, Cond cond, int trueBci, int falseBci){
+    private void branchIfNull(VmState state, JavaKind type, Cond cond, int trueBci, int falseBci){
         Instruction left = state.pop();
-        ConstantInstr right = new ConstantInstr(new Value(ValueType.Object,null));
+        ConstantInstr right = new ConstantInstr(new Value(JavaKind.Object,null));
         Assert.matchType(left,type);
         branchIf(state,left,right,cond,trueBci,falseBci);
     }
 
-    private void branchIfSame(VmState state, ValueType type, Cond cond, int trueBci, int falseBci){
+    private void branchIfSame(VmState state, JavaKind type, Cond cond, int trueBci, int falseBci){
         Instruction left = state.pop();
         Instruction right = state.pop();
         Assert.matchType(left,type);
@@ -539,7 +537,7 @@ public class HirBuilder {
         succ.set(i,cfg.blockContain(sw.getDefaultDest()+curBci));
 
         Instruction index = state.pop();
-        Assert.matchType(index,ValueType.Int);
+        Assert.matchType(index,JavaKind.Int);
         TableSwitchInstr instr = new TableSwitchInstr(succ,index,sw.getLowKey(),sw.getHighKey());
         appendToBlock(instr);
     }
@@ -557,12 +555,12 @@ public class HirBuilder {
         succ.set(i,cfg.blockContain(sw.getDefaultDest()+curBci));
 
         Instruction index = state.pop();
-        Assert.matchType(index,ValueType.Int);
+        Assert.matchType(index,JavaKind.Int);
         LookupSwitchInstr instr = new LookupSwitchInstr(succ,index,key);
         appendToBlock(instr);
     }
 
-    private void returnOp(VmState state, ValueType type, boolean justReturn){
+    private void returnOp(VmState state, JavaKind type, boolean justReturn){
         Instruction val = null;
         if(!justReturn) {
             val = state.pop();
@@ -572,7 +570,7 @@ public class HirBuilder {
         JavaKind returnKind = method.getSignature().getReturnKind();
         switch (returnKind){
             case Byte:{
-                ConstantInstr mask = new ConstantInstr(new Value(ValueType.Int,0xFF));
+                ConstantInstr mask = new ConstantInstr(new Value(JavaKind.Int,0xFF));
                 appendToBlock(mask);
                 LogicInstr t = new LogicInstr(Bytecode.IAND,mask,val);
                 appendToBlock(t);
@@ -581,7 +579,7 @@ public class HirBuilder {
             }
             case Short:
             case Char:{
-                ConstantInstr mask = new ConstantInstr(new Value(ValueType.Int,0xFFFF));
+                ConstantInstr mask = new ConstantInstr(new Value(JavaKind.Int,0xFFFF));
                 appendToBlock(mask);
                 LogicInstr t = new LogicInstr(Bytecode.IAND,mask,val);
                 appendToBlock(t);
@@ -589,7 +587,7 @@ public class HirBuilder {
                 break;
             }
             case Boolean:{
-                ConstantInstr mask = new ConstantInstr(new Value(ValueType.Int,1));
+                ConstantInstr mask = new ConstantInstr(new Value(JavaKind.Int,1));
                 appendToBlock(mask);
                 LogicInstr t = new LogicInstr(Bytecode.IAND,mask,val);
                 appendToBlock(t);
@@ -608,7 +606,7 @@ public class HirBuilder {
         ConstantInstr holder=null;
         JavaField field = method.getConstantPool().lookupField(index,method,opcode);
         if(opcode==Bytecode.PUTSTATIC || opcode==Bytecode.GETSTATIC){
-            holder = new ConstantInstr(new Value(ValueType.Object,field.getJavaKind().toJavaClass()));
+            holder = new ConstantInstr(new Value(JavaKind.Object,field.getJavaKind().toJavaClass()));
             appendToBlock(holder);
         }
         switch (opcode){
@@ -626,7 +624,7 @@ public class HirBuilder {
             }
             case Bytecode.GETFIELD:{
                 Instruction object = state.pop();
-                Assert.matchType(object,ValueType.Object);
+                Assert.matchType(object,JavaKind.Object);
                 LoadFieldInstr instr = new LoadFieldInstr(object,((HotSpotResolvedJavaField)field).getOffset(),field);
                 appendToBlock(instr);
                 state.push(instr);
@@ -635,7 +633,7 @@ public class HirBuilder {
             case Bytecode.PUTFIELD:{
                 Instruction val = state.pop();
                 Instruction object = state.pop();
-                Assert.matchType(object,ValueType.Object);
+                Assert.matchType(object,JavaKind.Object);
                 StoreFieldInstr instr = new StoreFieldInstr(object,((HotSpotResolvedJavaField)field).getOffset(),field,val);
                 appendToBlock(instr);
                 break;
@@ -657,17 +655,17 @@ public class HirBuilder {
 
     private void newTypeArray(VmState state, int elementType){
         Instruction len = state.pop();
-        Assert.matchType(len,ValueType.Int);
-        ValueType type = null;
+        Assert.matchType(len,JavaKind.Int);
+        JavaKind type = null;
         switch (elementType){
-            case 4:type=ValueType.Boolean;break;
-            case 5:type=ValueType.Char;break;
-            case 6:type=ValueType.Float;break;
-            case 7:type=ValueType.Double;break;
-            case 8:type=ValueType.Byte;break;
-            case 9:type=ValueType.Short;break;
-            case 10:type=ValueType.Int;break;
-            case 11:type=ValueType.Long;break;
+            case 4:type=JavaKind.Boolean;break;
+            case 5:type=JavaKind.Char;break;
+            case 6:type=JavaKind.Float;break;
+            case 7:type=JavaKind.Double;break;
+            case 8:type=JavaKind.Byte;break;
+            case 9:type=JavaKind.Short;break;
+            case 10:type=JavaKind.Int;break;
+            case 11:type=JavaKind.Long;break;
             default:CompilerErrors.shouldNotReachHere();
         }
         NewTypeArrayInstr instr = new NewTypeArrayInstr(len,type);
@@ -677,7 +675,7 @@ public class HirBuilder {
 
     private void newObjectArray(VmState state,int index){
         Instruction len = state.pop();
-        Assert.matchType(len,ValueType.Int);
+        Assert.matchType(len,JavaKind.Int);
         JavaType klass = method.getConstantPool().lookupType(index,-1);
 
         NewObjectArrayInstr instr = new NewObjectArrayInstr(len,klass);
@@ -687,7 +685,7 @@ public class HirBuilder {
 
     private void arrayLength(VmState state){
         Instruction array =  state.pop();
-        Assert.matchType(array,ValueType.Array);
+        Assert.matchType(array,JavaKind.Object);
         ArrayLenInstr instr = new ArrayLenInstr(array);
         appendToBlock(instr);
         state.push(instr);
@@ -695,7 +693,7 @@ public class HirBuilder {
 
     private void athrow(VmState state){
         Instruction exception = state.pop();
-        Assert.matchType(exception,ValueType.Object);
+        Assert.matchType(exception,JavaKind.Object);
         ThrowInstr instr = new ThrowInstr(new ArrayList<>(),exception);
         appendToBlock(instr);
     }
@@ -703,7 +701,7 @@ public class HirBuilder {
     private void checkCast(VmState state,int index){
         JavaType klass = method.getConstantPool().lookupType(index,-1);
         Instruction object = state.pop();
-        Assert.matchType(object,ValueType.Object);
+        Assert.matchType(object,JavaKind.Object);
         CheckCastInstr instr = new CheckCastInstr(klass,object);
         appendToBlock(instr);
         state.push(instr);
@@ -712,7 +710,7 @@ public class HirBuilder {
     private void instanceOf(VmState state,int index){
         JavaType klass = method.getConstantPool().lookupType(index,-1);
         Instruction object = state.pop();
-        Assert.matchType(object,ValueType.Object);
+        Assert.matchType(object,JavaKind.Object);
         InstanceOfInstr instr = new InstanceOfInstr(klass,object);
         appendToBlock(instr);
         state.push(instr);
@@ -730,7 +728,7 @@ public class HirBuilder {
         Instruction[] dimenInstrs = new Instruction[dimension];
         for(int i=dimension-1;i>=0;i--){
             Instruction di = state.pop();
-            Assert.matchType(di,ValueType.Int);
+            Assert.matchType(di,JavaKind.Int);
             dimenInstrs[i] = di;
         }
 

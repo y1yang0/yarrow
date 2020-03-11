@@ -1,18 +1,12 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.Value;
-import com.kelthuzadx.yarrow.hir.ValueType;
+import jdk.vm.ci.meta.JavaKind;
 
 public class Instruction {
     private int id;
     private Instruction next;
     private Value value;
-
-    Instruction(){
-        this.id = IdGenerator.next();
-        this.value = new Value(ValueType.Illegal);
-        this.next = null;
-    }
 
     Instruction(Value value){
         this.id = IdGenerator.next();
@@ -28,8 +22,12 @@ public class Instruction {
         this.value = value;
     }
 
-    public boolean isType(ValueType type){
+    public boolean isType(JavaKind type){
         return this.value.isType(type);
+    }
+
+    public JavaKind getType(){
+        return value.getType();
     }
 
     private static class IdGenerator{

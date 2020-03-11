@@ -1,6 +1,8 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
+import com.kelthuzadx.yarrow.hir.Value;
 import jdk.vm.ci.meta.ExceptionHandler;
+import jdk.vm.ci.meta.JavaKind;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,7 @@ public class BlockStartInstr extends Instruction {
     private ExceptionHandler xhandler;
 
     public BlockStartInstr(int blockId, int bci) {
+        super(new Value(JavaKind.Illegal));
         this.blockId = blockId;
         this.startBci = this.endBci = bci;
         this.successor = new ArrayList<>();
