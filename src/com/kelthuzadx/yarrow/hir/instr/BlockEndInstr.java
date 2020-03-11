@@ -11,4 +11,8 @@ public class BlockEndInstr extends Instruction{
         super(value);
         this.successor = successor;
     }
+
+    public List<BlockStartInstr> getSuccessor() {
+        return successor;
+    }
 }

@@ -1,5 +1,6 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
+import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.Value;
 import jdk.vm.ci.meta.JavaKind;
 
@@ -12,6 +13,12 @@ public class Instruction {
         this.id = IdGenerator.next();
         this.value = value;
         this.next = null;
+    }
+
+    public static void assertType(Instruction value, JavaKind rhs){
+        if(!value.isType(rhs)){
+            throw new YarrowError("Type Mismatch");
+        }
     }
 
     public void setNext(Instruction next) {

@@ -3,7 +3,6 @@ package com.kelthuzadx.yarrow.hir;
 import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.bytecode.BytecodeStream;
 import com.kelthuzadx.yarrow.hir.instr.*;
-import com.kelthuzadx.yarrow.util.Assert;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Converter;
 import com.kelthuzadx.yarrow.util.Logger;
@@ -264,6 +263,19 @@ public class HirBuilder {
                 default                        : CompilerErrors.shouldNotReachHere();
             }
         }
+
+        // This could happen when back edge splits one consist block
+        if(!(lastInstr instanceof BlockEndInstr)){
+            BlockEndInstr endInstr = new GotoInstr(new ArrayList<>(){{
+                add(cfg.blockContain(bs.peekNextBci()));
+            }});
+            appendToBlock(endInstr);
+        }
+        block.setBlockEnd((BlockEndInstr)lastInstr);
+
+        for(BlockStartInstr succ:((BlockEndInstr)lastInstr).getSuccessor()){
+        }
+
     }
 
     private void appendToBlock(Instruction curInstr){
@@ -311,15 +323,15 @@ public class HirBuilder {
 
     private void load(VmState state, JavaKind type, int index){
         Instruction temp = state.get(index);
-        Assert.matchType(temp,JavaKind.Int);
+        Instruction.assertType(temp,JavaKind.Int);
         state.push(temp);
     }
 
     private void loadArray(VmState state, JavaKind type){
         Instruction index = state.pop();
         Instruction array = state.pop();
-        Assert.matchType(array,JavaKind.Object);
-        Assert.matchType(index,JavaKind.Int);
+        Instruction.assertType(array,JavaKind.Object);
+        Instruction.assertType(index,JavaKind.Int);
         LoadIndexInstr instr = new LoadIndexInstr(array,index,null, type);
         appendToBlock(instr);
         state.push(instr);
@@ -327,7 +339,7 @@ public class HirBuilder {
 
     private void store(VmState state, JavaKind type, int index){
         Instruction temp = state.pop();
-        Assert.matchType(temp,JavaKind.Int);
+        Instruction.assertType(temp,JavaKind.Int);
         state.set(index,temp);
     }
 
@@ -335,8 +347,8 @@ public class HirBuilder {
         Instruction value = state.pop();
         Instruction index = state.pop();
         Instruction array = state.pop();
-        Assert.matchType(index,JavaKind.Int);
-        Assert.matchType(value,type);
+        Instruction.assertType(index,JavaKind.Int);
+        Instruction.assertType(value,type);
         StoreIndexInstr instr = new StoreIndexInstr(array,index,null,type,value);
         appendToBlock(instr);
     }
@@ -415,8 +427,8 @@ public class HirBuilder {
     private void arithmetic(VmState state, JavaKind type,int opcode){
         Instruction right = state.pop();
         Instruction left = state.pop();
-        Assert.matchType(left,type);
-        Assert.matchType(right,type);
+        Instruction.assertType(left,type);
+        Instruction.assertType(right,type);
         ArithmeticInstr instr = new ArithmeticInstr(opcode,left,right);
         appendToBlock(instr);
         state.push(instr);
@@ -424,7 +436,7 @@ public class HirBuilder {
 
     private void negate(VmState state, JavaKind type){
         Instruction temp = state.pop();
-        Assert.matchType(temp,type);
+        Instruction.assertType(temp,type);
         NegateInstr instr = new NegateInstr(temp);
         appendToBlock(instr);
         state.push(instr);
@@ -433,8 +445,8 @@ public class HirBuilder {
     private void shift(VmState state, JavaKind type, int opcode){
         Instruction right = state.pop();
         Instruction left = state.pop();
-        Assert.matchType(right,JavaKind.Int);
-        Assert.matchType(left,type);
+        Instruction.assertType(right,JavaKind.Int);
+        Instruction.assertType(left,type);
         ShiftInstr instr = new ShiftInstr(opcode,left,right);
         appendToBlock(instr);
         state.push(instr);
@@ -443,8 +455,8 @@ public class HirBuilder {
     private void logic(VmState state, JavaKind type, int opcode){
         Instruction right = state.pop();
         Instruction left = state.pop();
-        Assert.matchType(right,type);
-        Assert.matchType(left,type);
+        Instruction.assertType(right,type);
+        Instruction.assertType(left,type);
         LogicInstr instr = new LogicInstr(opcode,left,right);
         appendToBlock(instr);
         state.push(instr);
@@ -468,7 +480,7 @@ public class HirBuilder {
 
     private void typeCast(VmState state,  JavaKind fromType, JavaKind toType, int opcode){
         Instruction from = state.pop();
-        Assert.matchType(from,fromType);
+        Instruction.assertType(from,fromType);
         JavaKind t = toType;
         if(t==JavaKind.Byte || t==JavaKind.Char|| t==JavaKind.Short){
             t = JavaKind.Int;
@@ -481,8 +493,8 @@ public class HirBuilder {
     private void compare(VmState state, JavaKind type, int opcode){
         Instruction right = state.pop();
         Instruction left = state.pop();
-        Assert.matchType(left,type);
-        Assert.matchType(right,type);
+        Instruction.assertType(left,type);
+        Instruction.assertType(right,type);
         CompareInstr instr = new CompareInstr(opcode,left,right);
         appendToBlock(instr);
         state.push(instr);
@@ -491,22 +503,22 @@ public class HirBuilder {
     private void branchIfZero(VmState state, JavaKind type, Cond cond, int trueBci, int falseBci){
         Instruction left = state.pop();
         ConstantInstr right = new ConstantInstr(new Value(JavaKind.Int,0));
-        Assert.matchType(left,type);
+        Instruction.assertType(left,type);
         branchIf(state,left,right,cond,trueBci,falseBci);
     }
 
     private void branchIfNull(VmState state, JavaKind type, Cond cond, int trueBci, int falseBci){
         Instruction left = state.pop();
         ConstantInstr right = new ConstantInstr(new Value(JavaKind.Object,null));
-        Assert.matchType(left,type);
+        Instruction.assertType(left,type);
         branchIf(state,left,right,cond,trueBci,falseBci);
     }
 
     private void branchIfSame(VmState state, JavaKind type, Cond cond, int trueBci, int falseBci){
         Instruction left = state.pop();
         Instruction right = state.pop();
-        Assert.matchType(left,type);
-        Assert.matchType(right,type);
+        Instruction.assertType(left,type);
+        Instruction.assertType(right,type);
         branchIf(state,left,right,cond,trueBci,falseBci);
     }
 
@@ -538,7 +550,7 @@ public class HirBuilder {
         succ.set(i,cfg.blockContain(sw.getDefaultDest()+curBci));
 
         Instruction index = state.pop();
-        Assert.matchType(index,JavaKind.Int);
+        Instruction.assertType(index,JavaKind.Int);
         TableSwitchInstr instr = new TableSwitchInstr(succ,index,sw.getLowKey(),sw.getHighKey());
         appendToBlock(instr);
     }
@@ -556,7 +568,7 @@ public class HirBuilder {
         succ.set(i,cfg.blockContain(sw.getDefaultDest()+curBci));
 
         Instruction index = state.pop();
-        Assert.matchType(index,JavaKind.Int);
+        Instruction.assertType(index,JavaKind.Int);
         LookupSwitchInstr instr = new LookupSwitchInstr(succ,index,key);
         appendToBlock(instr);
     }
@@ -565,7 +577,7 @@ public class HirBuilder {
         Instruction val = null;
         if(!justReturn) {
             val = state.pop();
-            Assert.matchType(val,type);
+            Instruction.assertType(val,type);
         }
 
         JavaKind returnKind = method.getSignature().getReturnKind();
@@ -625,7 +637,7 @@ public class HirBuilder {
             }
             case Bytecode.GETFIELD:{
                 Instruction object = state.pop();
-                Assert.matchType(object,JavaKind.Object);
+                Instruction.assertType(object,JavaKind.Object);
                 LoadFieldInstr instr = new LoadFieldInstr(object,((HotSpotResolvedJavaField)field).getOffset(),field);
                 appendToBlock(instr);
                 state.push(instr);
@@ -634,7 +646,7 @@ public class HirBuilder {
             case Bytecode.PUTFIELD:{
                 Instruction val = state.pop();
                 Instruction object = state.pop();
-                Assert.matchType(object,JavaKind.Object);
+                Instruction.assertType(object,JavaKind.Object);
                 StoreFieldInstr instr = new StoreFieldInstr(object,((HotSpotResolvedJavaField)field).getOffset(),field,val);
                 appendToBlock(instr);
                 break;
@@ -656,7 +668,7 @@ public class HirBuilder {
 
     private void newTypeArray(VmState state, int elementType){
         Instruction len = state.pop();
-        Assert.matchType(len,JavaKind.Int);
+        Instruction.assertType(len,JavaKind.Int);
         JavaKind type = Converter.fromBasicType(elementType);
         NewTypeArrayInstr instr = new NewTypeArrayInstr(len,type);
         appendToBlock(instr);
@@ -665,7 +677,7 @@ public class HirBuilder {
 
     private void newObjectArray(VmState state,int index){
         Instruction len = state.pop();
-        Assert.matchType(len,JavaKind.Int);
+        Instruction.assertType(len,JavaKind.Int);
         JavaType klass = method.getConstantPool().lookupType(index,-1);
 
         NewObjectArrayInstr instr = new NewObjectArrayInstr(len,klass);
@@ -675,7 +687,7 @@ public class HirBuilder {
 
     private void arrayLength(VmState state){
         Instruction array =  state.pop();
-        Assert.matchType(array,JavaKind.Object);
+        Instruction.assertType(array,JavaKind.Object);
         ArrayLenInstr instr = new ArrayLenInstr(array);
         appendToBlock(instr);
         state.push(instr);
@@ -683,7 +695,7 @@ public class HirBuilder {
 
     private void athrow(VmState state){
         Instruction exception = state.pop();
-        Assert.matchType(exception,JavaKind.Object);
+        Instruction.assertType(exception,JavaKind.Object);
         ThrowInstr instr = new ThrowInstr(new ArrayList<>(),exception);
         appendToBlock(instr);
     }
@@ -691,7 +703,7 @@ public class HirBuilder {
     private void checkCast(VmState state,int index){
         JavaType klass = method.getConstantPool().lookupType(index,-1);
         Instruction object = state.pop();
-        Assert.matchType(object,JavaKind.Object);
+        Instruction.assertType(object,JavaKind.Object);
         CheckCastInstr instr = new CheckCastInstr(klass,object);
         appendToBlock(instr);
         state.push(instr);
@@ -700,7 +712,7 @@ public class HirBuilder {
     private void instanceOf(VmState state,int index){
         JavaType klass = method.getConstantPool().lookupType(index,-1);
         Instruction object = state.pop();
-        Assert.matchType(object,JavaKind.Object);
+        Instruction.assertType(object,JavaKind.Object);
         InstanceOfInstr instr = new InstanceOfInstr(klass,object);
         appendToBlock(instr);
         state.push(instr);
@@ -718,13 +730,16 @@ public class HirBuilder {
         Instruction[] dimenInstrs = new Instruction[dimension];
         for(int i=dimension-1;i>=0;i--){
             Instruction di = state.pop();
-            Assert.matchType(di,JavaKind.Int);
+            Instruction.assertType(di,JavaKind.Int);
             dimenInstrs[i] = di;
         }
 
         MultiNewArrayInstr instr = new MultiNewArrayInstr(klass,dimenInstrs);
         appendToBlock(instr);
         state.push(instr);
+    }
+
+    private void propagateVmState() {
     }
 }
 

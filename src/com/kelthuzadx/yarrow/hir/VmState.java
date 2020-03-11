@@ -42,4 +42,14 @@ public class VmState {
     public int lockPop(){
         return 0;
     }
+
+    public VmState copy(){
+        VmState newState = new VmState(stack.capacity(),local.length);
+        newState.stack.addAll(this.stack);
+        for(int i=0;i<newState.local.length;i++){
+            newState.local[i] = this.local[i];
+        }
+        newState.lock.addAll(this.lock);
+        return newState;
+    }
 }

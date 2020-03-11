@@ -1,6 +1,7 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.Value;
+import com.kelthuzadx.yarrow.hir.VmState;
 import jdk.vm.ci.meta.ExceptionHandler;
 import jdk.vm.ci.meta.JavaKind;
 
@@ -10,6 +11,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class BlockStartInstr extends Instruction {
+    // For constructing control flow graph
     private int blockId;
     private int startBci;
     private int endBci;
@@ -18,6 +20,10 @@ public class BlockStartInstr extends Instruction {
     private boolean loopHeader;
     private ExceptionHandler xhandler;
 
+    // For instruction itself
+    private BlockEndInstr blockEnd;
+    private VmState state;
+
     public BlockStartInstr(int blockId, int bci) {
         super(new Value(JavaKind.Illegal));
         this.blockId = blockId;
@@ -25,6 +31,8 @@ public class BlockStartInstr extends Instruction {
         this.successor = new ArrayList<>();
         this.mayThrowEx = false;
         this.loopHeader = false;
+        this.blockEnd = null;
+        this.state = null;
     }
 
     public int getEndBci() {
@@ -81,6 +89,16 @@ public class BlockStartInstr extends Instruction {
 
     public void setXhandler(ExceptionHandler xhandler) {
         this.xhandler = xhandler;
+    }
+
+    public void setBlockEnd(BlockEndInstr blockEnd) {
+        this.blockEnd = blockEnd;
+    }
+
+    public void merge(VmState state){
+        if(state==null){
+            VmState newState = state.copy();
+        }
     }
 
     @Override
