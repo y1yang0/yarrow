@@ -1,14 +1,16 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
-public class StoreIndexInstr extends Instruction {
-    private Instruction array;
+import com.kelthuzadx.yarrow.hir.Value;
+import jdk.vm.ci.meta.JavaKind;
+
+public class StoreIndexInstr extends AccessArrayInstr {
     private Instruction index;
     private Instruction length;
-    private ValueType elementType;
+    private JavaKind elementType;
     private Instruction value;
 
-    public StoreIndexInstr(Instruction array, Instruction index, Instruction length, ValueType elementType, Instruction value) {
-        this.array = array;
+    public StoreIndexInstr(Instruction array, Instruction index, Instruction length,JavaKind elementType, Instruction value) {
+        super(new Value(elementType),array);
         this.index = index;
         this.length = length;
         this.elementType = elementType;

@@ -1,5 +1,7 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
+import com.kelthuzadx.yarrow.hir.Value;
+import jdk.vm.ci.meta.JavaKind;
 import jdk.vm.ci.meta.JavaType;
 
 public class NewObjectArrayInstr extends Instruction {
@@ -7,6 +9,7 @@ public class NewObjectArrayInstr extends Instruction {
     private JavaType klass;
 
     public NewObjectArrayInstr(Instruction len, JavaType klass) {
+        super(new Value(JavaKind.Object));
         this.len = len;
         this.klass = klass;
     }

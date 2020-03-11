@@ -1,11 +1,15 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
+import com.kelthuzadx.yarrow.hir.Value;
+import jdk.vm.ci.meta.JavaKind;
+
 public class NewTypeArrayInstr extends Instruction {
     private Instruction len;
-    private ValueType type;
+    private JavaKind elemType;
 
-    public NewTypeArrayInstr(Instruction len, ValueType type) {
+    public NewTypeArrayInstr(Instruction len, JavaKind elemType) {
+        super(new Value(JavaKind.Object));
         this.len = len;
-        this.type = type;
+        this.elemType = elemType;
     }
 }

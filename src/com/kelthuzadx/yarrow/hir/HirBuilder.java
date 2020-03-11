@@ -5,6 +5,7 @@ import com.kelthuzadx.yarrow.bytecode.BytecodeStream;
 import com.kelthuzadx.yarrow.hir.instr.*;
 import com.kelthuzadx.yarrow.util.Assert;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
+import com.kelthuzadx.yarrow.util.Converter;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaField;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
@@ -237,7 +238,7 @@ public class HirBuilder {
                 case Bytecode.FRETURN:returnOp(state,JavaKind.Float,false);break;
                 case Bytecode.DRETURN:returnOp(state,JavaKind.Double,false);break;
                 case Bytecode.ARETURN:returnOp(state,JavaKind.Object,false);break;
-                case Bytecode.RETURN:returnOp(state,JavaKind.Illegal,true);break;
+                case Bytecode.RETURN:returnOp(state,JavaKind.Void,true);break;
                 case Bytecode.GETSTATIC:
                 case Bytecode.GETFIELD:
                 case Bytecode.PUTSTATIC:
@@ -656,18 +657,7 @@ public class HirBuilder {
     private void newTypeArray(VmState state, int elementType){
         Instruction len = state.pop();
         Assert.matchType(len,JavaKind.Int);
-        JavaKind type = null;
-        switch (elementType){
-            case 4:type=JavaKind.Boolean;break;
-            case 5:type=JavaKind.Char;break;
-            case 6:type=JavaKind.Float;break;
-            case 7:type=JavaKind.Double;break;
-            case 8:type=JavaKind.Byte;break;
-            case 9:type=JavaKind.Short;break;
-            case 10:type=JavaKind.Int;break;
-            case 11:type=JavaKind.Long;break;
-            default:CompilerErrors.shouldNotReachHere();
-        }
+        JavaKind type = Converter.fromBasicType(elementType);
         NewTypeArrayInstr instr = new NewTypeArrayInstr(len,type);
         appendToBlock(instr);
         state.push(instr);
