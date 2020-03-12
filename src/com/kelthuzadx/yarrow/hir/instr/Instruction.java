@@ -4,8 +4,10 @@ import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.Value;
 import jdk.vm.ci.meta.JavaKind;
 
+import java.util.Optional;
+
 public class Instruction {
-    private int id;
+    protected int id;
     private Instruction next;
     private Value value;
 
@@ -29,6 +31,10 @@ public class Instruction {
         this.value = value;
     }
 
+    public Optional<Object> getValue() {
+        return value.getValue();
+    }
+
     public boolean isType(JavaKind type){
         return this.value.isType(type);
     }
@@ -36,6 +42,7 @@ public class Instruction {
     public JavaKind getType(){
         return value.getType();
     }
+
 
     private static class IdGenerator{
         private static int id;

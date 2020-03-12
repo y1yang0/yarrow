@@ -16,4 +16,9 @@ public class TableSwitchInstr extends BlockEndInstr {
         this.lowKey = lowKey;
         this.highKey = highKey;
     }
+
+    @Override
+    public String toString() {
+        return "TableSwitchInstr";
+    }
 }

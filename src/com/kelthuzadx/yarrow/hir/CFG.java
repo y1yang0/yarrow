@@ -4,6 +4,7 @@ import com.kelthuzadx.yarrow.bytecode.BytecodeStream;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.core.YarrowProperties.Debug;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
+import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
 import jdk.vm.ci.meta.ExceptionHandler;
@@ -117,7 +118,7 @@ class CFG {
                 case RET:
                 case JSR:
                 case JSR_W: {
-                    Logger.error("Unimplement jsr/ret bytecode");
+                    CompilerErrors.unsupported();
                 }
                 case TABLESWITCH: {
                     currentBlock = null;

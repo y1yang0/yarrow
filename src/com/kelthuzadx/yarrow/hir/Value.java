@@ -28,4 +28,8 @@ public class Value {
     public JavaKind getType() {
         return type;
     }
+
+    public Optional<Object> getValue() {
+        return value;
+    }
 }

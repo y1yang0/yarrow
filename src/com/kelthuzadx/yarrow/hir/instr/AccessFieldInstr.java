@@ -4,9 +4,9 @@ import com.kelthuzadx.yarrow.hir.Value;
 import jdk.vm.ci.meta.JavaField;
 
 public class AccessFieldInstr extends Instruction {
-    private Instruction object;
-    private int offset;
-    private JavaField field;
+    protected Instruction object;
+    protected int offset;
+    protected JavaField field;
 
     public AccessFieldInstr(Instruction object, int offset, JavaField field) {
         super(new Value(field.getJavaKind()));

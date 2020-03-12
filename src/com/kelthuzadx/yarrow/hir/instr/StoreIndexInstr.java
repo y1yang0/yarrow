@@ -1,6 +1,7 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.Value;
+import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 
 public class StoreIndexInstr extends AccessArrayInstr {
@@ -15,5 +16,10 @@ public class StoreIndexInstr extends AccessArrayInstr {
         this.length = length;
         this.elementType = elementType;
         this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return Logger.f("i{}: store i{}[i{}]#{},i{}",super.id,super.array,index.id,elementType.getJavaName(),value.id);
     }
 }

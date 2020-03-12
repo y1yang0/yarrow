@@ -1,6 +1,7 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.Value;
+import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 
 import java.util.ArrayList;
@@ -12,5 +13,10 @@ public class ReturnInstr extends BlockEndInstr {
     public ReturnInstr(Instruction returnValue) {
         super(new Value(returnValue==null?JavaKind.Void:returnValue.getType()),new ArrayList<>());
         this.returnValue = returnValue;
+    }
+
+    @Override
+    public String toString() {
+        return Logger.f("i{}: return i{}",super.id,returnValue.id);
     }
 }

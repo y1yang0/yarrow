@@ -1,7 +1,9 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
+import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.hir.VmState;
+import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Constrain;
 import jdk.vm.ci.meta.ExceptionHandler;
 import jdk.vm.ci.meta.JavaKind;
@@ -110,7 +112,13 @@ public class BlockStartInstr extends Instruction {
         }else{
             Constrain.matchVmState(this.state,state);
             if(this.isLoopHeader()){
+                for(int i=0;i<state.getLocalSize();i++){
+                    if(state.get(i)==null || !state.get(i).isType(this.state.get(i).getType())){
+                        CompilerErrors.bailOut();
+                    }
+                }
             }else{
+                //TODO
             }
         }
     }

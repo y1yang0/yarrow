@@ -7,8 +7,9 @@ import java.text.SimpleDateFormat;
 public class Logger {
     private static final SimpleDateFormat FORMATTER = new SimpleDateFormat("HH:mm:ss");
 
-    public static void error(String msg) {
-        throw new YarrowError(msg);
+    @SafeVarargs
+    public static <T> String f(String format, T... args) {
+        return replacePlaceHolder(format,args);
     }
 
     @SafeVarargs
