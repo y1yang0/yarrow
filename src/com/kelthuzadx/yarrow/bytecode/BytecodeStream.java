@@ -478,9 +478,8 @@ public class BytecodeStream implements Iterator<Integer> {
     }
 
     private void reset(int startBci, int endBci) {
-        this.curBci = startBci;
+        this.curBci = this.nextBci = startBci;
         this.endBci = endBci;
-        this.nextBci = 0;
         this.isWide = false;
         this.data = Integer.MIN_VALUE;
     }

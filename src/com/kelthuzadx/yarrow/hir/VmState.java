@@ -75,7 +75,7 @@ public class VmState {
 
     public void createPhiForLocal(BlockStartInstr block,int index){
         Value val = new Value(local[index].getType());
-        PhiInstr phi = new PhiInstr(val,-index-1,block);
+        PhiInstr phi = new PhiInstr(val,index,block);
         local[index] = phi;
     }
 }

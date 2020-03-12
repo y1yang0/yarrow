@@ -36,16 +36,17 @@ public class HirBuilder {
         // doing abstract interpretation by iterating all blocks in CFG
         Logger.logf("=====Abstract interpretation=====>");
         Set<Integer> visit = new HashSet<>(cfg.getBlocks().length);
+
         workList = new ArrayDeque<>();
         BlockStartInstr methodEntryBlock = cfg.blockContain(0);
         methodEntryBlock.merge(createEntryVmState());
+        lastInstr = methodEntryBlock;
         workList.add(methodEntryBlock);
 
         while (!workList.isEmpty()){
             BlockStartInstr blockStart = workList.remove();
             if(!visit.contains(blockStart.getBlockId())){
                 visit.add(blockStart.getBlockId());
-                lastInstr = blockStart;
                 fulfillBlock(blockStart);
             }
         }
@@ -234,22 +235,22 @@ public class HirBuilder {
                 case Bytecode.FCMPG:compare(state,JavaKind.Float,opcode);break;
                 case Bytecode.DCMPL:
                 case Bytecode.DCMPG:compare(state,JavaKind.Double,opcode);break;
-                case Bytecode.IFEQ:branchIfZero(state,JavaKind.Int,Cond.EQ,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IFNE:branchIfZero(state,JavaKind.Int,Cond.NE,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IFLT:branchIfZero(state,JavaKind.Int,Cond.LT,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IFGE:branchIfZero(state,JavaKind.Int,Cond.GE,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IFGT:branchIfZero(state,JavaKind.Int,Cond.GT,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IFLE:branchIfZero(state,JavaKind.Int,Cond.LE,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IF_ICMPEQ:branchIfSame(state,JavaKind.Int,Cond.EQ,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IF_ICMPNE:branchIfSame(state,JavaKind.Int,Cond.NE,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IF_ICMPLT:branchIfSame(state,JavaKind.Int,Cond.LT,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IF_ICMPGE:branchIfSame(state,JavaKind.Int,Cond.GE,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IF_ICMPGT:branchIfSame(state,JavaKind.Int,Cond.GT,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IF_ICMPLE:branchIfSame(state,JavaKind.Int,Cond.LE,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IF_ACMPEQ:branchIfSame(state,JavaKind.Object,Cond.EQ,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IF_ACMPNE:branchIfSame(state,JavaKind.Object,Cond.NE,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IFEQ:branchIfZero(state,JavaKind.Int,Cond.EQ,curBci+bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IFNE:branchIfZero(state,JavaKind.Int,Cond.NE,curBci+bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IFLT:branchIfZero(state,JavaKind.Int,Cond.LT,curBci+bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IFGE:branchIfZero(state,JavaKind.Int,Cond.GE,curBci+bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IFGT:branchIfZero(state,JavaKind.Int,Cond.GT,curBci+bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IFLE:branchIfZero(state,JavaKind.Int,Cond.LE,curBci+bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ICMPEQ:branchIfSame(state,JavaKind.Int,Cond.EQ,curBci+bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ICMPNE:branchIfSame(state,JavaKind.Int,Cond.NE,curBci+bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ICMPLT:branchIfSame(state,JavaKind.Int,Cond.LT,curBci+bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ICMPGE:branchIfSame(state,JavaKind.Int,Cond.GE,curBci+bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ICMPGT:branchIfSame(state,JavaKind.Int,Cond.GT,curBci+bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ICMPLE:branchIfSame(state,JavaKind.Int,Cond.LE,curBci+bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ACMPEQ:branchIfSame(state,JavaKind.Object,Cond.EQ,curBci+bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IF_ACMPNE:branchIfSame(state,JavaKind.Object,Cond.NE,curBci+bs.getBytecodeData(),bs.peekNextBci());break;
                 case Bytecode.GOTO:
-                case Bytecode.GOTO_W:goTo(state,bs.getBytecodeData());break;
+                case Bytecode.GOTO_W:goTo(state,curBci+bs.getBytecodeData());break;
                 case Bytecode.JSR:
                 case Bytecode.RET:
                 case Bytecode.JSR_W: CompilerErrors.unsupported();
@@ -281,8 +282,8 @@ public class HirBuilder {
                 case Bytecode.MONITOREXIT:CompilerErrors.unsupported();
                 case Bytecode.WIDE:CompilerErrors.shouldNotReachHere();
                 case Bytecode.MULTIANEWARRAY:multiNewArray(state,bs.getMultiNewArray());break;
-                case Bytecode.IFNULL:branchIfNull(state,JavaKind.Object,Cond.EQ,bs.getBytecodeData(),bs.peekNextBci());break;
-                case Bytecode.IFNONNULL:branchIfNull(state,JavaKind.Object,Cond.NE,bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IFNULL:branchIfNull(state,JavaKind.Object,Cond.EQ,curBci+bs.getBytecodeData(),bs.peekNextBci());break;
+                case Bytecode.IFNONNULL:branchIfNull(state,JavaKind.Object,Cond.NE,curBci+bs.getBytecodeData(),bs.peekNextBci());break;
                 default                        : CompilerErrors.shouldNotReachHere();
             }
         }
