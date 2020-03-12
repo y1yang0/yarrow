@@ -6,12 +6,12 @@ import jdk.vm.ci.meta.JavaKind;
 
 public class ArrayLenInstr extends AccessArrayInstr {
 
-    public ArrayLenInstr(Instruction array){
-        super(new Value(JavaKind.Int),array);
+    public ArrayLenInstr(Instruction array) {
+        super(new Value(JavaKind.Int), array);
     }
 
     @Override
     public String toString() {
-        return Logger.f("i{}: arraylen i{}",super.id,super.array.id);
+        return Logger.f("i{}: arraylen i{}", super.id, super.array.id);
     }
 }

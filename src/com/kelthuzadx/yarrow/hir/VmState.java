@@ -1,14 +1,15 @@
 package com.kelthuzadx.yarrow.hir;
 
-import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.hir.instr.InstanceOfInstr;
 import com.kelthuzadx.yarrow.hir.instr.Instruction;
 import com.kelthuzadx.yarrow.hir.instr.PhiInstr;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class VmState {
@@ -17,26 +18,26 @@ public class VmState {
     private Instruction[] local;
     private List<Instruction> lock;
 
-    public VmState(int maxStackSize, int localSize){
+    public VmState(int maxStackSize, int localSize) {
         stack = new Stack<>();
         stack.ensureCapacity(maxStackSize);
         local = new Instruction[localSize];
-        lock =  new ArrayList<>();
+        lock = new ArrayList<>();
         this.maxStackSize = maxStackSize;
     }
 
-    public void push(Instruction instr){
-        if(stack.size()+1> maxStackSize){
+    public void push(Instruction instr) {
+        if (stack.size() + 1 > maxStackSize) {
             throw new RuntimeException("stack excess maximum capacity");
         }
         stack.push(instr);
     }
 
-    public Instruction pop(){
+    public Instruction pop() {
         return stack.pop();
     }
 
-    public int getStackSize(){
+    public int getStackSize() {
         return stack.size();
     }
 
@@ -44,47 +45,57 @@ public class VmState {
         return stack;
     }
 
-    public void set(int index, Instruction instr){
+    public void set(int index, Instruction instr) {
         local[index] = instr;
     }
 
-    public Instruction get(int index){
+    public Instruction get(int index) {
         return local[index];
     }
 
-    public int getLocalSize(){
+    public int getLocalSize() {
         return local.length;
     }
 
-    public int lockPush(InstanceOfInstr object){
+    public int lockPush(InstanceOfInstr object) {
         return 0;
     }
 
-    public int lockPop(){
+    public int lockPop() {
         return 0;
     }
 
-    public int getLockSize(){
+    public int getLockSize() {
         return lock.size();
     }
 
-    public VmState copy(){
-        VmState newState = new VmState(this.maxStackSize,this.local.length);
+    public VmState copy() {
+        VmState newState = new VmState(this.maxStackSize, this.local.length);
         newState.stack.addAll(this.stack);
         System.arraycopy(this.local, 0, newState.local, 0, newState.local.length);
         newState.lock.addAll(this.lock);
         return newState;
     }
 
-    public void createPhiForStack(BlockStartInstr block,int index){
+    public void createPhiForStack(BlockStartInstr block, int index) {
         Value val = new Value(stack.elementAt(index).getType());
-        PhiInstr phi = new PhiInstr(val,-index-1,block);
-        stack.set(index,phi);
+        PhiInstr phi = new PhiInstr(val, -index - 1, block);
+        stack.set(index, phi);
     }
 
-    public void createPhiForLocal(BlockStartInstr block,int index){
+    public void createPhiForLocal(BlockStartInstr block, int index) {
         Value val = new Value(local[index].getType());
-        PhiInstr phi = new PhiInstr(val,index,block);
+        PhiInstr phi = new PhiInstr(val, index, block);
         local[index] = phi;
+    }
+
+    @Override
+    public String toString() {
+        String sk = stack.stream().map(instr -> "i"+instr.getId()).collect(Collectors.joining(","));
+        String lc = Arrays.stream(local).map(instr -> "i"+instr.getId()).collect(Collectors.joining(","));
+        return "VmState{" +
+                "stack=["+sk+
+                "],local=["+lc+
+                "]}";
     }
 }

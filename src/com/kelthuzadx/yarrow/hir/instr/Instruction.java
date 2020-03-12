@@ -11,46 +11,50 @@ public class Instruction {
     private Instruction next;
     private Value value;
 
-    Instruction(Value value){
+    Instruction(Value value) {
         this.id = IdGenerator.next();
         this.value = value;
         this.next = null;
     }
 
-    public static void assertType(Instruction value, JavaKind rhs){
-        if(!value.isType(rhs)){
+    public static void assertType(Instruction value, JavaKind rhs) {
+        if (!value.isType(rhs)) {
             throw new YarrowError("Type Mismatch");
         }
     }
 
-    public void setNext(Instruction next) {
-        this.next = next;
-    }
-
-    public void setValue(Value value) {
-        this.value = value;
+    public int getId() {
+        return id;
     }
 
     public Optional<Object> getValue() {
         return value.getValue();
     }
 
-    public boolean isType(JavaKind type){
+    public void setValue(Value value) {
+        this.value = value;
+    }
+
+    public boolean isType(JavaKind type) {
         return this.value.isType(type);
     }
 
-    public JavaKind getType(){
+    public JavaKind getType() {
         return value.getType();
     }
 
-    public Instruction getNext(){
+    public Instruction getNext() {
         return next;
     }
 
-    private static class IdGenerator{
+    public void setNext(Instruction next) {
+        this.next = next;
+    }
+
+    private static class IdGenerator {
         private static int id;
 
-        static int next(){
+        static int next() {
             return id++;
         }
     }

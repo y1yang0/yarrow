@@ -1,6 +1,5 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
-import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.hir.VmState;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
@@ -13,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class BlockStartInstr extends Instruction {
@@ -101,26 +99,26 @@ public class BlockStartInstr extends Instruction {
         this.blockEnd = blockEnd;
     }
 
-    public void merge(VmState state){
-        if(this.state==null){
+    public void merge(VmState state) {
+        if (this.state == null) {
             this.state = state.copy();
-            if(this.isLoopHeader()){
-                for(int i = 0; i<this.state.getStackSize(); i++){
-                    this.state.createPhiForStack(this,i);
+            if (this.isLoopHeader()) {
+                for (int i = 0; i < this.state.getStackSize(); i++) {
+                    this.state.createPhiForStack(this, i);
                 }
-                for(int i=0;i<this.state.getLocalSize();i++){
-                    this.state.createPhiForLocal(this,i);
+                for (int i = 0; i < this.state.getLocalSize(); i++) {
+                    this.state.createPhiForLocal(this, i);
                 }
             }
-        }else{
-            Constrain.matchVmState(this.state,state);
-            if(this.isLoopHeader()){
-                for(int i=0;i<state.getLocalSize();i++){
-                    if(state.get(i)==null || !state.get(i).isType(this.state.get(i).getType())){
+        } else {
+            Constrain.matchVmState(this.state, state);
+            if (this.isLoopHeader()) {
+                for (int i = 0; i < state.getLocalSize(); i++) {
+                    if (state.get(i) == null || !state.get(i).isType(this.state.get(i).getType())) {
                         CompilerErrors.bailOut();
                     }
                 }
-            }else{
+            } else {
                 //TODO
             }
         }
@@ -130,13 +128,13 @@ public class BlockStartInstr extends Instruction {
         return state;
     }
 
-    public void iterateBytecode(Consumer<Instruction> closure){
+    public void iterateBytecode(Consumer<Instruction> closure) {
         Instruction last = this;
-        while (last!=null && last!=blockEnd){
+        while (last != null && last != blockEnd) {
             closure.accept(last);
             last = last.getNext();
         }
-        if(last!=null && last==blockEnd){
+        if (last != null && last == blockEnd) {
             closure.accept(last);
         }
     }
@@ -154,7 +152,7 @@ public class BlockStartInstr extends Instruction {
         return Objects.hash(blockId);
     }
 
-    public String toCFGString(){
+    public String toCFGString() {
         String successorString = successor.stream().map(
                 b -> "#" + b.getBlockId() + " " + (b.xhandler != null ? "!" : "") + "[" + b.getStartBci() + "," + b.getEndBci() + "]"
         ).collect(Collectors.toList()).toString();
@@ -175,6 +173,6 @@ public class BlockStartInstr extends Instruction {
 
     @Override
     public String toString() {
-        return Logger.f("i{}: block_start",super.id);
+        return Logger.f("i{}: block_start", super.id);
     }
 }

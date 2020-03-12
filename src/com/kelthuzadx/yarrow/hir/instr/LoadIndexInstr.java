@@ -1,7 +1,6 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.Value;
-import com.kelthuzadx.yarrow.util.Converter;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 
@@ -10,8 +9,8 @@ public class LoadIndexInstr extends AccessArrayInstr {
     private Instruction length;
     private JavaKind elementType;
 
-    public LoadIndexInstr(Instruction array, Instruction index, Instruction length, JavaKind elementType){
-        super(new Value(elementType),array);
+    public LoadIndexInstr(Instruction array, Instruction index, Instruction length, JavaKind elementType) {
+        super(new Value(elementType), array);
         this.index = index;
         this.length = length;
         this.elementType = elementType;
@@ -19,6 +18,6 @@ public class LoadIndexInstr extends AccessArrayInstr {
 
     @Override
     public String toString() {
-        return Logger.f("i{}: load i{}[i{}]#{}",super.id,super.array,index.id,elementType.getJavaName());
+        return Logger.f("i{}: load i{}[i{}]#{}", super.id, super.array, index.id, elementType.getJavaName());
     }
 }

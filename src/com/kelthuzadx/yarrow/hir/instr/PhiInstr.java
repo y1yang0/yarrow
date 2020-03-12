@@ -2,7 +2,6 @@ package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.util.Logger;
-import jdk.vm.ci.meta.JavaKind;
 
 public class PhiInstr extends Instruction {
     private int index; // negate number for stack, and positive number for local
@@ -16,6 +15,6 @@ public class PhiInstr extends Instruction {
 
     @Override
     public String toString() {
-        return Logger.f("i{}: phi [{}]",super.id,index);
+        return Logger.f("i{}: phi [{}]", super.id, index);
     }
 }

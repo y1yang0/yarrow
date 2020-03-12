@@ -17,6 +17,6 @@ public class InstanceOfInstr extends Instruction {
 
     @Override
     public String toString() {
-        return Logger.f("i{}: instanceof i{} -> {}",super.id,object.id,klass.toClassName());
+        return Logger.f("i{}: instanceof i{} -> {}", super.id, object.id, klass.toClassName());
     }
 }

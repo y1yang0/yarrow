@@ -11,7 +11,7 @@ public class TableSwitchInstr extends BlockEndInstr {
     private int highKey;
 
     public TableSwitchInstr(List<BlockStartInstr> successor, Instruction index, int lowKey, int highKey) {
-        super(new Value(JavaKind.Illegal),successor);
+        super(new Value(JavaKind.Illegal), successor);
         this.index = index;
         this.lowKey = lowKey;
         this.highKey = highKey;

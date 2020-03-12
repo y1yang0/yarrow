@@ -15,6 +15,6 @@ public class NewInstr extends Instruction {
 
     @Override
     public String toString() {
-        return Logger.f("i{}: new #{}",super.id,klass.getName());
+        return Logger.f("i{}: new #{}", super.id, klass.getName());
     }
 }

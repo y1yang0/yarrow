@@ -17,6 +17,6 @@ public class NewObjectArrayInstr extends Instruction {
 
     @Override
     public String toString() {
-        return Logger.f("i{}: new_objarr #{}",super.id,klass.getName());
+        return Logger.f("i{}: new_objarr #{}", super.id, klass.getName());
     }
 }

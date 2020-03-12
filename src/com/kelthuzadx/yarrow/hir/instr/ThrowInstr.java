@@ -9,13 +9,13 @@ import java.util.List;
 public class ThrowInstr extends BlockEndInstr {
     private Instruction exception;
 
-    public ThrowInstr(List<BlockStartInstr> successor,Instruction exception) {
-        super(new Value(JavaKind.Illegal),successor);
+    public ThrowInstr(List<BlockStartInstr> successor, Instruction exception) {
+        super(new Value(JavaKind.Illegal), successor);
         this.exception = exception;
     }
 
     @Override
     public String toString() {
-        return Logger.f("i{}: throw i{}",super.id,exception.id);
+        return Logger.f("i{}: throw i{}", super.id, exception.id);
     }
 }

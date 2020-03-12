@@ -2,9 +2,7 @@ package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.util.Logger;
-import jdk.vm.ci.meta.JavaKind;
 import jdk.vm.ci.meta.JavaMethod;
-import jdk.vm.ci.meta.JavaType;
 
 public class ParamInstr extends Instruction {
     private boolean isReceiver;
@@ -20,6 +18,6 @@ public class ParamInstr extends Instruction {
 
     @Override
     public String toString() {
-        return Logger.f("i{}: param [{}]#{}",super.id,index,method.getName());
+        return Logger.f("i{}: param [{}]#{}", super.id, index, method.getName());
     }
 }

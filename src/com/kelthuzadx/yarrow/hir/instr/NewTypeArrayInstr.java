@@ -16,6 +16,6 @@ public class NewTypeArrayInstr extends Instruction {
 
     @Override
     public String toString() {
-        return Logger.f("i{}: new_typearr #{}",super.id,elemType.getJavaName());
+        return Logger.f("i{}: new_typearr #{}", super.id, elemType.getJavaName());
     }
 }

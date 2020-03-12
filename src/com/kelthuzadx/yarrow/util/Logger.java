@@ -9,7 +9,7 @@ public class Logger {
 
     @SafeVarargs
     public static <T> String f(String format, T... args) {
-        return replacePlaceHolder(format,args);
+        return replacePlaceHolder(format, args);
     }
 
     @SafeVarargs

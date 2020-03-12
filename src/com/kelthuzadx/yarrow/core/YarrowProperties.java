@@ -32,7 +32,7 @@ public class YarrowProperties {
                     } else if ("false".equals(prop.get())) {
                         field.setBoolean(null, false);
                     } else {
-                        Logger.errorf("Invalid yarrow property {} for -Dyarrow.{}.{}",prop.get(),klass.getSimpleName(),field.getName());
+                        Logger.errorf("Invalid yarrow property {} for -Dyarrow.{}.{}", prop.get(), klass.getSimpleName(), field.getName());
                     }
                 }
             }

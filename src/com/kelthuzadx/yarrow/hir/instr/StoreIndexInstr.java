@@ -10,8 +10,8 @@ public class StoreIndexInstr extends AccessArrayInstr {
     private JavaKind elementType;
     private Instruction value;
 
-    public StoreIndexInstr(Instruction array, Instruction index, Instruction length,JavaKind elementType, Instruction value) {
-        super(new Value(elementType),array);
+    public StoreIndexInstr(Instruction array, Instruction index, Instruction length, JavaKind elementType, Instruction value) {
+        super(new Value(elementType), array);
         this.index = index;
         this.length = length;
         this.elementType = elementType;
@@ -20,6 +20,6 @@ public class StoreIndexInstr extends AccessArrayInstr {
 
     @Override
     public String toString() {
-        return Logger.f("i{}: store i{}[i{}]#{},i{}",super.id,super.array,index.id,elementType.getJavaName(),value.id);
+        return Logger.f("i{}: store i{}[i{}]#{},i{}", super.id, super.array, index.id, elementType.getJavaName(), value.id);
     }
 }

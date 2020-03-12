@@ -17,6 +17,6 @@ public class CheckCastInstr extends Instruction {
 
     @Override
     public String toString() {
-        return Logger.f("i{}: checkcast i{} -> {}",super.id,object.id,klass.toClassName());
+        return Logger.f("i{}: checkcast i{} -> {}", super.id, object.id, klass.toClassName());
     }
 }

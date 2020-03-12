@@ -1,7 +1,7 @@
 package com.kelthuzadx.yarrow.bytecode;
 
-import com.kelthuzadx.yarrow.util.Constrain;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
+import com.kelthuzadx.yarrow.util.Constrain;
 
 import java.util.Iterator;
 
@@ -18,7 +18,7 @@ public class BytecodeStream implements Iterator<Integer> {
 
     public BytecodeStream(byte[] code) {
         this.code = code;
-        reset(0, code.length-1);
+        reset(0, code.length - 1);
     }
 
     public BytecodeStream(byte[] code, int startBci, int endBci) {
@@ -320,50 +320,68 @@ public class BytecodeStream implements Iterator<Integer> {
     }
 
     public IINC getIINC() {
-        Constrain.matchInt(code[curBci], (byte)IINC);
+        Constrain.matchInt(code[curBci], (byte) IINC);
         return new IINC();
     }
 
     public TableSwitch getTableSwitch() {
-        Constrain.matchInt(code[curBci], (byte)TABLESWITCH);
+        Constrain.matchInt(code[curBci], (byte) TABLESWITCH);
         return new TableSwitch();
     }
 
     public LookupSwitch getLookupSwitch() {
-        Constrain.matchInt(code[curBci], (byte)LOOKUPSWITCH);
+        Constrain.matchInt(code[curBci], (byte) LOOKUPSWITCH);
         return new LookupSwitch();
     }
 
     public InvokeDynamic getInvokeDynamic() {
-        Constrain.matchInt(code[curBci], (byte)INVOKEDYNAMIC);
+        Constrain.matchInt(code[curBci], (byte) INVOKEDYNAMIC);
         return new InvokeDynamic();
     }
 
     public InvokeInterface getInvokeInterface() {
-        Constrain.matchInt(code[curBci], (byte)INVOKEINTERFACE);
+        Constrain.matchInt(code[curBci], (byte) INVOKEINTERFACE);
         return new InvokeInterface();
     }
 
     public InvokeVirtual getInvokeVirtual() {
-        Constrain.matchInt(code[curBci], (byte)INVOKEVIRTUAL);
+        Constrain.matchInt(code[curBci], (byte) INVOKEVIRTUAL);
         return new InvokeVirtual();
     }
 
     public InvokeSpecial getInvokeSpecial() {
-        Constrain.matchInt(code[curBci], (byte)INVOKESPECIAL);
+        Constrain.matchInt(code[curBci], (byte) INVOKESPECIAL);
         return new InvokeSpecial();
     }
 
     public InvokeStatic getInvokeStatic() {
-        Constrain.matchInt(code[curBci], (byte)INVOKESTATIC);
+        Constrain.matchInt(code[curBci], (byte) INVOKESTATIC);
         return new InvokeStatic();
     }
 
     public MultiNewArray getMultiNewArray() {
-        Constrain.matchInt(code[curBci], (byte)MULTIANEWARRAY);
+        Constrain.matchInt(code[curBci], (byte) MULTIANEWARRAY);
         return new MultiNewArray();
     }
 
+    private void reset(int startBci, int endBci) {
+        this.curBci = this.nextBci = startBci;
+        this.endBci = endBci;
+        this.isWide = false;
+        this.data = Integer.MIN_VALUE;
+    }
+
+    private int readS2(int i) {
+        return (code[i] << 8) | (code[i + 1] & 0xff);
+    }
+
+    private int readU2(int i) {
+        return ((code[i] & 0xff) << 8) | (code[i + 1] & 0xff);
+    }
+
+    private int readS4(int i) {
+        return (code[i] << 24) | ((code[i + 1] & 0xff) << 16) | ((code[i + 2] & 0xff) << 8) | (code[i + 3] & 0xff);
+    }
 
     public final class IINC {
         public int getIncrementIndex() {
@@ -477,25 +495,6 @@ public class BytecodeStream implements Iterator<Integer> {
         public int getDimension() {
             return code[curBci + 3];
         }
-    }
-
-    private void reset(int startBci, int endBci) {
-        this.curBci = this.nextBci = startBci;
-        this.endBci = endBci;
-        this.isWide = false;
-        this.data = Integer.MIN_VALUE;
-    }
-
-    private int readS2(int i) {
-        return (code[i] << 8) | (code[i + 1] & 0xff);
-    }
-
-    private int readU2(int i) {
-        return ((code[i] & 0xff) << 8) | (code[i + 1] & 0xff);
-    }
-
-    private int readS4(int i) {
-        return (code[i] << 24) | ((code[i + 1] & 0xff) << 16) | ((code[i + 2] & 0xff) << 8) | (code[i + 3] & 0xff);
     }
 
 }

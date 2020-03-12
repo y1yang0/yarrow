@@ -1,11 +1,10 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
-import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 
-public class TypeCastInstr extends Instruction{
+public class TypeCastInstr extends Instruction {
     private int opcode;
     private Instruction from;
     private JavaKind toType;
@@ -19,6 +18,6 @@ public class TypeCastInstr extends Instruction{
 
     @Override
     public String toString() {
-        return Logger.f("i{}: typecast i{} -> {}",super.id,from.id,toType.getJavaName());
+        return Logger.f("i{}: typecast i{} -> {}", super.id, from.id, toType.getJavaName());
     }
 }

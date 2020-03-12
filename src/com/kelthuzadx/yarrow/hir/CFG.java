@@ -2,7 +2,6 @@ package com.kelthuzadx.yarrow.hir;
 
 import com.kelthuzadx.yarrow.bytecode.BytecodeStream;
 import com.kelthuzadx.yarrow.core.YarrowError;
-import com.kelthuzadx.yarrow.core.YarrowProperties.Debug;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Logger;
@@ -56,14 +55,14 @@ class CFG {
         }
     }
 
-    public BlockStartInstr blockContain(int bci){
-        if(bci<0 || bci>=bciToBlockMapping.length){
-            throw new YarrowError("invalid bytecode index "+bci);
+    public BlockStartInstr blockContain(int bci) {
+        if (bci < 0 || bci >= bciToBlockMapping.length) {
+            throw new YarrowError("invalid bytecode index " + bci);
         }
         return bciToBlockMapping[bci];
     }
 
-    public BlockStartInstr[] getBlocks(){
+    public BlockStartInstr[] getBlocks() {
         return blocks;
     }
 
@@ -274,7 +273,7 @@ class CFG {
             String flag = block.isLoopHeader() ? "[LH]" : "";
             flag += isLoopBlock(block.getBlockId()) ? "[L]" : "";
             Logger.logf("#{} {}{", block.getBlockId(), flag);
-            BytecodeStream bs = new BytecodeStream(code,block.getStartBci());
+            BytecodeStream bs = new BytecodeStream(code, block.getStartBci());
             while (bs.hasNext()) {
                 int bci = bs.next();
                 Logger.logf(" {}", bs.getCurrentBytecodeString());
