@@ -99,7 +99,12 @@ public class BlockStartInstr extends Instruction {
         if(this.state==null){
             this.state = state.copy();
             if(this.isLoopHeader()){
-
+                for(int i=0;i<this.state.getStackSize();i++){
+                    this.state.createPhiForStack(this,i);
+                }
+                for(int i=0;i<this.state.getLocalSize();i++){
+                    this.state.createPhiForLocal(this,i);
+                }
             }
         }
     }

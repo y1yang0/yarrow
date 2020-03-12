@@ -36,7 +36,7 @@ public class HirBuilder {
         Map<Integer,Boolean> visit = new HashMap<>(cfg.getBlocks().length);
         Queue<BlockStartInstr> workList = new ArrayDeque<>();
         BlockStartInstr methodEntryBlock = cfg.blockContain(0);
-        methodEntryBlock.merge(createEntryVmState()));
+        methodEntryBlock.merge(createEntryVmState());
         workList.add(methodEntryBlock);
 
         while (!workList.isEmpty()){

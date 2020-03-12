@@ -1,7 +1,10 @@
 package com.kelthuzadx.yarrow.hir;
 
+import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.hir.instr.InstanceOfInstr;
 import com.kelthuzadx.yarrow.hir.instr.Instruction;
+import com.kelthuzadx.yarrow.hir.instr.PhiInstr;
+import jdk.vm.ci.meta.JavaKind;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +19,7 @@ public class VmState {
 
     public VmState(int stackSize, int localSize){
         stack = new Stack<>();
+        stack.ensureCapacity(stackSize);
         local = new Instruction[localSize];
         lock =  new ArrayList<>();
         this.stackSize = stackSize;
@@ -32,12 +36,20 @@ public class VmState {
         return stack.pop();
     }
 
+    public int getStackSize(){
+        return stackSize;
+    }
+
     public void set(int index, Instruction instr){
         local[index] = instr;
     }
 
     public Instruction get(int index){
         return local[index];
+    }
+
+    public int getLocalSize(){
+        return local.length;
     }
 
     public int lockPush(InstanceOfInstr object){
@@ -54,5 +66,17 @@ public class VmState {
         System.arraycopy(this.local, 0, newState.local, 0, newState.local.length);
         newState.lock.addAll(this.lock);
         return newState;
+    }
+
+    public void createPhiForStack(BlockStartInstr block,int index){
+        Value val = new Value(stack.elementAt(index).getType());
+        PhiInstr phi = new PhiInstr(val,-index-1,block);
+        stack.set(index,phi);
+    }
+
+    public void createPhiForLocal(BlockStartInstr block,int index){
+        Value val = new Value(local[index].getType());
+        PhiInstr phi = new PhiInstr(val,-index-1,block);
+        local[index] = phi;
     }
 }
