@@ -24,6 +24,6 @@ public class ShiftInstr extends Op2Instr{
             default:
                 CompilerErrors.shouldNotReachHere();
         }
-        return Logger.f("i{}: i{} {} i{}",super.id,left.id,op,right);
+        return Logger.f("i{}: i{} {} i{}",super.id,left.id,op,right.id);
     }
 }

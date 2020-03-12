@@ -34,7 +34,8 @@ public class HirBuilder {
 
     public HirBuilder build() {
         // Construct cfg and detect reducible loops
-        cfg = CFG.build(method);
+        cfg = new CFG(method);
+        cfg.build();
 
         // Abstract interpretation
         Set<Integer> visit = new HashSet<>(cfg.getBlocks().length);
@@ -42,20 +43,26 @@ public class HirBuilder {
         workList = new ArrayDeque<>();
         BlockStartInstr methodEntryBlock = cfg.blockContain(0);
         methodEntryBlock.merge(createEntryVmState());
-        lastInstr = methodEntryBlock;
         workList.add(methodEntryBlock);
 
         while (!workList.isEmpty()){
             BlockStartInstr blockStart = workList.remove();
             if(!visit.contains(blockStart.getBlockId())){
                 visit.add(blockStart.getBlockId());
+                if(lastInstr == null){
+                    lastInstr = methodEntryBlock;
+                }else{
+                    lastInstr.setNext(blockStart);
+                    lastInstr = blockStart;
+                }
                 fulfillBlock(blockStart);
             }
         }
 
         if(PrintSSA){
             Logger.logf("=====SSA Form=====>");
-            printSSA();
+            BlockStartInstr methodEntry = cfg.blockContain(0);
+            printSSA(new HashSet<>(),methodEntry);
         }
 
         return this;
@@ -81,13 +88,20 @@ public class HirBuilder {
 
     }
 
-    private void printSSA(){
-        BlockStartInstr methodEntry = cfg.blockContain(0);
-        methodEntry.iterateBytecode(instr-> {
-            System.out.println(instr);
-        });
+    private void printSSA(Set<BlockStartInstr> visit,BlockStartInstr block){
+        if(block==null || visit.contains(block)){
+            return;
+        }
 
+        block.iterateBytecode(instr-> {
+            Logger.logf("{}",instr.toString());
+        });
+        visit.add(block);
+        for(BlockStartInstr succ:block.getSuccessor()){
+            printSSA(visit,succ);
+        }
     }
+
 
     private void fulfillBlock(BlockStartInstr block){
         VmState state = block.getVmState();
@@ -305,9 +319,7 @@ public class HirBuilder {
 
         // This could happen when back edge splits one consist block
         if(!(lastInstr instanceof BlockEndInstr)){
-            BlockEndInstr endInstr = new GotoInstr(new ArrayList<>(){{
-                add(cfg.blockContain(bs.peekNextBci()));
-            }});
+            BlockEndInstr endInstr = new GotoInstr(cfg.blockContain(bs.peekNextBci()));
             appendToBlock(endInstr);
         }
         block.setBlockEnd((BlockEndInstr)lastInstr);
@@ -573,10 +585,7 @@ public class HirBuilder {
     }
 
     private void goTo(VmState state, int destBci){
-        ArrayList<BlockStartInstr> succ = new ArrayList<>() {{
-            add(cfg.blockContain(destBci));
-        }};
-        GotoInstr instr = new GotoInstr(succ);
+        GotoInstr instr = new GotoInstr(cfg.blockContain(destBci));
         appendToBlock(instr);
     }
 

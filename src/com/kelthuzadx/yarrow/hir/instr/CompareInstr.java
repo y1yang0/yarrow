@@ -13,6 +13,6 @@ public class CompareInstr extends Op2Instr {
 
     @Override
     public String toString() {
-        return Logger.f("i{}: i{} == i{}",super.id,super.left.id,super.right);
+        return Logger.f("i{}: i{} == i{}",super.id,super.left.id,super.right.id);
     }
 }

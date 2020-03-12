@@ -5,6 +5,7 @@ import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.hir.VmState;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Constrain;
+import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.ExceptionHandler;
 import jdk.vm.ci.meta.JavaKind;
 
@@ -135,7 +136,9 @@ public class BlockStartInstr extends Instruction {
             closure.accept(last);
             last = last.getNext();
         }
-        closure.accept(last);
+        if(last!=null && last==blockEnd){
+            closure.accept(last);
+        }
     }
 
     @Override
@@ -151,8 +154,7 @@ public class BlockStartInstr extends Instruction {
         return Objects.hash(blockId);
     }
 
-    @Override
-    public String toString() {
+    public String toCFGString(){
         String successorString = successor.stream().map(
                 b -> "#" + b.getBlockId() + " " + (b.xhandler != null ? "!" : "") + "[" + b.getStartBci() + "," + b.getEndBci() + "]"
         ).collect(Collectors.toList()).toString();
@@ -168,5 +170,11 @@ public class BlockStartInstr extends Instruction {
                 "]" +
                 " => " +
                 successorString;
+    }
+
+
+    @Override
+    public String toString() {
+        return Logger.f("i{}: block_start",super.id);
     }
 }

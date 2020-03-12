@@ -29,7 +29,7 @@ class CFG {
     private int nextLoopIndex;
 
 
-    private CFG(HotSpotResolvedJavaMethod method) {
+    public CFG(HotSpotResolvedJavaMethod method) {
         this.method = method;
         this.globalBlockId = 0;
         this.codeSize = method.getCodeSize();
@@ -43,19 +43,17 @@ class CFG {
 
     }
 
-    public static CFG build(HotSpotResolvedJavaMethod method) {
-        CFG cfg = new CFG(method);
-        cfg.mapBciToBlocks();
-        cfg.uniqueBlocks();
-        HashSet<Integer> visit = new HashSet<>(cfg.blocks.length);
-        HashSet<Integer> active = new HashSet<>(cfg.blocks.length);
-        cfg.identifyLoop(visit, active, cfg.bciToBlockMapping[0]);
+    public void build() {
+        mapBciToBlocks();
+        uniqueBlocks();
+        HashSet<Integer> visit = new HashSet<>(blocks.length);
+        HashSet<Integer> active = new HashSet<>(blocks.length);
+        identifyLoop(visit, active, bciToBlockMapping[0]);
         if (PrintCFG) {
-            cfg.printBciToBlocks();
-            cfg.printAllBlockRange();
-            cfg.printAllBlock();
+            printBciToBlocks();
+            printAllBlockRange();
+            printAllBlock();
         }
-        return cfg;
     }
 
     public BlockStartInstr blockContain(int bci){
@@ -259,14 +257,14 @@ class CFG {
                 method.getDeclaringClass().getUnqualifiedName(),
                 method.getName());
         for (int i = 0; i < bciToBlockMapping.length; i++) {
-            Logger.logf("{} : {}", i, bciToBlockMapping[i] != null ? bciToBlockMapping[i].toString() : "[]");
+            Logger.logf("{} : {}", i, bciToBlockMapping[i] != null ? bciToBlockMapping[i].toCFGString() : "[]");
         }
     }
 
     private void printAllBlockRange() {
         Logger.logf("{}", "=====All block ranges=====>");
         for (BlockStartInstr block : blocks) {
-            Logger.logf("{}", block.toString());
+            Logger.logf("{}", block.toCFGString());
         }
     }
 

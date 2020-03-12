@@ -26,6 +26,6 @@ public class LogicInstr extends Op2Instr {
             case Bytecode.IXOR:
             case Bytecode.LXOR:op="^";break;
         }
-        return Logger.f("i{}: i{} {} i{}",super.id,left.id,op,right);
+        return Logger.f("i{}: i{} {} i{}",super.id,left.id,op,right.id);
     }
 }

@@ -36,6 +36,6 @@ public class IfInstr extends BlockEndInstr {
             case LE:op="<=";
                 break;
         }
-        return Logger.f("i{}: if i{} {} i{}",super.id,left.id,op,right);
+        return Logger.f("i{}: if i{} {} i{}",super.id,left.id,op,right.id);
     }
 }
