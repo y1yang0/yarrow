@@ -43,6 +43,9 @@ public class Instruction {
         return value.getType();
     }
 
+    public Instruction getNext(){
+        return next;
+    }
 
     private static class IdGenerator{
         private static int id;

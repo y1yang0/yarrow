@@ -11,6 +11,8 @@ import jdk.vm.ci.meta.JavaKind;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class BlockStartInstr extends Instruction {
@@ -125,6 +127,15 @@ public class BlockStartInstr extends Instruction {
 
     public VmState getVmState() {
         return state;
+    }
+
+    public void iterateBytecode(Consumer<Instruction> closure){
+        Instruction last = this;
+        while (last!=null && last!=blockEnd){
+            closure.accept(last);
+            last = last.getNext();
+        }
+        closure.accept(last);
     }
 
     @Override

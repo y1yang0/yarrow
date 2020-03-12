@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.kelthuzadx.yarrow.bytecode.Bytecode.*;
+import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintCFG;
 
 class CFG {
     private HotSpotResolvedJavaMethod method;
@@ -49,7 +50,7 @@ class CFG {
         HashSet<Integer> visit = new HashSet<>(cfg.blocks.length);
         HashSet<Integer> active = new HashSet<>(cfg.blocks.length);
         cfg.identifyLoop(visit, active, cfg.bciToBlockMapping[0]);
-        if (Debug.PrintCFG) {
+        if (PrintCFG) {
             cfg.printBciToBlocks();
             cfg.printAllBlockRange();
             cfg.printAllBlock();

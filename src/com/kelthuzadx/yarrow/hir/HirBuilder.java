@@ -10,7 +10,10 @@ import jdk.vm.ci.hotspot.HotSpotResolvedJavaField;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
 import jdk.vm.ci.meta.*;
 
+import java.io.PrintWriter;
 import java.util.*;
+
+import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintSSA;
 
 /**
  * HirBuilder performs an abstract interpretation, it would transform java bytecode to compiler HIR.
@@ -30,11 +33,10 @@ public class HirBuilder {
     }
 
     public HirBuilder build() {
-        // construct cfg and detect reducible loops
+        // Construct cfg and detect reducible loops
         cfg = CFG.build(method);
 
-        // doing abstract interpretation by iterating all blocks in CFG
-        Logger.logf("=====Abstract interpretation=====>");
+        // Abstract interpretation
         Set<Integer> visit = new HashSet<>(cfg.getBlocks().length);
 
         workList = new ArrayDeque<>();
@@ -50,6 +52,12 @@ public class HirBuilder {
                 fulfillBlock(blockStart);
             }
         }
+
+        if(PrintSSA){
+            Logger.logf("=====SSA Form=====>");
+            printSSA();
+        }
+
         return this;
     }
 
@@ -73,6 +81,14 @@ public class HirBuilder {
 
     }
 
+    private void printSSA(){
+        BlockStartInstr methodEntry = cfg.blockContain(0);
+        methodEntry.iterateBytecode(instr-> {
+            System.out.println(instr);
+        });
+
+    }
+
     private void fulfillBlock(BlockStartInstr block){
         VmState state = block.getVmState();
 
@@ -80,7 +96,6 @@ public class HirBuilder {
         while (bs.hasNext()){
             int curBci = bs.next();
             int opcode = bs.currentBytecode();
-            Logger.logf("#{} {}",block.getBlockId(),bs.getCurrentBytecodeString());
             switch (opcode) {
                 case Bytecode.NOP: break;
                 case Bytecode.ACONST_NULL:loadConst(state,JavaKind.Object,null);break;
