@@ -80,7 +80,7 @@ public class HirBuilder {
         while (bs.hasNext()){
             int curBci = bs.next();
             int opcode = bs.currentBytecode();
-            Logger.logf("{}",bs.getCurrentBytecodeString());
+            Logger.logf("#{} {}",block.getBlockId(),bs.getCurrentBytecodeString());
             switch (opcode) {
                 case Bytecode.NOP: break;
                 case Bytecode.ACONST_NULL:loadConst(state,JavaKind.Object,null);break;

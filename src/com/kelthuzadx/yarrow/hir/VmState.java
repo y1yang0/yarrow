@@ -1,5 +1,6 @@
 package com.kelthuzadx.yarrow.hir;
 
+import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.hir.instr.InstanceOfInstr;
 import com.kelthuzadx.yarrow.hir.instr.Instruction;
@@ -39,6 +40,10 @@ public class VmState {
         return stack.size();
     }
 
+    public Stack<Instruction> getStack() {
+        return stack;
+    }
+
     public void set(int index, Instruction instr){
         local[index] = instr;
     }
@@ -57,6 +62,10 @@ public class VmState {
 
     public int lockPop(){
         return 0;
+    }
+
+    public int getLockSize(){
+        return lock.size();
     }
 
     public VmState copy(){

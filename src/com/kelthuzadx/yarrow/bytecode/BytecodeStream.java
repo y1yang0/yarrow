@@ -1,6 +1,6 @@
 package com.kelthuzadx.yarrow.bytecode;
 
-import com.kelthuzadx.yarrow.util.Assert;
+import com.kelthuzadx.yarrow.util.Constrain;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 
 import java.util.Iterator;
@@ -320,45 +320,47 @@ public class BytecodeStream implements Iterator<Integer> {
     }
 
     public IINC getIINC() {
-        Assert.matchInt(code[curBci], IINC);
+        Constrain.matchInt(code[curBci], (byte)IINC);
         return new IINC();
     }
 
     public TableSwitch getTableSwitch() {
-        Assert.matchInt(code[curBci], TABLESWITCH);
+        Constrain.matchInt(code[curBci], (byte)TABLESWITCH);
         return new TableSwitch();
     }
 
     public LookupSwitch getLookupSwitch() {
-        Assert.matchInt(code[curBci], LOOKUPSWITCH);
+        Constrain.matchInt(code[curBci], (byte)LOOKUPSWITCH);
         return new LookupSwitch();
     }
 
     public InvokeDynamic getInvokeDynamic() {
-        Assert.matchInt(code[curBci], INVOKEDYNAMIC);
+        Constrain.matchInt(code[curBci], (byte)INVOKEDYNAMIC);
         return new InvokeDynamic();
     }
 
     public InvokeInterface getInvokeInterface() {
-        Assert.matchInt(code[curBci], INVOKEINTERFACE);
+        Constrain.matchInt(code[curBci], (byte)INVOKEINTERFACE);
         return new InvokeInterface();
     }
 
     public InvokeVirtual getInvokeVirtual() {
-        Assert.matchInt(code[curBci], INVOKEVIRTUAL);
+        Constrain.matchInt(code[curBci], (byte)INVOKEVIRTUAL);
         return new InvokeVirtual();
     }
 
     public InvokeSpecial getInvokeSpecial() {
-        Assert.matchInt(code[curBci], INVOKESPECIAL);
+        Constrain.matchInt(code[curBci], (byte)INVOKESPECIAL);
         return new InvokeSpecial();
     }
 
     public InvokeStatic getInvokeStatic() {
+        Constrain.matchInt(code[curBci], (byte)INVOKESTATIC);
         return new InvokeStatic();
     }
 
     public MultiNewArray getMultiNewArray() {
+        Constrain.matchInt(code[curBci], (byte)MULTIANEWARRAY);
         return new MultiNewArray();
     }
 
