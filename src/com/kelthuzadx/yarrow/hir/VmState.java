@@ -4,7 +4,6 @@ import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.hir.instr.InstanceOfInstr;
 import com.kelthuzadx.yarrow.hir.instr.Instruction;
 import com.kelthuzadx.yarrow.hir.instr.PhiInstr;
-import jdk.vm.ci.meta.JavaKind;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,21 +11,21 @@ import java.util.Stack;
 
 @SuppressWarnings("unused")
 public class VmState {
-    private final int stackSize;
+    private final int maxStackSize;
     private Stack<Instruction> stack;
     private Instruction[] local;
     private List<Instruction> lock;
 
-    public VmState(int stackSize, int localSize){
+    public VmState(int maxStackSize, int localSize){
         stack = new Stack<>();
-        stack.ensureCapacity(stackSize);
+        stack.ensureCapacity(maxStackSize);
         local = new Instruction[localSize];
         lock =  new ArrayList<>();
-        this.stackSize = stackSize;
+        this.maxStackSize = maxStackSize;
     }
 
     public void push(Instruction instr){
-        if(stack.size()+1>stackSize){
+        if(stack.size()+1> maxStackSize){
             throw new RuntimeException("stack excess maximum capacity");
         }
         stack.push(instr);
@@ -37,7 +36,7 @@ public class VmState {
     }
 
     public int getStackSize(){
-        return stackSize;
+        return stack.size();
     }
 
     public void set(int index, Instruction instr){
@@ -61,7 +60,7 @@ public class VmState {
     }
 
     public VmState copy(){
-        VmState newState = new VmState(this.stackSize,this.local.length);
+        VmState newState = new VmState(this.maxStackSize,this.local.length);
         newState.stack.addAll(this.stack);
         System.arraycopy(this.local, 0, newState.local, 0, newState.local.length);
         newState.lock.addAll(this.lock);

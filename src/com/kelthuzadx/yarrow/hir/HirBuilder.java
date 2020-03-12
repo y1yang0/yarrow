@@ -22,6 +22,8 @@ public class HirBuilder {
 
     private Instruction lastInstr;
 
+    private Queue<BlockStartInstr> workList;
+
     public HirBuilder(HotSpotResolvedJavaMethod method) {
         this.method = method;
         this.lastInstr = null;
@@ -33,16 +35,16 @@ public class HirBuilder {
 
         // doing abstract interpretation by iterating all blocks in CFG
         Logger.logf("=====Abstract interpretation=====>");
-        Map<Integer,Boolean> visit = new HashMap<>(cfg.getBlocks().length);
-        Queue<BlockStartInstr> workList = new ArrayDeque<>();
+        Set<Integer> visit = new HashSet<>(cfg.getBlocks().length);
+        workList = new ArrayDeque<>();
         BlockStartInstr methodEntryBlock = cfg.blockContain(0);
         methodEntryBlock.merge(createEntryVmState());
         workList.add(methodEntryBlock);
 
         while (!workList.isEmpty()){
             BlockStartInstr blockStart = workList.remove();
-            if(!visit.containsKey(blockStart.getBlockId())){
-                visit.put(blockStart.getBlockId(),true);
+            if(!visit.contains(blockStart.getBlockId())){
+                visit.add(blockStart.getBlockId());
                 lastInstr = blockStart;
                 fulfillBlock(blockStart);
             }
@@ -296,6 +298,7 @@ public class HirBuilder {
 
         for(BlockStartInstr succ:((BlockEndInstr)lastInstr).getSuccessor()){
             succ.merge(block.getVmState());
+            workList.add(succ);
         }
 
     }
