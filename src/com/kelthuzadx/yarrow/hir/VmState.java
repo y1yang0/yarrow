@@ -9,6 +9,7 @@ import java.util.Stack;
 
 @SuppressWarnings("unused")
 public class VmState {
+    private final int stackSize;
     private Stack<Instruction> stack;
     private Instruction[] local;
     private List<Instruction> lock;
@@ -17,9 +18,13 @@ public class VmState {
         stack = new Stack<>();
         local = new Instruction[localSize];
         lock =  new ArrayList<>();
+        this.stackSize = stackSize;
     }
 
     public void push(Instruction instr){
+        if(stack.size()+1>stackSize){
+            throw new RuntimeException("stack excess maximum capacity");
+        }
         stack.push(instr);
     }
 
@@ -44,11 +49,9 @@ public class VmState {
     }
 
     public VmState copy(){
-        VmState newState = new VmState(stack.capacity(),local.length);
+        VmState newState = new VmState(this.stackSize,this.local.length);
         newState.stack.addAll(this.stack);
-        for(int i=0;i<newState.local.length;i++){
-            newState.local[i] = this.local[i];
-        }
+        System.arraycopy(this.local, 0, newState.local, 0, newState.local.length);
         newState.lock.addAll(this.lock);
         return newState;
     }

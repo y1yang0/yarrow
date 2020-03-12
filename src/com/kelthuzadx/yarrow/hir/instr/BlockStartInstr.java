@@ -98,6 +98,9 @@ public class BlockStartInstr extends Instruction {
     public void merge(VmState state){
         if(this.state==null){
             this.state = state.copy();
+            if(this.isLoopHeader()){
+
+            }
         }
     }
 

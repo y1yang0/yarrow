@@ -7,7 +7,7 @@ Back to my project, the whole compilation is divided into two parts. yarrow pars
 
 
 ## HIR constuction
-构造HIR本质上是一个抽象解释的过程，在抽象解释之前还需要找出所有可能分割基本块的字节码（goto,lookupswitch,tableswitch,if_*cmp)，另外找出循环也是必要的，因为后面步骤中构造SSA需要有发现一个基本块是循环头的能力。
+构造HIR本质上是一个抽象解释的过程，在抽象解释之前还需要找出所有可能分割基本块的字节码（goto,lookupswitch,tableswitch,if_*cmp)，另外找出循环也是必要的，因为SSA需要使用Phi指令合并数据流，而循环头是控制流合并的发生地。
 抽象解释的核心依赖于一个VmState，它遍历所有基本块，即上一步发现的BlockStartInstr，然后对于每个BlockStartInstr编译器解释执行字节码，这一步依赖VmState的操作数栈和局部变量表，当一切完成后将构造出包含SSA指令的基本块，基本块通过前驱和后继指针关联其它基本块，形成一个有向图，即控制流图。
 
 ## Reference 

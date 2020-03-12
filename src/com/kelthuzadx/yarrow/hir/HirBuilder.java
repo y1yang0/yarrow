@@ -8,10 +8,7 @@ import com.kelthuzadx.yarrow.util.Converter;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaField;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
-import jdk.vm.ci.meta.JavaConstant;
-import jdk.vm.ci.meta.JavaField;
-import jdk.vm.ci.meta.JavaKind;
-import jdk.vm.ci.meta.JavaType;
+import jdk.vm.ci.meta.*;
 
 import java.util.*;
 
@@ -39,7 +36,7 @@ public class HirBuilder {
         Map<Integer,Boolean> visit = new HashMap<>(cfg.getBlocks().length);
         Queue<BlockStartInstr> workList = new ArrayDeque<>();
         BlockStartInstr methodEntryBlock = cfg.blockContain(0);
-        methodEntryBlock.merge(new VmState(method.getMaxStackSize(),method.getMaxLocals()));
+        methodEntryBlock.merge(createEntryVmState()));
         workList.add(methodEntryBlock);
 
         while (!workList.isEmpty()){
@@ -51,6 +48,26 @@ public class HirBuilder {
             }
         }
         return this;
+    }
+
+    private VmState createEntryVmState(){
+        VmState state = new VmState(method.getMaxStackSize(),method.getMaxLocals());
+        int paramIndex = 0;
+
+        if(method.hasReceiver()){
+            ParamInstr receiverInstr = new ParamInstr(new Value(JavaKind.Object),method,false,paramIndex);
+            state.set(paramIndex,receiverInstr);
+            paramIndex++;
+        }
+
+        Signature sig = method.getSignature();
+        for(int i=0;i<sig.getParameterCount(false/*Receiver already processed*/);i++){
+            ParamInstr pi = new ParamInstr(new Value(sig.getParameterKind(i)),method,false,paramIndex);
+            state.set(paramIndex,pi);
+            paramIndex++;
+        }
+        return state;
+
     }
 
     private void fulfillBlock(BlockStartInstr block){
@@ -328,7 +345,7 @@ public class HirBuilder {
 
     private void load(VmState state, JavaKind type, int index){
         Instruction temp = state.get(index);
-        Instruction.assertType(temp,JavaKind.Int);
+        Instruction.assertType(temp,type);
         state.push(temp);
     }
 
@@ -344,7 +361,7 @@ public class HirBuilder {
 
     private void store(VmState state, JavaKind type, int index){
         Instruction temp = state.pop();
-        Instruction.assertType(temp,JavaKind.Int);
+        Instruction.assertType(temp,type);
         state.set(index,temp);
     }
 
