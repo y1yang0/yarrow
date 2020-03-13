@@ -252,9 +252,7 @@ class CFG {
     }
 
     private void printBciToBlocks() {
-        Logger.logf("=====Bci to block mapping({}.{})=====>",
-                method.getDeclaringClass().getUnqualifiedName(),
-                method.getName());
+        Logger.logf("=====Mapping bci to blockBci=====>");
         for (int i = 0; i < bciToBlockMapping.length; i++) {
             Logger.logf("{} : {}", i, bciToBlockMapping[i] != null ? bciToBlockMapping[i].toCFGString() : "[]");
         }
