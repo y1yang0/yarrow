@@ -309,7 +309,7 @@ class CFG {
             }
         }
         content.append("}");
-        Path path = Paths.get("out.cfg");
+        Path path = Paths.get("cfg.dot");
         try {
             Files.writeString(path, content.toString());
         } catch (IOException e) {
