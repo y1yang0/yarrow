@@ -57,12 +57,15 @@ public class VmState {
         return local.length;
     }
 
-    public int lockPush(InstanceOfInstr object) {
-        return 0;
+    public Instruction lock(InstanceOfInstr object) {
+        lock.add(object);
+        return lock.get(lock.size() - 1);
     }
 
-    public int lockPop() {
-        return 0;
+    public Instruction unlock() {
+        Instruction object = lock.get(lock.size() - 1);
+        lock.remove(lock.size() - 1);
+        return object;
     }
 
     public int getLockSize() {
@@ -93,8 +96,10 @@ public class VmState {
     public String toString() {
         String sk = stack.stream().map(instr -> "i" + instr.getId()).collect(Collectors.joining(","));
         String lc = Arrays.stream(local).map(instr -> "i" + instr.getId()).collect(Collectors.joining(","));
+        String lx = lock.stream().map(instr -> "i" + instr.getId()).collect(Collectors.joining(","));
         return "VmState{" +
-                "stack=[" + sk +
+                "lock=[" + lx +
+                "],stack=[" + sk +
                 "],local=[" + lc +
                 "]}";
     }

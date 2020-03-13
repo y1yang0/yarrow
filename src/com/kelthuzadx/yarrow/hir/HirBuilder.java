@@ -382,7 +382,7 @@ public class HirBuilder {
                     duplicate(opcode);
                     break;
                 case Bytecode.SWAP:
-                    swap(state);
+                    swap();
                     break;
                 case Bytecode.IADD:
                 case Bytecode.ISUB:
@@ -588,7 +588,7 @@ public class HirBuilder {
                 case Bytecode.INVOKESTATIC:
                 case Bytecode.INVOKEINTERFACE:
                 case Bytecode.INVOKEDYNAMIC:
-                    call(state);
+                    call();
                     break;
                 case Bytecode.NEW:
                     newInstance(bs.getBytecodeData());
@@ -600,10 +600,10 @@ public class HirBuilder {
                     newObjectArray(bs.getBytecodeData());
                     break;
                 case Bytecode.ARRAYLENGTH:
-                    arrayLength(state);
+                    arrayLength();
                     break;
                 case Bytecode.ATHROW:
-                    athrow(state);
+                    athrow();
                     break;
                 case Bytecode.CHECKCAST:
                     checkCast(bs.getBytecodeData());
@@ -612,8 +612,11 @@ public class HirBuilder {
                     instanceOf(bs.getBytecodeData());
                     break;
                 case Bytecode.MONITORENTER:
+                    monitorEnter();
+                    break;
                 case Bytecode.MONITOREXIT:
-                    CompilerErrors.unsupported();
+                    monitorExit();
+                    break;
                 case Bytecode.WIDE:
                     CompilerErrors.shouldNotReachHere();
                 case Bytecode.MULTIANEWARRAY:
@@ -783,7 +786,7 @@ public class HirBuilder {
         }
     }
 
-    private void swap(VmState state) {
+    private void swap() {
         Instruction temp = state.pop();
         Instruction temp1 = state.pop();
         state.push(temp);
@@ -1021,7 +1024,7 @@ public class HirBuilder {
     }
 
 
-    private void call(VmState state) {
+    private void call() {
     }
 
     private void newInstance(int index) {
@@ -1053,7 +1056,7 @@ public class HirBuilder {
         state.push(instr);
     }
 
-    private void arrayLength(VmState state) {
+    private void arrayLength() {
         Instruction array = state.pop();
         Instruction.assertType(array, JavaKind.Object);
         ArrayLenInstr instr = new ArrayLenInstr(array);
@@ -1061,7 +1064,7 @@ public class HirBuilder {
         state.push(instr);
     }
 
-    private void athrow(VmState state) {
+    private void athrow() {
         VmState stateBefore = state.copy();
         Instruction exception = state.pop();
         Instruction.assertType(exception, JavaKind.Object);
@@ -1089,10 +1092,18 @@ public class HirBuilder {
         state.push(instr);
     }
 
-    private void monitorEnter(VmState state) {
+    private void monitorEnter() {
+        Instruction lock = state.pop();
+        Instruction.assertType(lock, JavaKind.Object);
+        VmState stateBefore = state.copy(); // save state before locking(but after pop element) in case of deopt after a nullptr exception
+        MonitorEnterInstr instr = new MonitorEnterInstr(lock, stateBefore);
+        appendToBlock(instr);
     }
 
-    private void monitorExit(VmState state) {
+    private void monitorExit() {
+        Instruction lock = state.unlock();
+        MonitorExitInstr instr = new MonitorExitInstr(lock);
+        appendToBlock(instr);
     }
 
     private void multiNewArray(BytecodeStream.MultiNewArray mna) {
