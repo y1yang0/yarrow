@@ -91,11 +91,11 @@ public class VmState {
 
     @Override
     public String toString() {
-        String sk = stack.stream().map(instr -> "i"+instr.getId()).collect(Collectors.joining(","));
-        String lc = Arrays.stream(local).map(instr -> "i"+instr.getId()).collect(Collectors.joining(","));
+        String sk = stack.stream().map(instr -> "i" + instr.getId()).collect(Collectors.joining(","));
+        String lc = Arrays.stream(local).map(instr -> "i" + instr.getId()).collect(Collectors.joining(","));
         return "VmState{" +
-                "stack=["+sk+
-                "],local=["+lc+
+                "stack=[" + sk +
+                "],local=[" + lc +
                 "]}";
     }
 }

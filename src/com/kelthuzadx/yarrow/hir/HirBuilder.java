@@ -91,7 +91,7 @@ public class HirBuilder {
         if (block == null || visit.contains(block)) {
             return;
         }
-        Logger.logf("{}",block.getVmState().toString());
+        Logger.logf("{}", block.getVmState().toString());
         block.iterateBytecode(instr -> Logger.logf("{}", instr.toString()));
         visit.add(block);
         for (BlockStartInstr succ : block.getSuccessor()) {
@@ -630,7 +630,7 @@ public class HirBuilder {
 
         // This could happen when back edge splits one consist block
         if (!(lastInstr instanceof BlockEndInstr)) {
-            BlockEndInstr endInstr = new GotoInstr(cfg.blockContain(bs.peekNextBci()));
+            BlockEndInstr endInstr = new GotoInstr(null, cfg.blockContain(bs.peekNextBci()));
             appendToBlock(endInstr);
         }
         block.setBlockEnd((BlockEndInstr) lastInstr);
@@ -865,34 +865,37 @@ public class HirBuilder {
     }
 
     private void branchIfZero(VmState state, JavaKind type, Cond cond, int trueBci, int falseBci) {
+        VmState stateBefore = state.copy();
         Instruction left = state.pop();
         ConstantInstr right = new ConstantInstr(new Value(JavaKind.Int, 0));
         Instruction.assertType(left, type);
-        branchIf(state, left, right, cond, trueBci, falseBci);
+        branchIf(state, stateBefore, left, right, cond, trueBci, falseBci);
     }
 
     private void branchIfNull(VmState state, JavaKind type, Cond cond, int trueBci, int falseBci) {
+        VmState stateBefore = state.copy();
         Instruction left = state.pop();
         ConstantInstr right = new ConstantInstr(new Value(JavaKind.Object, null));
         Instruction.assertType(left, type);
-        branchIf(state, left, right, cond, trueBci, falseBci);
+        branchIf(state, stateBefore, left, right, cond, trueBci, falseBci);
     }
 
     private void branchIfSame(VmState state, JavaKind type, Cond cond, int trueBci, int falseBci) {
+        VmState stateBefore = state.copy();
         Instruction right = state.pop();
         Instruction left = state.pop();
         Instruction.assertType(left, type);
         Instruction.assertType(right, type);
-        branchIf(state, left, right, cond, trueBci, falseBci);
+        branchIf(state, stateBefore, left, right, cond, trueBci, falseBci);
     }
 
-    private void branchIf(VmState state, Instruction left, Instruction right, Cond cond, int trueBci, int falseBci) {
-        IfInstr instr = new IfInstr(cfg.blockContain(trueBci), cfg.blockContain(falseBci), left, right, cond);
+    private void branchIf(VmState state, VmState stateBefore, Instruction left, Instruction right, Cond cond, int trueBci, int falseBci) {
+        IfInstr instr = new IfInstr(stateBefore, cfg.blockContain(trueBci), cfg.blockContain(falseBci), left, right, cond);
         appendToBlock(instr);
     }
 
     private void goTo(VmState state, int destBci) {
-        GotoInstr instr = new GotoInstr(cfg.blockContain(destBci));
+        GotoInstr instr = new GotoInstr(null, cfg.blockContain(destBci));
         appendToBlock(instr);
     }
 
@@ -906,9 +909,10 @@ public class HirBuilder {
         }
         succ.set(i, cfg.blockContain(sw.getDefaultDest() + curBci));
 
+        VmState stateBefore = state.copy();
         Instruction index = state.pop();
         Instruction.assertType(index, JavaKind.Int);
-        TableSwitchInstr instr = new TableSwitchInstr(succ, index, sw.getLowKey(), sw.getHighKey());
+        TableSwitchInstr instr = new TableSwitchInstr(stateBefore, succ, index, sw.getLowKey(), sw.getHighKey());
         appendToBlock(instr);
     }
 
@@ -924,9 +928,10 @@ public class HirBuilder {
         }
         succ.set(i, cfg.blockContain(sw.getDefaultDest() + curBci));
 
+        VmState stateBefore = state.copy();
         Instruction index = state.pop();
         Instruction.assertType(index, JavaKind.Int);
-        LookupSwitchInstr instr = new LookupSwitchInstr(succ, index, key);
+        LookupSwitchInstr instr = new LookupSwitchInstr(stateBefore, succ, index, key);
         appendToBlock(instr);
     }
 
@@ -1018,27 +1023,30 @@ public class HirBuilder {
     }
 
     private void newInstance(VmState state, int index) {
+        VmState stateBefore = state.copy();
         JavaType klass = method.getConstantPool().lookupType(index, -1);
-        NewInstr instr = new NewInstr(klass);
+        NewInstr instr = new NewInstr(stateBefore, klass);
         appendToBlock(instr);
         state.push(instr);
     }
 
     private void newTypeArray(VmState state, int elementType) {
+        VmState stateBefore = state.copy();
         Instruction len = state.pop();
         Instruction.assertType(len, JavaKind.Int);
         JavaKind type = Converter.fromBasicType(elementType);
-        NewTypeArrayInstr instr = new NewTypeArrayInstr(len, type);
+        NewTypeArrayInstr instr = new NewTypeArrayInstr(stateBefore, len, type);
         appendToBlock(instr);
         state.push(instr);
     }
 
     private void newObjectArray(VmState state, int index) {
+        VmState stateBefore = state.copy();
         Instruction len = state.pop();
         Instruction.assertType(len, JavaKind.Int);
         JavaType klass = method.getConstantPool().lookupType(index, -1);
 
-        NewObjectArrayInstr instr = new NewObjectArrayInstr(len, klass);
+        NewObjectArrayInstr instr = new NewObjectArrayInstr(stateBefore, len, klass);
         appendToBlock(instr);
         state.push(instr);
     }
@@ -1052,26 +1060,29 @@ public class HirBuilder {
     }
 
     private void athrow(VmState state) {
+        VmState stateBefore = state.copy();
         Instruction exception = state.pop();
         Instruction.assertType(exception, JavaKind.Object);
-        ThrowInstr instr = new ThrowInstr(new ArrayList<>(), exception);
+        ThrowInstr instr = new ThrowInstr(stateBefore, new ArrayList<>(), exception);
         appendToBlock(instr);
     }
 
     private void checkCast(VmState state, int index) {
+        VmState stateBefore = state.copy();
         JavaType klass = method.getConstantPool().lookupType(index, -1);
         Instruction object = state.pop();
         Instruction.assertType(object, JavaKind.Object);
-        CheckCastInstr instr = new CheckCastInstr(klass, object);
+        CheckCastInstr instr = new CheckCastInstr(stateBefore, klass, object);
         appendToBlock(instr);
         state.push(instr);
     }
 
     private void instanceOf(VmState state, int index) {
+        VmState stateBefore = state.copy();
         JavaType klass = method.getConstantPool().lookupType(index, -1);
         Instruction object = state.pop();
         Instruction.assertType(object, JavaKind.Object);
-        InstanceOfInstr instr = new InstanceOfInstr(klass, object);
+        InstanceOfInstr instr = new InstanceOfInstr(stateBefore, klass, object);
         appendToBlock(instr);
         state.push(instr);
     }
@@ -1083,6 +1094,7 @@ public class HirBuilder {
     }
 
     private void multiNewArray(VmState state, BytecodeStream.MultiNewArray mna) {
+        VmState stateBefore = state.copy();
         JavaType klass = method.getConstantPool().lookupType(mna.getConstPoolIndex(), -1);
         int dimension = mna.getDimension();
         Instruction[] dimenInstrs = new Instruction[dimension];
@@ -1092,7 +1104,7 @@ public class HirBuilder {
             dimenInstrs[i] = di;
         }
 
-        MultiNewArrayInstr instr = new MultiNewArrayInstr(klass, dimenInstrs);
+        MultiNewArrayInstr instr = new MultiNewArrayInstr(stateBefore, klass, dimenInstrs);
         appendToBlock(instr);
         state.push(instr);
     }

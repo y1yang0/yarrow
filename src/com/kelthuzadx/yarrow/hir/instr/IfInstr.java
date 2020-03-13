@@ -2,6 +2,7 @@ package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.Cond;
 import com.kelthuzadx.yarrow.hir.Value;
+import com.kelthuzadx.yarrow.hir.VmState;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 
@@ -12,8 +13,8 @@ public class IfInstr extends BlockEndInstr {
     private Instruction right;
     private Cond cond;
 
-    public IfInstr(BlockStartInstr trueBlock, BlockStartInstr falseBlock, Instruction left, Instruction right, Cond cond) {
-        super(new Value(JavaKind.Illegal), new ArrayList<>() {{
+    public IfInstr(VmState stateBefore, BlockStartInstr trueBlock, BlockStartInstr falseBlock, Instruction left, Instruction right, Cond cond) {
+        super(new Value(JavaKind.Illegal), stateBefore, new ArrayList<>() {{
             add(trueBlock);
             add(falseBlock);
         }});

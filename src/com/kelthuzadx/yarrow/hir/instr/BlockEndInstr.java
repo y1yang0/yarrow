@@ -1,14 +1,15 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.Value;
+import com.kelthuzadx.yarrow.hir.VmState;
 
 import java.util.List;
 
-public class BlockEndInstr extends Instruction {
+public class BlockEndInstr extends StateInstr {
     private List<BlockStartInstr> successor;
 
-    public BlockEndInstr(Value value, List<BlockStartInstr> successor) {
-        super(value);
+    public BlockEndInstr(Value value, VmState stateBefore, List<BlockStartInstr> successor) {
+        super(value, stateBefore);
         this.successor = successor;
     }
 

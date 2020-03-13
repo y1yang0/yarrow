@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class BlockStartInstr extends Instruction {
+public class BlockStartInstr extends StateInstr {
     // For constructing control flow graph
     private int blockId;
     private int startBci;
@@ -26,17 +26,15 @@ public class BlockStartInstr extends Instruction {
 
     // For instruction itself
     private BlockEndInstr blockEnd;
-    private VmState state;
 
     public BlockStartInstr(int blockId, int bci) {
-        super(new Value(JavaKind.Illegal));
+        super(new Value(JavaKind.Illegal), null);
         this.blockId = blockId;
         this.startBci = this.endBci = bci;
         this.successor = new ArrayList<>();
         this.mayThrowEx = false;
         this.loopHeader = false;
         this.blockEnd = null;
-        this.state = null;
     }
 
     public int getEndBci() {
@@ -100,21 +98,22 @@ public class BlockStartInstr extends Instruction {
     }
 
     public void merge(VmState state) {
-        if (this.state == null) {
-            this.state = state.copy();
+        if (getVmState() == null) {
+            VmState newState = state.copy();
             if (this.isLoopHeader()) {
-                for (int i = 0; i < this.state.getStackSize(); i++) {
-                    this.state.createPhiForStack(this, i);
+                for (int i = 0; i < newState.getStackSize(); i++) {
+                    newState.createPhiForStack(this, i);
                 }
-                for (int i = 0; i < this.state.getLocalSize(); i++) {
-                    this.state.createPhiForLocal(this, i);
+                for (int i = 0; i < newState.getLocalSize(); i++) {
+                    newState.createPhiForLocal(this, i);
                 }
             }
+            setVmState(newState);
         } else {
-            Constrain.matchVmState(this.state, state);
+            Constrain.matchVmState(getVmState(), state);
             if (this.isLoopHeader()) {
                 for (int i = 0; i < state.getLocalSize(); i++) {
-                    if (state.get(i) == null || !state.get(i).isType(this.state.get(i).getType())) {
+                    if (state.get(i) == null || !state.get(i).isType(getVmState().get(i).getType())) {
                         CompilerErrors.bailOut();
                     }
                 }
@@ -122,10 +121,6 @@ public class BlockStartInstr extends Instruction {
                 //TODO
             }
         }
-    }
-
-    public VmState getVmState() {
-        return state;
     }
 
     public void iterateBytecode(Consumer<Instruction> closure) {
