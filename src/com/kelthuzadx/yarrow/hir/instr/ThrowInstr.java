@@ -17,6 +17,6 @@ public class ThrowInstr extends BlockEndInstr {
 
     @Override
     public String toString() {
-        return Logger.f("i{}: throw i{}", super.id, exception.id);
+        return Logger.format("i{}: throw i{}", super.id, exception.id);
     }
 }

@@ -16,6 +16,6 @@ public class NewInstr extends StateInstr {
 
     @Override
     public String toString() {
-        return Logger.f("i{}: new #{}", super.id, klass.getName());
+        return Logger.format("i{}: new #{}", super.id, klass.getName());
     }
 }

@@ -17,7 +17,6 @@ import static com.kelthuzadx.yarrow.bytecode.Bytecode.*;
 import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintCFG;
 
 class CFG {
-    private HotSpotResolvedJavaMethod method;
     private int globalBlockId;
     private int codeSize;
     private byte[] code;
@@ -29,7 +28,6 @@ class CFG {
 
 
     public CFG(HotSpotResolvedJavaMethod method) {
-        this.method = method;
         this.globalBlockId = 0;
         this.codeSize = method.getCodeSize();
         this.code = method.getCode();

@@ -52,6 +52,6 @@ public class ArithmeticInstr extends Op2Instr {
                 CompilerErrors.shouldNotReachHere();
         }
 
-        return Logger.f("i{}: i{} {} i{}", super.id, super.left.id, op, super.right.id);
+        return Logger.format("i{}: i{} {} i{}", super.id, super.left.id, op, super.right.id);
     }
 }

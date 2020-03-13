@@ -94,8 +94,8 @@ public class VmState {
 
     @Override
     public String toString() {
-        String sk = stack.stream().map(instr -> "i" + instr.getId()).collect(Collectors.joining(","));
-        String lc = Arrays.stream(local).map(instr -> "i" + instr.getId()).collect(Collectors.joining(","));
+        String sk = stack.stream().map(instr -> "i"+instr.getId()).collect(Collectors.joining(","));
+        String lc = Arrays.stream(local).map(instr -> "i" + instr.toString()).collect(Collectors.joining(","));
         String lx = lock.stream().map(instr -> "i" + instr.getId()).collect(Collectors.joining(","));
         return "VmState{" +
                 "lock=[" + lx +

@@ -42,16 +42,16 @@ public class HirBuilder {
         Set<Integer> visit = new HashSet<>(cfg.getBlocks().length);
 
         workList = new ArrayDeque<>();
-        BlockStartInstr methodEntryBlock = cfg.blockContain(0);
-        methodEntryBlock.merge(createEntryVmState());
-        workList.add(methodEntryBlock);
+        BlockStartInstr methodEntry = cfg.blockContain(0);
+        methodEntry.mergeVmState(createEntryVmState());
+        workList.add(methodEntry);
 
         while (!workList.isEmpty()) {
             BlockStartInstr blockStart = workList.remove();
             if (!visit.contains(blockStart.getBlockId())) {
                 visit.add(blockStart.getBlockId());
                 if (lastInstr == null) {
-                    lastInstr = methodEntryBlock;
+                    lastInstr = methodEntry;
                 } else {
                     lastInstr.setNext(blockStart);
                     lastInstr = blockStart;
@@ -62,8 +62,8 @@ public class HirBuilder {
 
         if (PrintSSA) {
             Logger.logf("=====SSA Form=====>");
-            BlockStartInstr methodEntry = cfg.blockContain(0);
-            printSSA(new HashSet<>(), methodEntry);
+            BlockStartInstr me = cfg.blockContain(0);
+            printSSA(new HashSet<>(), me);
         }
 
         return this;
@@ -95,8 +95,9 @@ public class HirBuilder {
         }
         Logger.logf("{}", block.getVmState().toString());
         block.iterateBytecode(instr -> Logger.logf("{}", instr.toString()));
+        Logger.logf("");
         visit.add(block);
-        for (BlockStartInstr succ : block.getSuccessor()) {
+        for (BlockStartInstr succ : block.getBlockEnd().getSuccessor()) {
             printSSA(visit, succ);
         }
     }
@@ -641,7 +642,7 @@ public class HirBuilder {
         block.setBlockEnd((BlockEndInstr) lastInstr);
 
         for (BlockStartInstr succ : ((BlockEndInstr) lastInstr).getSuccessor()) {
-            succ.merge(block.getVmState());
+            succ.mergeVmState(block.getVmState());
             workList.add(succ);
         }
 

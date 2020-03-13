@@ -19,6 +19,7 @@ public class BlockStartInstr extends StateInstr {
     private int blockId;
     private int startBci;
     private int endBci;
+    // Successor of this block, when HIR construction accomplish, it will be cleared
     private List<BlockStartInstr> successor;
     private boolean mayThrowEx;
     private boolean loopHeader;
@@ -26,12 +27,14 @@ public class BlockStartInstr extends StateInstr {
 
     // For instruction itself
     private BlockEndInstr blockEnd;
+    private List<BlockStartInstr> predecessor;
 
     public BlockStartInstr(int blockId, int bci) {
         super(new Value(JavaKind.Illegal), null);
         this.blockId = blockId;
         this.startBci = this.endBci = bci;
         this.successor = new ArrayList<>();
+        this.predecessor = new ArrayList<>();
         this.mayThrowEx = false;
         this.loopHeader = false;
         this.blockEnd = null;
@@ -59,6 +62,10 @@ public class BlockStartInstr extends StateInstr {
 
     public List<BlockStartInstr> getSuccessor() {
         return successor;
+    }
+
+    public List<BlockStartInstr> getPredecessor() {
+        return predecessor;
     }
 
     public void removeSuccessor() {
@@ -93,11 +100,23 @@ public class BlockStartInstr extends StateInstr {
         this.xhandler = xhandler;
     }
 
-    public void setBlockEnd(BlockEndInstr blockEnd) {
-        this.blockEnd = blockEnd;
+    public BlockEndInstr getBlockEnd() {
+        return blockEnd;
     }
 
-    public void merge(VmState state) {
+    public void setBlockEnd(BlockEndInstr blockEnd) {
+        // Connect to BlockEndInstr and remove BlockStartInstr's successors
+        this.blockEnd = blockEnd;
+        this.removeSuccessor();
+
+        // Set predecessors of BlockStartInstr
+        for(BlockStartInstr succ:blockEnd.getSuccessor()){
+            succ.getPredecessor().add(this);
+        }
+        blockEnd.setBlockStart(this);
+    }
+
+    public void mergeVmState(VmState state) {
         if (getVmState() == null) {
             VmState newState = state.copy();
             if (this.isLoopHeader()) {
@@ -168,6 +187,6 @@ public class BlockStartInstr extends StateInstr {
 
     @Override
     public String toString() {
-        return Logger.f("i{}: block_start", super.id);
+        return Logger.format("i{}: block_start", super.id);
     }
 }

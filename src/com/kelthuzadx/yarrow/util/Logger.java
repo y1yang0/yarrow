@@ -8,7 +8,7 @@ public class Logger {
     private static final SimpleDateFormat FORMATTER = new SimpleDateFormat("HH:mm:ss");
 
     @SafeVarargs
-    public static <T> String f(String format, T... args) {
+    public static <T> String format(String format, T... args) {
         return replacePlaceHolder(format, args);
     }
 

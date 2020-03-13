@@ -15,6 +15,6 @@ public class MonitorEnterInstr extends StateInstr {
 
     @Override
     public String toString() {
-        return Logger.f("i{}: monitorenter i{}", super.id, lock.id);
+        return Logger.format("i{}: monitorenter i{}", super.id, lock.id);
     }
 }

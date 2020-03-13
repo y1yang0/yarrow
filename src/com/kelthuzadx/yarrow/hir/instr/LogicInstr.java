@@ -31,6 +31,6 @@ public class LogicInstr extends Op2Instr {
                 op = "^";
                 break;
         }
-        return Logger.f("i{}: i{} {} i{}", super.id, left.id, op, right.id);
+        return Logger.format("i{}: i{} {} i{}", super.id, left.id, op, right.id);
     }
 }

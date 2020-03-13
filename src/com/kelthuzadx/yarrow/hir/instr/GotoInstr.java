@@ -16,6 +16,6 @@ public class GotoInstr extends BlockEndInstr {
 
     @Override
     public String toString() {
-        return Logger.f("i{}: goto i{}", super.id, super.getSuccessor().get(0).id);
+        return Logger.format("i{}: goto i{}", super.id, super.getSuccessor().get(0).id);
     }
 }

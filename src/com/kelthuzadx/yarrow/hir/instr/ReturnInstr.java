@@ -19,8 +19,8 @@ public class ReturnInstr extends BlockEndInstr {
     @Override
     public String toString() {
         if (returnValue == null) {
-            return Logger.f("i{}: return", super.id);
+            return Logger.format("i{}: return", super.id);
         }
-        return Logger.f("i{}: return i{}", super.id, returnValue.id);
+        return Logger.format("i{}: return i{}", super.id, returnValue.id);
     }
 }

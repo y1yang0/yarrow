@@ -47,7 +47,7 @@ public class IfInstr extends BlockEndInstr {
                 op = "<=";
                 break;
         }
-        return Logger.f("i{}: if i{} {} i{} then i{} else i{}",
+        return Logger.format("i{}: if i{} {} i{} then i{} else i{}",
                 super.id, left.id, op, right.id,
                 super.getSuccessor().get(0).id,
                 super.getSuccessor().get(1).id);

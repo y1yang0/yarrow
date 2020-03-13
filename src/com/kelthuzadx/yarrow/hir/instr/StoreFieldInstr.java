@@ -13,6 +13,6 @@ public class StoreFieldInstr extends AccessFieldInstr {
 
     @Override
     public String toString() {
-        return Logger.f("i{}: store i{}.#{},i{}", super.id, super.object, super.offset, super.field.getDeclaringClass(), value.id);
+        return Logger.format("i{}: store i{}.#{},i{}", super.id, super.object, super.offset, super.field.getDeclaringClass(), value.id);
     }
 }

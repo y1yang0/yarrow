@@ -13,6 +13,6 @@ public class NegateInstr extends Instruction {
 
     @Override
     public String toString() {
-        return Logger.f("i{}: -i{}]", super.id, left.id);
+        return Logger.format("i{}: -i{}]", super.id, left.id);
     }
 }

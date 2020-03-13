@@ -13,8 +13,9 @@ public class PhiInstr extends Instruction {
         this.block = block;
     }
 
+
     @Override
     public String toString() {
-        return Logger.f("i{}: phi [{}]", super.id, index);
+        return Logger.format("i{}: phi [{}]", super.id, index);
     }
 }
