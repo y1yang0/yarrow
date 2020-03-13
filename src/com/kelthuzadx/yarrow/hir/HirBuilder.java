@@ -26,6 +26,8 @@ public class HirBuilder {
 
     private Queue<BlockStartInstr> workList;
 
+    private VmState state;
+
     public HirBuilder(HotSpotResolvedJavaMethod method) {
         this.method = method;
         this.lastInstr = null;
@@ -101,7 +103,7 @@ public class HirBuilder {
 
 
     private void fulfillBlock(BlockStartInstr block) {
-        VmState state = block.getVmState();
+        state = block.getVmState();
 
         BytecodeStream bs = new BytecodeStream(method.getCode(), block.getStartBci(), block.getEndBci());
         while (bs.hasNext()) {
@@ -111,258 +113,258 @@ public class HirBuilder {
                 case Bytecode.NOP:
                     break;
                 case Bytecode.ACONST_NULL:
-                    loadConst(state, JavaKind.Object, null);
+                    loadConst(JavaKind.Object, null);
                     break;
                 case Bytecode.ICONST_M1:
-                    loadConst(state, JavaKind.Int, -1);
+                    loadConst(JavaKind.Int, -1);
                     break;
                 case Bytecode.ICONST_0:
-                    loadConst(state, JavaKind.Int, 0);
+                    loadConst(JavaKind.Int, 0);
                     break;
                 case Bytecode.ICONST_1:
-                    loadConst(state, JavaKind.Int, 1);
+                    loadConst(JavaKind.Int, 1);
                     break;
                 case Bytecode.ICONST_2:
-                    loadConst(state, JavaKind.Int, 2);
+                    loadConst(JavaKind.Int, 2);
                     break;
                 case Bytecode.ICONST_3:
-                    loadConst(state, JavaKind.Int, 3);
+                    loadConst(JavaKind.Int, 3);
                     break;
                 case Bytecode.ICONST_4:
-                    loadConst(state, JavaKind.Int, 4);
+                    loadConst(JavaKind.Int, 4);
                     break;
                 case Bytecode.ICONST_5:
-                    loadConst(state, JavaKind.Int, 5);
+                    loadConst(JavaKind.Int, 5);
                     break;
                 case Bytecode.LCONST_0:
-                    loadConst(state, JavaKind.Long, 0L);
+                    loadConst(JavaKind.Long, 0L);
                     break;
                 case Bytecode.LCONST_1:
-                    loadConst(state, JavaKind.Long, 1L);
+                    loadConst(JavaKind.Long, 1L);
                     break;
                 case Bytecode.FCONST_0:
-                    loadConst(state, JavaKind.Float, 0.0f);
+                    loadConst(JavaKind.Float, 0.0f);
                     break;
                 case Bytecode.FCONST_1:
-                    loadConst(state, JavaKind.Float, 1.0f);
+                    loadConst(JavaKind.Float, 1.0f);
                     break;
                 case Bytecode.FCONST_2:
-                    loadConst(state, JavaKind.Float, 2.0f);
+                    loadConst(JavaKind.Float, 2.0f);
                     break;
                 case Bytecode.DCONST_0:
-                    loadConst(state, JavaKind.Double, 0.0d);
+                    loadConst(JavaKind.Double, 0.0d);
                     break;
                 case Bytecode.DCONST_1:
-                    loadConst(state, JavaKind.Double, 1.0d);
+                    loadConst(JavaKind.Double, 1.0d);
                     break;
                 case Bytecode.BIPUSH:
-                    loadConst(state, JavaKind.Int, (byte) bs.getBytecodeData());
+                    loadConst(JavaKind.Int, (byte) bs.getBytecodeData());
                     break;
                 case Bytecode.SIPUSH:
-                    loadConst(state, JavaKind.Int, (short) bs.getBytecodeData());
+                    loadConst(JavaKind.Int, (short) bs.getBytecodeData());
                     break;
                 case Bytecode.LDC:
                 case Bytecode.LDC_W:
                 case Bytecode.LDC2_W:
-                    ldc(state, bs.getBytecodeData());
+                    ldc(bs.getBytecodeData());
                     break;
                 case Bytecode.ILOAD:
-                    load(state, JavaKind.Int, bs.getBytecodeData());
+                    load(JavaKind.Int, bs.getBytecodeData());
                     break;
                 case Bytecode.LLOAD:
-                    load(state, JavaKind.Long, bs.getBytecodeData());
+                    load(JavaKind.Long, bs.getBytecodeData());
                     break;
                 case Bytecode.FLOAD:
-                    load(state, JavaKind.Float, bs.getBytecodeData());
+                    load(JavaKind.Float, bs.getBytecodeData());
                     break;
                 case Bytecode.DLOAD:
-                    load(state, JavaKind.Double, bs.getBytecodeData());
+                    load(JavaKind.Double, bs.getBytecodeData());
                     break;
                 case Bytecode.ALOAD:
-                    load(state, JavaKind.Object, bs.getBytecodeData());
+                    load(JavaKind.Object, bs.getBytecodeData());
                     break;
                 case Bytecode.ILOAD_0:
-                    load(state, JavaKind.Int, 0);
+                    load(JavaKind.Int, 0);
                     break;
                 case Bytecode.ILOAD_1:
-                    load(state, JavaKind.Int, 1);
+                    load(JavaKind.Int, 1);
                     break;
                 case Bytecode.ILOAD_2:
-                    load(state, JavaKind.Int, 2);
+                    load(JavaKind.Int, 2);
                     break;
                 case Bytecode.ILOAD_3:
-                    load(state, JavaKind.Int, 3);
+                    load(JavaKind.Int, 3);
                     break;
                 case Bytecode.LLOAD_0:
-                    load(state, JavaKind.Long, 0);
+                    load(JavaKind.Long, 0);
                     break;
                 case Bytecode.LLOAD_1:
-                    load(state, JavaKind.Long, 1);
+                    load(JavaKind.Long, 1);
                     break;
                 case Bytecode.LLOAD_2:
-                    load(state, JavaKind.Long, 2);
+                    load(JavaKind.Long, 2);
                     break;
                 case Bytecode.LLOAD_3:
-                    load(state, JavaKind.Long, 3);
+                    load(JavaKind.Long, 3);
                     break;
                 case Bytecode.FLOAD_0:
-                    load(state, JavaKind.Float, 0);
+                    load(JavaKind.Float, 0);
                     break;
                 case Bytecode.FLOAD_1:
-                    load(state, JavaKind.Float, 1);
+                    load(JavaKind.Float, 1);
                     break;
                 case Bytecode.FLOAD_2:
-                    load(state, JavaKind.Float, 2);
+                    load(JavaKind.Float, 2);
                     break;
                 case Bytecode.FLOAD_3:
-                    load(state, JavaKind.Float, 3);
+                    load(JavaKind.Float, 3);
                     break;
                 case Bytecode.DLOAD_0:
-                    load(state, JavaKind.Double, 0);
+                    load(JavaKind.Double, 0);
                     break;
                 case Bytecode.DLOAD_1:
-                    load(state, JavaKind.Double, 1);
+                    load(JavaKind.Double, 1);
                     break;
                 case Bytecode.DLOAD_2:
-                    load(state, JavaKind.Double, 2);
+                    load(JavaKind.Double, 2);
                     break;
                 case Bytecode.DLOAD_3:
-                    load(state, JavaKind.Double, 3);
+                    load(JavaKind.Double, 3);
                     break;
                 case Bytecode.ALOAD_0:
-                    load(state, JavaKind.Object, 0);
+                    load(JavaKind.Object, 0);
                     break;
                 case Bytecode.ALOAD_1:
-                    load(state, JavaKind.Object, 1);
+                    load(JavaKind.Object, 1);
                     break;
                 case Bytecode.ALOAD_2:
-                    load(state, JavaKind.Object, 2);
+                    load(JavaKind.Object, 2);
                     break;
                 case Bytecode.ALOAD_3:
-                    load(state, JavaKind.Object, 3);
+                    load(JavaKind.Object, 3);
                     break;
                 case Bytecode.IALOAD:
-                    loadArray(state, JavaKind.Int);
+                    loadArray(JavaKind.Int);
                     break;
                 case Bytecode.LALOAD:
-                    loadArray(state, JavaKind.Long);
+                    loadArray(JavaKind.Long);
                     break;
                 case Bytecode.FALOAD:
-                    loadArray(state, JavaKind.Float);
+                    loadArray(JavaKind.Float);
                     break;
                 case Bytecode.DALOAD:
-                    loadArray(state, JavaKind.Double);
+                    loadArray(JavaKind.Double);
                     break;
                 case Bytecode.AALOAD:
-                    loadArray(state, JavaKind.Object);
+                    loadArray(JavaKind.Object);
                     break;
                 case Bytecode.BALOAD:
-                    loadArray(state, JavaKind.Byte);
+                    loadArray(JavaKind.Byte);
                     break;
                 case Bytecode.CALOAD:
-                    loadArray(state, JavaKind.Char);
+                    loadArray(JavaKind.Char);
                     break;
                 case Bytecode.SALOAD:
-                    loadArray(state, JavaKind.Short);
+                    loadArray(JavaKind.Short);
                     break;
                 case Bytecode.ISTORE:
-                    store(state, JavaKind.Int, bs.getBytecodeData());
+                    store(JavaKind.Int, bs.getBytecodeData());
                     break;
                 case Bytecode.LSTORE:
-                    store(state, JavaKind.Long, bs.getBytecodeData());
+                    store(JavaKind.Long, bs.getBytecodeData());
                     break;
                 case Bytecode.FSTORE:
-                    store(state, JavaKind.Float, bs.getBytecodeData());
+                    store(JavaKind.Float, bs.getBytecodeData());
                     break;
                 case Bytecode.DSTORE:
-                    store(state, JavaKind.Double, bs.getBytecodeData());
+                    store(JavaKind.Double, bs.getBytecodeData());
                     break;
                 case Bytecode.ASTORE:
-                    store(state, JavaKind.Object, bs.getBytecodeData());
+                    store(JavaKind.Object, bs.getBytecodeData());
                     break;
                 case Bytecode.ISTORE_0:
-                    store(state, JavaKind.Int, 0);
+                    store(JavaKind.Int, 0);
                     break;
                 case Bytecode.ISTORE_1:
-                    store(state, JavaKind.Int, 1);
+                    store(JavaKind.Int, 1);
                     break;
                 case Bytecode.ISTORE_2:
-                    store(state, JavaKind.Int, 2);
+                    store(JavaKind.Int, 2);
                     break;
                 case Bytecode.ISTORE_3:
-                    store(state, JavaKind.Int, 3);
+                    store(JavaKind.Int, 3);
                     break;
                 case Bytecode.LSTORE_0:
-                    store(state, JavaKind.Long, 0);
+                    store(JavaKind.Long, 0);
                     break;
                 case Bytecode.LSTORE_1:
-                    store(state, JavaKind.Long, 1);
+                    store(JavaKind.Long, 1);
                     break;
                 case Bytecode.LSTORE_2:
-                    store(state, JavaKind.Long, 2);
+                    store(JavaKind.Long, 2);
                     break;
                 case Bytecode.LSTORE_3:
-                    store(state, JavaKind.Long, 3);
+                    store(JavaKind.Long, 3);
                     break;
                 case Bytecode.FSTORE_0:
-                    store(state, JavaKind.Float, 0);
+                    store(JavaKind.Float, 0);
                     break;
                 case Bytecode.FSTORE_1:
-                    store(state, JavaKind.Float, 1);
+                    store(JavaKind.Float, 1);
                     break;
                 case Bytecode.FSTORE_2:
-                    store(state, JavaKind.Float, 2);
+                    store(JavaKind.Float, 2);
                     break;
                 case Bytecode.FSTORE_3:
-                    store(state, JavaKind.Float, 3);
+                    store(JavaKind.Float, 3);
                     break;
                 case Bytecode.DSTORE_0:
-                    store(state, JavaKind.Double, 0);
+                    store(JavaKind.Double, 0);
                     break;
                 case Bytecode.DSTORE_1:
-                    store(state, JavaKind.Double, 1);
+                    store(JavaKind.Double, 1);
                     break;
                 case Bytecode.DSTORE_2:
-                    store(state, JavaKind.Double, 2);
+                    store(JavaKind.Double, 2);
                     break;
                 case Bytecode.DSTORE_3:
-                    store(state, JavaKind.Double, 3);
+                    store(JavaKind.Double, 3);
                     break;
                 case Bytecode.ASTORE_0:
-                    store(state, JavaKind.Object, 0);
+                    store(JavaKind.Object, 0);
                     break;
                 case Bytecode.ASTORE_1:
-                    store(state, JavaKind.Object, 1);
+                    store(JavaKind.Object, 1);
                     break;
                 case Bytecode.ASTORE_2:
-                    store(state, JavaKind.Object, 2);
+                    store(JavaKind.Object, 2);
                     break;
                 case Bytecode.ASTORE_3:
-                    store(state, JavaKind.Object, 3);
+                    store(JavaKind.Object, 3);
                     break;
                 case Bytecode.IASTORE:
-                    storeArray(state, JavaKind.Int);
+                    storeArray(JavaKind.Int);
                     break;
                 case Bytecode.LASTORE:
-                    storeArray(state, JavaKind.Long);
+                    storeArray(JavaKind.Long);
                     break;
                 case Bytecode.FASTORE:
-                    storeArray(state, JavaKind.Float);
+                    storeArray(JavaKind.Float);
                     break;
                 case Bytecode.DASTORE:
-                    storeArray(state, JavaKind.Double);
+                    storeArray(JavaKind.Double);
                     break;
                 case Bytecode.AASTORE:
-                    storeArray(state, JavaKind.Object);
+                    storeArray(JavaKind.Object);
                     break;
                 case Bytecode.BASTORE:
-                    storeArray(state, JavaKind.Byte);
+                    storeArray(JavaKind.Byte);
                     break;
                 case Bytecode.CASTORE:
-                    storeArray(state, JavaKind.Char);
+                    storeArray(JavaKind.Char);
                     break;
                 case Bytecode.SASTORE:
-                    storeArray(state, JavaKind.Short);
+                    storeArray(JavaKind.Short);
                     break;
                 case Bytecode.POP:
                     state.pop();
@@ -377,7 +379,7 @@ public class HirBuilder {
                 case Bytecode.DUP2:
                 case Bytecode.DUP2_X1:
                 case Bytecode.DUP2_X2:
-                    duplicate(state, opcode);
+                    duplicate(opcode);
                     break;
                 case Bytecode.SWAP:
                     swap(state);
@@ -387,199 +389,199 @@ public class HirBuilder {
                 case Bytecode.IMUL:
                 case Bytecode.IDIV:
                 case Bytecode.IREM:
-                    arithmetic(state, JavaKind.Int, opcode);
+                    arithmetic(JavaKind.Int, opcode);
                     break;
                 case Bytecode.LADD:
                 case Bytecode.LSUB:
                 case Bytecode.LMUL:
                 case Bytecode.LDIV:
                 case Bytecode.LREM:
-                    arithmetic(state, JavaKind.Long, opcode);
+                    arithmetic(JavaKind.Long, opcode);
                     break;
                 case Bytecode.FADD:
                 case Bytecode.FSUB:
                 case Bytecode.FMUL:
                 case Bytecode.FDIV:
                 case Bytecode.FREM:
-                    arithmetic(state, JavaKind.Float, opcode);
+                    arithmetic(JavaKind.Float, opcode);
                     break;
                 case Bytecode.DADD:
                 case Bytecode.DSUB:
                 case Bytecode.DMUL:
                 case Bytecode.DDIV:
                 case Bytecode.DREM:
-                    arithmetic(state, JavaKind.Double, opcode);
+                    arithmetic(JavaKind.Double, opcode);
                     break;
                 case Bytecode.INEG:
-                    negate(state, JavaKind.Int);
+                    negate(JavaKind.Int);
                     break;
                 case Bytecode.LNEG:
-                    negate(state, JavaKind.Long);
+                    negate(JavaKind.Long);
                     break;
                 case Bytecode.FNEG:
-                    negate(state, JavaKind.Float);
+                    negate(JavaKind.Float);
                     break;
                 case Bytecode.DNEG:
-                    negate(state, JavaKind.Double);
+                    negate(JavaKind.Double);
                     break;
                 case Bytecode.ISHL:
                 case Bytecode.ISHR:
                 case Bytecode.IUSHR:
-                    shift(state, JavaKind.Int, opcode);
+                    shift(JavaKind.Int, opcode);
                     break;
                 case Bytecode.LSHL:
                 case Bytecode.LSHR:
                 case Bytecode.LUSHR:
-                    shift(state, JavaKind.Long, opcode);
+                    shift(JavaKind.Long, opcode);
                     break;
                 case Bytecode.IAND:
                 case Bytecode.IOR:
                 case Bytecode.IXOR:
-                    logic(state, JavaKind.Int, opcode);
+                    logic(JavaKind.Int, opcode);
                     break;
                 case Bytecode.LAND:
                 case Bytecode.LOR:
                 case Bytecode.LXOR:
-                    logic(state, JavaKind.Long, opcode);
+                    logic(JavaKind.Long, opcode);
                     break;
                 case Bytecode.IINC:
-                    increment(state, bs.getIINC());
+                    increment(bs.getIINC());
                     break;
                 case Bytecode.I2L:
-                    typeCast(state, JavaKind.Int, JavaKind.Long, opcode);
+                    typeCast(JavaKind.Int, JavaKind.Long, opcode);
                     break;
                 case Bytecode.I2F:
-                    typeCast(state, JavaKind.Int, JavaKind.Float, opcode);
+                    typeCast(JavaKind.Int, JavaKind.Float, opcode);
                     break;
                 case Bytecode.I2D:
-                    typeCast(state, JavaKind.Int, JavaKind.Double, opcode);
+                    typeCast(JavaKind.Int, JavaKind.Double, opcode);
                     break;
                 case Bytecode.L2I:
-                    typeCast(state, JavaKind.Long, JavaKind.Int, opcode);
+                    typeCast(JavaKind.Long, JavaKind.Int, opcode);
                     break;
                 case Bytecode.L2F:
-                    typeCast(state, JavaKind.Long, JavaKind.Float, opcode);
+                    typeCast(JavaKind.Long, JavaKind.Float, opcode);
                     break;
                 case Bytecode.L2D:
-                    typeCast(state, JavaKind.Long, JavaKind.Double, opcode);
+                    typeCast(JavaKind.Long, JavaKind.Double, opcode);
                     break;
                 case Bytecode.F2I:
-                    typeCast(state, JavaKind.Float, JavaKind.Int, opcode);
+                    typeCast(JavaKind.Float, JavaKind.Int, opcode);
                     break;
                 case Bytecode.F2L:
-                    typeCast(state, JavaKind.Float, JavaKind.Long, opcode);
+                    typeCast(JavaKind.Float, JavaKind.Long, opcode);
                     break;
                 case Bytecode.F2D:
-                    typeCast(state, JavaKind.Float, JavaKind.Double, opcode);
+                    typeCast(JavaKind.Float, JavaKind.Double, opcode);
                     break;
                 case Bytecode.D2I:
-                    typeCast(state, JavaKind.Double, JavaKind.Int, opcode);
+                    typeCast(JavaKind.Double, JavaKind.Int, opcode);
                     break;
                 case Bytecode.D2L:
-                    typeCast(state, JavaKind.Double, JavaKind.Long, opcode);
+                    typeCast(JavaKind.Double, JavaKind.Long, opcode);
                     break;
                 case Bytecode.D2F:
-                    typeCast(state, JavaKind.Double, JavaKind.Float, opcode);
+                    typeCast(JavaKind.Double, JavaKind.Float, opcode);
                     break;
                 case Bytecode.I2B:
-                    typeCast(state, JavaKind.Int, JavaKind.Byte, opcode);
+                    typeCast(JavaKind.Int, JavaKind.Byte, opcode);
                     break;
                 case Bytecode.I2C:
-                    typeCast(state, JavaKind.Int, JavaKind.Char, opcode);
+                    typeCast(JavaKind.Int, JavaKind.Char, opcode);
                     break;
                 case Bytecode.I2S:
-                    typeCast(state, JavaKind.Int, JavaKind.Short, opcode);
+                    typeCast(JavaKind.Int, JavaKind.Short, opcode);
                     break;
                 case Bytecode.LCMP:
-                    compare(state, JavaKind.Long, opcode);
+                    compare(JavaKind.Long, opcode);
                     break;
                 case Bytecode.FCMPL:
                 case Bytecode.FCMPG:
-                    compare(state, JavaKind.Float, opcode);
+                    compare(JavaKind.Float, opcode);
                     break;
                 case Bytecode.DCMPL:
                 case Bytecode.DCMPG:
-                    compare(state, JavaKind.Double, opcode);
+                    compare(JavaKind.Double, opcode);
                     break;
                 case Bytecode.IFEQ:
-                    branchIfZero(state, JavaKind.Int, Cond.EQ, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfZero(JavaKind.Int, Cond.EQ, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 case Bytecode.IFNE:
-                    branchIfZero(state, JavaKind.Int, Cond.NE, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfZero(JavaKind.Int, Cond.NE, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 case Bytecode.IFLT:
-                    branchIfZero(state, JavaKind.Int, Cond.LT, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfZero(JavaKind.Int, Cond.LT, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 case Bytecode.IFGE:
-                    branchIfZero(state, JavaKind.Int, Cond.GE, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfZero(JavaKind.Int, Cond.GE, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 case Bytecode.IFGT:
-                    branchIfZero(state, JavaKind.Int, Cond.GT, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfZero(JavaKind.Int, Cond.GT, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 case Bytecode.IFLE:
-                    branchIfZero(state, JavaKind.Int, Cond.LE, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfZero(JavaKind.Int, Cond.LE, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 case Bytecode.IF_ICMPEQ:
-                    branchIfSame(state, JavaKind.Int, Cond.EQ, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfSame(JavaKind.Int, Cond.EQ, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 case Bytecode.IF_ICMPNE:
-                    branchIfSame(state, JavaKind.Int, Cond.NE, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfSame(JavaKind.Int, Cond.NE, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 case Bytecode.IF_ICMPLT:
-                    branchIfSame(state, JavaKind.Int, Cond.LT, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfSame(JavaKind.Int, Cond.LT, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 case Bytecode.IF_ICMPGE:
-                    branchIfSame(state, JavaKind.Int, Cond.GE, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfSame(JavaKind.Int, Cond.GE, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 case Bytecode.IF_ICMPGT:
-                    branchIfSame(state, JavaKind.Int, Cond.GT, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfSame(JavaKind.Int, Cond.GT, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 case Bytecode.IF_ICMPLE:
-                    branchIfSame(state, JavaKind.Int, Cond.LE, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfSame(JavaKind.Int, Cond.LE, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 case Bytecode.IF_ACMPEQ:
-                    branchIfSame(state, JavaKind.Object, Cond.EQ, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfSame(JavaKind.Object, Cond.EQ, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 case Bytecode.IF_ACMPNE:
-                    branchIfSame(state, JavaKind.Object, Cond.NE, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfSame(JavaKind.Object, Cond.NE, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 case Bytecode.GOTO:
                 case Bytecode.GOTO_W:
-                    goTo(state, curBci + bs.getBytecodeData());
+                    goTo(curBci + bs.getBytecodeData());
                     break;
                 case Bytecode.JSR:
                 case Bytecode.RET:
                 case Bytecode.JSR_W:
                     CompilerErrors.unsupported();
                 case Bytecode.TABLESWITCH:
-                    tableSwitch(state, bs.getTableSwitch(), curBci);
+                    tableSwitch(bs.getTableSwitch(), curBci);
                     break;
                 case Bytecode.LOOKUPSWITCH:
-                    lookupSwitch(state, bs.getLookupSwitch(), curBci);
+                    lookupSwitch(bs.getLookupSwitch(), curBci);
                     break;
                 case Bytecode.IRETURN:
-                    returnOp(state, JavaKind.Int, false);
+                    returnOp(JavaKind.Int, false);
                     break;
                 case Bytecode.LRETURN:
-                    returnOp(state, JavaKind.Long, false);
+                    returnOp(JavaKind.Long, false);
                     break;
                 case Bytecode.FRETURN:
-                    returnOp(state, JavaKind.Float, false);
+                    returnOp(JavaKind.Float, false);
                     break;
                 case Bytecode.DRETURN:
-                    returnOp(state, JavaKind.Double, false);
+                    returnOp(JavaKind.Double, false);
                     break;
                 case Bytecode.ARETURN:
-                    returnOp(state, JavaKind.Object, false);
+                    returnOp(JavaKind.Object, false);
                     break;
                 case Bytecode.RETURN:
-                    returnOp(state, JavaKind.Void, true);
+                    returnOp(JavaKind.Void, true);
                     break;
                 case Bytecode.GETSTATIC:
                 case Bytecode.GETFIELD:
                 case Bytecode.PUTSTATIC:
                 case Bytecode.PUTFIELD:
-                    accessField(state, bs.getBytecodeData(), opcode);
+                    accessField(bs.getBytecodeData(), opcode);
                     break;
                 case Bytecode.INVOKEVIRTUAL:
                 case Bytecode.INVOKESPECIAL:
@@ -589,13 +591,13 @@ public class HirBuilder {
                     call(state);
                     break;
                 case Bytecode.NEW:
-                    newInstance(state, bs.getBytecodeData());
+                    newInstance(bs.getBytecodeData());
                     break;
                 case Bytecode.NEWARRAY:
-                    newTypeArray(state, bs.getBytecodeData());
+                    newTypeArray(bs.getBytecodeData());
                     break;
                 case Bytecode.ANEWARRAY:
-                    newObjectArray(state, bs.getBytecodeData());
+                    newObjectArray(bs.getBytecodeData());
                     break;
                 case Bytecode.ARRAYLENGTH:
                     arrayLength(state);
@@ -604,10 +606,10 @@ public class HirBuilder {
                     athrow(state);
                     break;
                 case Bytecode.CHECKCAST:
-                    checkCast(state, bs.getBytecodeData());
+                    checkCast(bs.getBytecodeData());
                     break;
                 case Bytecode.INSTANCEOF:
-                    instanceOf(state, bs.getBytecodeData());
+                    instanceOf(bs.getBytecodeData());
                     break;
                 case Bytecode.MONITORENTER:
                 case Bytecode.MONITOREXIT:
@@ -615,13 +617,13 @@ public class HirBuilder {
                 case Bytecode.WIDE:
                     CompilerErrors.shouldNotReachHere();
                 case Bytecode.MULTIANEWARRAY:
-                    multiNewArray(state, bs.getMultiNewArray());
+                    multiNewArray(bs.getMultiNewArray());
                     break;
                 case Bytecode.IFNULL:
-                    branchIfNull(state, JavaKind.Object, Cond.EQ, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfNull(JavaKind.Object, Cond.EQ, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 case Bytecode.IFNONNULL:
-                    branchIfNull(state, JavaKind.Object, Cond.NE, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfNull(JavaKind.Object, Cond.NE, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 default:
                     CompilerErrors.shouldNotReachHere();
@@ -647,13 +649,13 @@ public class HirBuilder {
         lastInstr = curInstr;
     }
 
-    private <T> void loadConst(VmState state, JavaKind type, T value) {
+    private <T> void loadConst(JavaKind type, T value) {
         ConstantInstr instr = new ConstantInstr(new Value(type, value));
         appendToBlock(instr);
         state.push(instr);
     }
 
-    private void ldc(VmState state, int index) {
+    private void ldc(int index) {
         Value temp = null;
         Object item = method.getConstantPool().lookupConstant(index);
         if (item instanceof JavaConstant) {
@@ -685,13 +687,13 @@ public class HirBuilder {
         state.push(instr);
     }
 
-    private void load(VmState state, JavaKind type, int index) {
+    private void load(JavaKind type, int index) {
         Instruction temp = state.get(index);
         Instruction.assertType(temp, type);
         state.push(temp);
     }
 
-    private void loadArray(VmState state, JavaKind type) {
+    private void loadArray(JavaKind type) {
         Instruction index = state.pop();
         Instruction array = state.pop();
         Instruction.assertType(array, JavaKind.Object);
@@ -701,13 +703,13 @@ public class HirBuilder {
         state.push(instr);
     }
 
-    private void store(VmState state, JavaKind type, int index) {
+    private void store(JavaKind type, int index) {
         Instruction temp = state.pop();
         Instruction.assertType(temp, type);
         state.set(index, temp);
     }
 
-    private void storeArray(VmState state, JavaKind type) {
+    private void storeArray(JavaKind type) {
         Instruction value = state.pop();
         Instruction index = state.pop();
         Instruction array = state.pop();
@@ -717,7 +719,7 @@ public class HirBuilder {
         appendToBlock(instr);
     }
 
-    private void duplicate(VmState state, int opcode) {
+    private void duplicate(int opcode) {
         switch (opcode) {
             case Bytecode.DUP: {
                 Instruction temp = state.pop();
@@ -788,7 +790,7 @@ public class HirBuilder {
         state.push(temp1);
     }
 
-    private void arithmetic(VmState state, JavaKind type, int opcode) {
+    private void arithmetic(JavaKind type, int opcode) {
         Instruction right = state.pop();
         Instruction left = state.pop();
         Instruction.assertType(left, type);
@@ -798,7 +800,7 @@ public class HirBuilder {
         state.push(instr);
     }
 
-    private void negate(VmState state, JavaKind type) {
+    private void negate(JavaKind type) {
         Instruction temp = state.pop();
         Instruction.assertType(temp, type);
         NegateInstr instr = new NegateInstr(temp);
@@ -806,7 +808,7 @@ public class HirBuilder {
         state.push(instr);
     }
 
-    private void shift(VmState state, JavaKind type, int opcode) {
+    private void shift(JavaKind type, int opcode) {
         Instruction right = state.pop();
         Instruction left = state.pop();
         Instruction.assertType(right, JavaKind.Int);
@@ -816,7 +818,7 @@ public class HirBuilder {
         state.push(instr);
     }
 
-    private void logic(VmState state, JavaKind type, int opcode) {
+    private void logic(JavaKind type, int opcode) {
         Instruction right = state.pop();
         Instruction left = state.pop();
         Instruction.assertType(right, type);
@@ -826,23 +828,23 @@ public class HirBuilder {
         state.push(instr);
     }
 
-    private void increment(VmState state, BytecodeStream.IINC iinc) {
+    private void increment(BytecodeStream.IINC iinc) {
         // increment local variable by constant
         int index = iinc.getIncrementIndex();
         int constant = iinc.getIncrementConst();
 
-        load(state, JavaKind.Int, index);
+        load(JavaKind.Int, index);
 
         ConstantInstr instr = new ConstantInstr(new Value(JavaKind.Int, constant));
         appendToBlock(instr);
         state.push(instr);
 
-        arithmetic(state, JavaKind.Int, Bytecode.IADD);
+        arithmetic(JavaKind.Int, Bytecode.IADD);
 
-        store(state, JavaKind.Int, index);
+        store(JavaKind.Int, index);
     }
 
-    private void typeCast(VmState state, JavaKind fromType, JavaKind toType, int opcode) {
+    private void typeCast(JavaKind fromType, JavaKind toType, int opcode) {
         Instruction from = state.pop();
         Instruction.assertType(from, fromType);
         JavaKind t = toType;
@@ -854,7 +856,7 @@ public class HirBuilder {
         state.push(instr);
     }
 
-    private void compare(VmState state, JavaKind type, int opcode) {
+    private void compare(JavaKind type, int opcode) {
         Instruction right = state.pop();
         Instruction left = state.pop();
         Instruction.assertType(left, type);
@@ -864,42 +866,42 @@ public class HirBuilder {
         state.push(instr);
     }
 
-    private void branchIfZero(VmState state, JavaKind type, Cond cond, int trueBci, int falseBci) {
+    private void branchIfZero(JavaKind type, Cond cond, int trueBci, int falseBci) {
         VmState stateBefore = state.copy();
         Instruction left = state.pop();
         ConstantInstr right = new ConstantInstr(new Value(JavaKind.Int, 0));
         Instruction.assertType(left, type);
-        branchIf(state, stateBefore, left, right, cond, trueBci, falseBci);
+        branchIf(stateBefore, left, right, cond, trueBci, falseBci);
     }
 
-    private void branchIfNull(VmState state, JavaKind type, Cond cond, int trueBci, int falseBci) {
+    private void branchIfNull(JavaKind type, Cond cond, int trueBci, int falseBci) {
         VmState stateBefore = state.copy();
         Instruction left = state.pop();
         ConstantInstr right = new ConstantInstr(new Value(JavaKind.Object, null));
         Instruction.assertType(left, type);
-        branchIf(state, stateBefore, left, right, cond, trueBci, falseBci);
+        branchIf(stateBefore, left, right, cond, trueBci, falseBci);
     }
 
-    private void branchIfSame(VmState state, JavaKind type, Cond cond, int trueBci, int falseBci) {
+    private void branchIfSame(JavaKind type, Cond cond, int trueBci, int falseBci) {
         VmState stateBefore = state.copy();
         Instruction right = state.pop();
         Instruction left = state.pop();
         Instruction.assertType(left, type);
         Instruction.assertType(right, type);
-        branchIf(state, stateBefore, left, right, cond, trueBci, falseBci);
+        branchIf(stateBefore, left, right, cond, trueBci, falseBci);
     }
 
-    private void branchIf(VmState state, VmState stateBefore, Instruction left, Instruction right, Cond cond, int trueBci, int falseBci) {
+    private void branchIf(VmState stateBefore, Instruction left, Instruction right, Cond cond, int trueBci, int falseBci) {
         IfInstr instr = new IfInstr(stateBefore, cfg.blockContain(trueBci), cfg.blockContain(falseBci), left, right, cond);
         appendToBlock(instr);
     }
 
-    private void goTo(VmState state, int destBci) {
+    private void goTo(int destBci) {
         GotoInstr instr = new GotoInstr(null, cfg.blockContain(destBci));
         appendToBlock(instr);
     }
 
-    private void tableSwitch(VmState state, BytecodeStream.TableSwitch sw, int curBci) {
+    private void tableSwitch(BytecodeStream.TableSwitch sw, int curBci) {
         int len = sw.getNumOfCase();
         ArrayList<BlockStartInstr> succ = new ArrayList<>(len + 1);
         int i = 0;
@@ -916,7 +918,7 @@ public class HirBuilder {
         appendToBlock(instr);
     }
 
-    private void lookupSwitch(VmState state, BytecodeStream.LookupSwitch sw, int curBci) {
+    private void lookupSwitch(BytecodeStream.LookupSwitch sw, int curBci) {
         int len = sw.getNumOfCase();
         ArrayList<BlockStartInstr> succ = new ArrayList<>(len + 1);
         int[] key = new int[len];
@@ -935,7 +937,7 @@ public class HirBuilder {
         appendToBlock(instr);
     }
 
-    private void returnOp(VmState state, JavaKind type, boolean justReturn) {
+    private void returnOp(JavaKind type, boolean justReturn) {
         Instruction val = null;
         if (!justReturn) {
             val = state.pop();
@@ -977,7 +979,7 @@ public class HirBuilder {
         appendToBlock(instr);
     }
 
-    private void accessField(VmState state, int index, int opcode) {
+    private void accessField(int index, int opcode) {
         ConstantInstr holder = null;
         JavaField field = method.getConstantPool().lookupField(index, method, opcode);
         if (opcode == Bytecode.PUTSTATIC || opcode == Bytecode.GETSTATIC) {
@@ -1022,7 +1024,7 @@ public class HirBuilder {
     private void call(VmState state) {
     }
 
-    private void newInstance(VmState state, int index) {
+    private void newInstance(int index) {
         VmState stateBefore = state.copy();
         JavaType klass = method.getConstantPool().lookupType(index, -1);
         NewInstr instr = new NewInstr(stateBefore, klass);
@@ -1030,7 +1032,7 @@ public class HirBuilder {
         state.push(instr);
     }
 
-    private void newTypeArray(VmState state, int elementType) {
+    private void newTypeArray(int elementType) {
         VmState stateBefore = state.copy();
         Instruction len = state.pop();
         Instruction.assertType(len, JavaKind.Int);
@@ -1040,7 +1042,7 @@ public class HirBuilder {
         state.push(instr);
     }
 
-    private void newObjectArray(VmState state, int index) {
+    private void newObjectArray(int index) {
         VmState stateBefore = state.copy();
         Instruction len = state.pop();
         Instruction.assertType(len, JavaKind.Int);
@@ -1067,7 +1069,7 @@ public class HirBuilder {
         appendToBlock(instr);
     }
 
-    private void checkCast(VmState state, int index) {
+    private void checkCast(int index) {
         VmState stateBefore = state.copy();
         JavaType klass = method.getConstantPool().lookupType(index, -1);
         Instruction object = state.pop();
@@ -1077,7 +1079,7 @@ public class HirBuilder {
         state.push(instr);
     }
 
-    private void instanceOf(VmState state, int index) {
+    private void instanceOf(int index) {
         VmState stateBefore = state.copy();
         JavaType klass = method.getConstantPool().lookupType(index, -1);
         Instruction object = state.pop();
@@ -1093,7 +1095,7 @@ public class HirBuilder {
     private void monitorExit(VmState state) {
     }
 
-    private void multiNewArray(VmState state, BytecodeStream.MultiNewArray mna) {
+    private void multiNewArray(BytecodeStream.MultiNewArray mna) {
         VmState stateBefore = state.copy();
         JavaType klass = method.getConstantPool().lookupType(mna.getConstPoolIndex(), -1);
         int dimension = mna.getDimension();
