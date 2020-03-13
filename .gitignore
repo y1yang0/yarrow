@@ -28,5 +28,5 @@ target/*
 hs_err_pid*
 
 # custom
-./*.png
-./*.dot
+*.png
+*.dot

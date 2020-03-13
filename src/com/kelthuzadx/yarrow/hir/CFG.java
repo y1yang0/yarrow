@@ -17,9 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.kelthuzadx.yarrow.bytecode.Bytecode.*;
@@ -180,6 +178,8 @@ class CFG {
             }
         }
         this.blocks = bs.toArray(new BlockStartInstr[0]);
+
+        Arrays.sort(blocks, Comparator.comparingInt(BlockStartInstr::getBlockId));
     }
 
     private BlockStartInstr createBlockAt(int bci) {
@@ -300,13 +300,13 @@ class CFG {
         content.append("digraph G{\n");
         for(BlockStartInstr block:blocks){
             if(!block.getSuccessor().isEmpty()){
-                content.append("\t" + " B").append(block.getBlockId()).append("->");
-                String str = block.getSuccessor()
-                        .stream()
-                        .map(succ->"B"+succ.getBlockId())
-                        .collect(Collectors.joining(" -> "));
-                content.append(str).append(";\n");
+                for(BlockStartInstr succ:block.getSuccessor()){
+                    content.append("\tB").append(block.getBlockId()).append("-> B").append(succ.getBlockId()).append(";\n");
+                }
             }
+        }
+        for(BlockStartInstr block:blocks){
+            content.append("\tB").append(block.getBlockId()).append("[shape=box];\n");
         }
         content.append("}");
         Path path = Paths.get("cfg.dot");

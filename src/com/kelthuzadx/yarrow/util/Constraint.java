@@ -20,14 +20,21 @@ public class Constraint {
                 a.getLockSize() != b.getLockSize()) {
             throw new YarrowError("two VmState should be identical");
         }
-        Stack<Instruction> as = a.getStack();
-        Stack<Instruction> bs = b.getStack();
-        for (int i = 0; i < as.size(); i++) {
-            if (bs.get(i).isType(as.get(i).getType())) {
+        var stackA = a.getStack();
+        var stackB = b.getStack();
+        for (int i = 0; i < stackA.size(); i++) {
+            if (stackB.get(i).isType(stackA.get(i).getType())) {
                 throw new YarrowError("two VmState should be identical");
             }
         }
-        // TODO: should check lock either
+
+        var lockA = a.getLock();
+        var lockB = b.getLock();
+        for(int i=0;i< lockA.size();i++){
+            if(lockA.get(i)!=lockB.get(i)){
+                throw new YarrowError("two VmState should be identical");
+            }
+        }
     }
 
 }

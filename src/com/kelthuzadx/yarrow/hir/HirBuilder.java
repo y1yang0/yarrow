@@ -915,8 +915,7 @@ public class HirBuilder {
         BlockStartInstr[] succ = new BlockStartInstr[len+1];
         int i = 0;
         while (i < len) {
-            succ[i] = cfg.blockContain(sw.getDefaultDest()+curBci);
-            //succ.set(i, cfg.blockContain(sw.getKeyDest(i) + curBci));
+            succ[i] = cfg.blockContain(sw.getKeyDest(i)+curBci);
             i++;
         }
         succ[i] = cfg.blockContain(sw.getDefaultDest() + curBci);

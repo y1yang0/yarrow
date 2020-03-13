@@ -138,6 +138,15 @@ public class BlockStartInstr extends StateInstr {
                 }
             } else {
                 CompilerErrors.bailOut();
+                for (int i = 0; i < getVmState().getStackSize(); i++) {
+                    PhiInstr val = (PhiInstr) state.getStack().get(i);
+                    if(val != getVmState().getStack().get(i) &&
+                            !(getVmState().getStack().get(i) instanceof PhiInstr)
+                    ){
+                        getVmState().createPhiForStack(this, i);
+                    }
+                }
+
             }
         }
     }
