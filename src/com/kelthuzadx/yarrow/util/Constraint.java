@@ -2,9 +2,6 @@ package com.kelthuzadx.yarrow.util;
 
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.VmState;
-import com.kelthuzadx.yarrow.hir.instr.Instruction;
-
-import java.util.Stack;
 
 public class Constraint {
 
@@ -30,8 +27,8 @@ public class Constraint {
 
         var lockA = a.getLock();
         var lockB = b.getLock();
-        for(int i=0;i< lockA.size();i++){
-            if(lockA.get(i)!=lockB.get(i)){
+        for (int i = 0; i < lockA.size(); i++) {
+            if (lockA.get(i) != lockB.get(i)) {
                 throw new YarrowError("two VmState should be identical");
             }
         }

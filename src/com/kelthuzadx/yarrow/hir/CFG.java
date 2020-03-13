@@ -3,26 +3,18 @@ package com.kelthuzadx.yarrow.hir;
 import com.kelthuzadx.yarrow.bytecode.BytecodeStream;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
-import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Logger;
+import com.kelthuzadx.yarrow.util.Mode;
 import jdk.vm.ci.common.JVMCIError;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
 import jdk.vm.ci.meta.ExceptionHandler;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.kelthuzadx.yarrow.bytecode.Bytecode.*;
 import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintCFG;
-import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintCFGToDotFile;
+import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintIRToFile;
 
 class CFG {
     private int globalBlockId;
@@ -58,7 +50,7 @@ class CFG {
             printAllBlockRange();
             printAllBlock();
         }
-        if(PrintCFGToDotFile){
+        if (PrintIRToFile) {
             printCFGToDotFile();
         }
     }
@@ -295,26 +287,22 @@ class CFG {
         }
     }
 
-    private void printCFGToDotFile(){
+    private void printCFGToDotFile() {
         StringBuilder content = new StringBuilder();
         content.append("digraph G{\n");
-        for(BlockStartInstr block:blocks){
-            if(!block.getSuccessor().isEmpty()){
-                for(BlockStartInstr succ:block.getSuccessor()){
+        for (BlockStartInstr block : blocks) {
+            if (!block.getSuccessor().isEmpty()) {
+                for (BlockStartInstr succ : block.getSuccessor()) {
                     content.append("\tB").append(block.getBlockId()).append("-> B").append(succ.getBlockId()).append(";\n");
                 }
             }
         }
-        for(BlockStartInstr block:blocks){
+        for (BlockStartInstr block : blocks) {
             content.append("\tB").append(block.getBlockId()).append("[shape=box];\n");
         }
         content.append("}");
-        Path path = Paths.get("cfg.dot");
-        try {
-            Files.writeString(path, content.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        Logger.log(Mode.File, "cfg.dot", content.toString());
     }
 }
 

@@ -1,6 +1,5 @@
 package com.kelthuzadx.yarrow.bytecode;
 
-import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Constraint;
 import jdk.vm.ci.common.JVMCIError;
 

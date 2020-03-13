@@ -4,7 +4,6 @@ import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.hir.VmState;
 import com.kelthuzadx.yarrow.util.Logger;
 
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -30,15 +29,15 @@ public class PhiInstr extends Instruction {
         return null;
     }
 
-    public int operandCount(){
+    public int operandCount() {
         return block.getPredecessor().size();
     }
 
     @Override
     public String toString() {
-       String str = IntStream.range(0,operandCount())
-               .mapToObj(i->"i"+operand(i).id)
-               .collect(Collectors.joining(","));
+        String str = IntStream.range(0, operandCount())
+                .mapToObj(i -> "i" + operand(i).id)
+                .collect(Collectors.joining(","));
 
         return Logger.format("i{}: phi [{}]", super.id, str);
     }

@@ -110,7 +110,7 @@ public class BlockStartInstr extends StateInstr {
         this.removeSuccessor();
 
         // Set predecessors of BlockStartInstr
-        for(BlockStartInstr succ:blockEnd.getSuccessor()){
+        for (BlockStartInstr succ : blockEnd.getSuccessor()) {
             succ.getPredecessor().add(this);
         }
         blockEnd.setBlockStart(this);
@@ -140,9 +140,9 @@ public class BlockStartInstr extends StateInstr {
                 CompilerErrors.bailOut();
                 for (int i = 0; i < getVmState().getStackSize(); i++) {
                     PhiInstr val = (PhiInstr) state.getStack().get(i);
-                    if(val != getVmState().getStack().get(i) &&
+                    if (val != getVmState().getStack().get(i) &&
                             !(getVmState().getStack().get(i) instanceof PhiInstr)
-                    ){
+                    ) {
                         getVmState().createPhiForStack(this, i);
                     }
                 }
@@ -151,16 +151,6 @@ public class BlockStartInstr extends StateInstr {
         }
     }
 
-    public void iterateBytecode(Consumer<Instruction> closure) {
-        Instruction last = this;
-        while (last != null && last != blockEnd) {
-            closure.accept(last);
-            last = last.getNext();
-        }
-        if (last != null && last == blockEnd) {
-            closure.accept(last);
-        }
-    }
 
     @Override
     public boolean equals(Object obj) {

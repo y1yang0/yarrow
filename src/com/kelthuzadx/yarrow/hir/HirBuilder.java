@@ -3,7 +3,6 @@ package com.kelthuzadx.yarrow.hir;
 import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.bytecode.BytecodeStream;
 import com.kelthuzadx.yarrow.hir.instr.*;
-import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Converter;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.common.JVMCIError;
@@ -12,6 +11,7 @@ import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
 import jdk.vm.ci.meta.*;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintIR;
 
@@ -63,8 +63,7 @@ public class HirBuilder {
 
         if (PrintIR) {
             Logger.logf("=====Phase1: SSA Form=====>");
-            BlockStartInstr me = cfg.blockContain(0);
-            printSSA(new HashSet<>(), me);
+            printSSA(new HashSet<>(), cfg.blockContain(0));
         }
 
         return this;
@@ -89,20 +88,6 @@ public class HirBuilder {
         return state;
 
     }
-
-    private void printSSA(Set<BlockStartInstr> visit, BlockStartInstr block) {
-        if (block == null || visit.contains(block)) {
-            return;
-        }
-        Logger.logf("{}", block.getVmState().toString());
-        block.iterateBytecode(instr -> Logger.logf("{}", instr.toString()));
-        Logger.logf("");
-        visit.add(block);
-        for (BlockStartInstr succ : block.getBlockEnd().getSuccessor()) {
-            printSSA(visit, succ);
-        }
-    }
-
 
     private void fulfillBlock(BlockStartInstr block) {
         state = block.getVmState();
@@ -653,7 +638,7 @@ public class HirBuilder {
         lastInstr.setNext(curInstr);
         lastInstr = curInstr;
 
-        if(lastInstr instanceof StateInstr){
+        if (lastInstr instanceof StateInstr) {
             ((StateInstr) lastInstr).setVmState(state.copy());
         }
     }
@@ -912,10 +897,10 @@ public class HirBuilder {
 
     private void tableSwitch(BytecodeStream.TableSwitch sw, int curBci) {
         int len = sw.getNumOfCase();
-        BlockStartInstr[] succ = new BlockStartInstr[len+1];
+        BlockStartInstr[] succ = new BlockStartInstr[len + 1];
         int i = 0;
         while (i < len) {
-            succ[i] = cfg.blockContain(sw.getKeyDest(i)+curBci);
+            succ[i] = cfg.blockContain(sw.getKeyDest(i) + curBci);
             i++;
         }
         succ[i] = cfg.blockContain(sw.getDefaultDest() + curBci);
@@ -929,7 +914,7 @@ public class HirBuilder {
 
     private void lookupSwitch(BytecodeStream.LookupSwitch sw, int curBci) {
         int len = sw.getNumOfCase();
-        BlockStartInstr[] succ = new BlockStartInstr[len+1];
+        BlockStartInstr[] succ = new BlockStartInstr[len + 1];
         int[] key = new int[len];
         int i = 0;
         while (i < len) {
@@ -937,7 +922,7 @@ public class HirBuilder {
             succ[i] = cfg.blockContain(sw.getOffset(i) + curBci);
             i++;
         }
-        succ[i]= cfg.blockContain(sw.getDefaultDest() + curBci);
+        succ[i] = cfg.blockContain(sw.getDefaultDest() + curBci);
 
         VmState stateBefore = state.copy();
         Instruction index = state.pop();
@@ -1126,6 +1111,31 @@ public class HirBuilder {
         MultiNewArrayInstr instr = new MultiNewArrayInstr(stateBefore, klass, dimenInstrs);
         appendToBlock(instr);
         state.push(instr);
+    }
+
+    private void printSSA(Set<BlockStartInstr> visit, BlockStartInstr block) {
+        if (block == null || visit.contains(block)) {
+            return;
+        }
+        Logger.logf("{}", block.getVmState().toString());
+        iterateBytecode(block,instr -> Logger.logf("{}", instr.toString()));
+        Logger.logf("");
+        visit.add(block);
+        for (BlockStartInstr succ : block.getBlockEnd().getSuccessor()) {
+            printSSA(visit, succ);
+        }
+    }
+
+
+    public void iterateBytecode(BlockStartInstr block,Consumer<Instruction> closure) {
+        Instruction last = block;
+        while (last != null && last != block.getBlockEnd()) {
+            closure.accept(last);
+            last = last.getNext();
+        }
+        if (last != null && last == block.getBlockEnd()) {
+            closure.accept(last);
+        }
     }
 }
 

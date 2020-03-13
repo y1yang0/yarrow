@@ -1,6 +1,7 @@
 package com.kelthuzadx.yarrow.core;
 
 import com.kelthuzadx.yarrow.util.Logger;
+import com.kelthuzadx.yarrow.util.Mode;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -32,7 +33,7 @@ public class YarrowProperties {
                     } else if ("false".equals(prop.get())) {
                         field.setBoolean(null, false);
                     } else {
-                        Logger.errorf("Invalid yarrow property {} for -Dyarrow.{}.{}", prop.get(), klass.getSimpleName(), field.getName());
+                        Logger.log(Mode.Error, "Invalid yarrow property {} for -Dyarrow.{}.{}", prop.get(), klass.getSimpleName(), field.getName());
                     }
                 }
             }
@@ -44,6 +45,6 @@ public class YarrowProperties {
     public static class Debug {
         public static boolean PrintCFG = false;
         public static boolean PrintIR = false;
-        public static boolean PrintCFGToDotFile = false;
+        public static boolean PrintIRToFile = false;
     }
 }
