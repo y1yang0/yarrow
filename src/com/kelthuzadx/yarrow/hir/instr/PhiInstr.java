@@ -1,7 +1,12 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.Value;
+import com.kelthuzadx.yarrow.hir.VmState;
 import com.kelthuzadx.yarrow.util.Logger;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class PhiInstr extends Instruction {
     private int index; // negate number for stack, and positive number for local
@@ -13,9 +18,28 @@ public class PhiInstr extends Instruction {
         this.block = block;
     }
 
+    public Instruction operand(int index) {
+        VmState state = block.getPredecessor().get(index).getBlockEnd().getVmState();
+        if (state != null) {
+            if (index >= 0) {
+                return state.get(index);
+            } else {
+                return state.getStack().get(-(index + 1));
+            }
+        }
+        return null;
+    }
+
+    public int operandCount(){
+        return block.getPredecessor().size();
+    }
 
     @Override
     public String toString() {
-        return Logger.format("i{}: phi [{}]", super.id, index);
+       String str = IntStream.range(0,operandCount())
+               .mapToObj(i->"i"+operand(i).id)
+               .collect(Collectors.joining(","));
+
+        return Logger.format("i{}: phi [{}]", super.id, str);
     }
 }

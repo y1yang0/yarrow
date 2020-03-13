@@ -651,6 +651,10 @@ public class HirBuilder {
     private void appendToBlock(Instruction curInstr) {
         lastInstr.setNext(curInstr);
         lastInstr = curInstr;
+
+        if(lastInstr instanceof StateInstr){
+            ((StateInstr) lastInstr).setVmState(state.copy());
+        }
     }
 
     private <T> void loadConst(JavaKind type, T value) {
