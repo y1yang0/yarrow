@@ -3,7 +3,7 @@ package com.kelthuzadx.yarrow.hir.instr;
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.hir.VmState;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
-import com.kelthuzadx.yarrow.util.Constrain;
+import com.kelthuzadx.yarrow.util.Constraint;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.ExceptionHandler;
 import jdk.vm.ci.meta.JavaKind;
@@ -129,7 +129,7 @@ public class BlockStartInstr extends StateInstr {
             }
             setVmState(newState);
         } else {
-            Constrain.matchVmState(getVmState(), state);
+            Constraint.matchVmState(getVmState(), state);
             if (this.isLoopHeader()) {
                 for (int i = 0; i < state.getLocalSize(); i++) {
                     if (state.get(i) == null || !state.get(i).isType(getVmState().get(i).getType())) {
@@ -137,7 +137,7 @@ public class BlockStartInstr extends StateInstr {
                     }
                 }
             } else {
-                //TODO
+                CompilerErrors.bailOut();
             }
         }
     }

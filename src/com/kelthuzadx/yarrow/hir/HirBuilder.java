@@ -6,13 +6,14 @@ import com.kelthuzadx.yarrow.hir.instr.*;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Converter;
 import com.kelthuzadx.yarrow.util.Logger;
+import jdk.vm.ci.common.JVMCIError;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaField;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
 import jdk.vm.ci.meta.*;
 
 import java.util.*;
 
-import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintSSA;
+import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintIR;
 
 /**
  * HirBuilder performs an abstract interpretation, it would transform java bytecode to compiler HIR.
@@ -60,8 +61,8 @@ public class HirBuilder {
             }
         }
 
-        if (PrintSSA) {
-            Logger.logf("=====SSA Form=====>");
+        if (PrintIR) {
+            Logger.logf("=====Phase1: SSA Form=====>");
             BlockStartInstr me = cfg.blockContain(0);
             printSSA(new HashSet<>(), me);
         }
@@ -553,7 +554,7 @@ public class HirBuilder {
                 case Bytecode.JSR:
                 case Bytecode.RET:
                 case Bytecode.JSR_W:
-                    CompilerErrors.unsupported();
+                    JVMCIError.unimplemented();
                 case Bytecode.TABLESWITCH:
                     tableSwitch(bs.getTableSwitch(), curBci);
                     break;
@@ -619,7 +620,7 @@ public class HirBuilder {
                     monitorExit();
                     break;
                 case Bytecode.WIDE:
-                    CompilerErrors.shouldNotReachHere();
+                    JVMCIError.shouldNotReachHere();
                 case Bytecode.MULTIANEWARRAY:
                     multiNewArray(bs.getMultiNewArray());
                     break;
@@ -630,7 +631,7 @@ public class HirBuilder {
                     branchIfNull(JavaKind.Object, Cond.NE, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 default:
-                    CompilerErrors.shouldNotReachHere();
+                    JVMCIError.shouldNotReachHere();
             }
         }
 
@@ -685,7 +686,7 @@ public class HirBuilder {
                     temp = new Value(JavaKind.Long, ((JavaConstant) item).asDouble());
                     break;
                 default:
-                    CompilerErrors.shouldNotReachHere();
+                    JVMCIError.shouldNotReachHere();
             }
         } else {
             temp = new Value(JavaKind.Object, item);
@@ -787,7 +788,7 @@ public class HirBuilder {
                 break;
             }
             default:
-                CompilerErrors.shouldNotReachHere();
+                JVMCIError.shouldNotReachHere();
         }
     }
 
@@ -911,37 +912,38 @@ public class HirBuilder {
 
     private void tableSwitch(BytecodeStream.TableSwitch sw, int curBci) {
         int len = sw.getNumOfCase();
-        ArrayList<BlockStartInstr> succ = new ArrayList<>(len + 1);
+        BlockStartInstr[] succ = new BlockStartInstr[len+1];
         int i = 0;
         while (i < len) {
-            succ.set(i, cfg.blockContain(sw.getKeyDest(i) + curBci));
+            succ[i] = cfg.blockContain(sw.getDefaultDest()+curBci);
+            //succ.set(i, cfg.blockContain(sw.getKeyDest(i) + curBci));
             i++;
         }
-        succ.set(i, cfg.blockContain(sw.getDefaultDest() + curBci));
+        succ[i] = cfg.blockContain(sw.getDefaultDest() + curBci);
 
         VmState stateBefore = state.copy();
         Instruction index = state.pop();
         Instruction.assertType(index, JavaKind.Int);
-        TableSwitchInstr instr = new TableSwitchInstr(stateBefore, succ, index, sw.getLowKey(), sw.getHighKey());
+        TableSwitchInstr instr = new TableSwitchInstr(stateBefore, Arrays.asList(succ), index, sw.getLowKey(), sw.getHighKey());
         appendToBlock(instr);
     }
 
     private void lookupSwitch(BytecodeStream.LookupSwitch sw, int curBci) {
         int len = sw.getNumOfCase();
-        ArrayList<BlockStartInstr> succ = new ArrayList<>(len + 1);
+        BlockStartInstr[] succ = new BlockStartInstr[len+1];
         int[] key = new int[len];
         int i = 0;
         while (i < len) {
             key[i] = sw.getMatch(i);
-            succ.set(i, cfg.blockContain(sw.getOffset(i) + curBci));
+            succ[i] = cfg.blockContain(sw.getOffset(i) + curBci);
             i++;
         }
-        succ.set(i, cfg.blockContain(sw.getDefaultDest() + curBci));
+        succ[i]= cfg.blockContain(sw.getDefaultDest() + curBci);
 
         VmState stateBefore = state.copy();
         Instruction index = state.pop();
         Instruction.assertType(index, JavaKind.Int);
-        LookupSwitchInstr instr = new LookupSwitchInstr(stateBefore, succ, index, key);
+        LookupSwitchInstr instr = new LookupSwitchInstr(stateBefore, Arrays.asList(succ), index, key);
         appendToBlock(instr);
     }
 
@@ -1024,7 +1026,7 @@ public class HirBuilder {
                 break;
             }
             default:
-                CompilerErrors.shouldNotReachHere();
+                JVMCIError.shouldNotReachHere();
         }
     }
 

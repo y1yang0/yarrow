@@ -5,9 +5,18 @@ import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Logger;
+import jdk.vm.ci.common.JVMCIError;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
 import jdk.vm.ci.meta.ExceptionHandler;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,6 +24,7 @@ import java.util.stream.Collectors;
 
 import static com.kelthuzadx.yarrow.bytecode.Bytecode.*;
 import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintCFG;
+import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintCFGToDotFile;
 
 class CFG {
     private int globalBlockId;
@@ -31,7 +41,6 @@ class CFG {
         this.globalBlockId = 0;
         this.codeSize = method.getCodeSize();
         this.code = method.getCode();
-        assert codeSize == code.length;
         this.xhandler = method.getExceptionHandlers();
         this.bciToBlockMapping = null;
         this.blocks = null;
@@ -50,6 +59,9 @@ class CFG {
             printBciToBlocks();
             printAllBlockRange();
             printAllBlock();
+        }
+        if(PrintCFGToDotFile){
+            printCFGToDotFile();
         }
     }
 
@@ -114,7 +126,7 @@ class CFG {
                 case RET:
                 case JSR:
                 case JSR_W: {
-                    CompilerErrors.unsupported();
+                    JVMCIError.unimplemented();
                 }
                 case TABLESWITCH: {
                     currentBlock = null;
@@ -280,6 +292,28 @@ class CFG {
             Logger.logf("} => {}", block.getSuccessor().stream().map(
                     b -> "#" + b.getBlockId()
             ).collect(Collectors.toList()));
+        }
+    }
+
+    private void printCFGToDotFile(){
+        StringBuilder content = new StringBuilder();
+        content.append("digraph G{\n");
+        for(BlockStartInstr block:blocks){
+            if(!block.getSuccessor().isEmpty()){
+                content.append("\t" + " B").append(block.getBlockId()).append("->");
+                String str = block.getSuccessor()
+                        .stream()
+                        .map(succ->"B"+succ.getBlockId())
+                        .collect(Collectors.joining(" -> "));
+                content.append(str).append(";\n");
+            }
+        }
+        content.append("}");
+        Path path = Paths.get("out.cfg");
+        try {
+            Files.writeString(path, content.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

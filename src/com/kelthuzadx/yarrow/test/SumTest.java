@@ -253,8 +253,8 @@ public class SumTest {
 
     public static void main(String[] args) {
         int sum = 0;
-        for (int i = 0; i < 99999; i++) {
-            sum += sum(i);
+        for (int i = 0; i < 999998; i++) {
+            sum += sum2(i);
         }
         System.out.println(sum);
     }

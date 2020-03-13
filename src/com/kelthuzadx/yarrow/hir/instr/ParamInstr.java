@@ -18,6 +18,6 @@ public class ParamInstr extends Instruction {
 
     @Override
     public String toString() {
-        return Logger.format("i{}: param [{}]", super.id, index);
+        return Logger.format("i{}: param#{}", super.id, index);
     }
 }

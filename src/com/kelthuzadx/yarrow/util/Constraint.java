@@ -6,7 +6,7 @@ import com.kelthuzadx.yarrow.hir.instr.Instruction;
 
 import java.util.Stack;
 
-public class Constrain {
+public class Constraint {
 
     public static void matchInt(int a, int b) {
         if (a != b) {

@@ -5,6 +5,7 @@ import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Logger;
+import jdk.vm.ci.common.JVMCIError;
 
 public class ArithmeticInstr extends Op2Instr {
     public ArithmeticInstr(int opcode, Instruction left, Instruction right) {
@@ -49,7 +50,7 @@ public class ArithmeticInstr extends Op2Instr {
                 op = '%';
                 break;
             default:
-                CompilerErrors.shouldNotReachHere();
+                JVMCIError.shouldNotReachHere();
         }
 
         return Logger.format("i{}: i{} {} i{}", super.id, super.left.id, op, super.right.id);

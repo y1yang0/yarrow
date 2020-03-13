@@ -4,6 +4,7 @@ import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Logger;
+import jdk.vm.ci.common.JVMCIError;
 
 public class ShiftInstr extends Op2Instr {
     public ShiftInstr(int opcode, Instruction left, Instruction right) {
@@ -27,7 +28,7 @@ public class ShiftInstr extends Op2Instr {
                 op = ">>>";
                 break;
             default:
-                CompilerErrors.shouldNotReachHere();
+                JVMCIError.shouldNotReachHere();
         }
         return Logger.format("i{}: i{} {} i{}", super.id, left.id, op, right.id);
     }

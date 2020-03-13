@@ -43,6 +43,7 @@ public class YarrowProperties {
 
     public static class Debug {
         public static boolean PrintCFG = false;
-        public static boolean PrintSSA = false;
+        public static boolean PrintIR = false;
+        public static boolean PrintCFGToDotFile = false;
     }
 }
