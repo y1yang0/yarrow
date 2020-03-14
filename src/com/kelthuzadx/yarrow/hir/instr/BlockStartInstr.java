@@ -127,19 +127,26 @@ public class BlockStartInstr extends StateInstr {
             VmState state = newState.copy();
             if (this.isLoopHeader()) {
                 for (int i = 0; i < state.getStackSize(); i++) {
-                    state.createPhiForStack(this, i);
+                    if(state.getStack().get(i)!=null){
+                        state.createPhiForStack(this, i);
+                    }
                 }
                 for (int i = 0; i < state.getLocalSize(); i++) {
-                    state.createPhiForLocal(this, i);
+                    if(state.getLocal()[i]!=null){
+                        state.createPhiForLocal(this, i);
+                    }
                 }
             }
             setVmState(state);
         } else {
             Constraint.matchVmState(getVmState(), newState);
             if (this.isLoopHeader()) {
-                for (int i = 0; i < newState.getLocalSize(); i++) {
-                    if (newState.get(i) == null || !newState.get(i).isType(getVmState().get(i).getType())) {
-                        CompilerErrors.bailOut();
+                for (int i = 0; i < getVmState().getLocalSize(); i++) {
+                    if(getVmState().get(i)!=null){
+                        if(newState.getLocal()[i]==null ||
+                                !newState.getLocal()[i].isType(getVmState().get(i).getType())){
+                            CompilerErrors.bailOut();
+                        }
                     }
                 }
             } else {
