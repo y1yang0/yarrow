@@ -24,6 +24,6 @@ public class CallInstr extends StateInstr {
 
     @Override
     public String toString() {
-        return Logger.format("i{}: {} {}::{}", super.id, Bytecode.forName(opcode), target.getDeclaringClass().getUnqualifiedName(), target.getName());
+        return Logger.format("i{}: {} {}::{}", super.id, Bytecode.forName(opcode), target.getDeclaringClass().getName(), target.getName());
     }
 }
