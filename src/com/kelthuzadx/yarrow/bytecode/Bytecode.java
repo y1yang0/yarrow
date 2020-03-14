@@ -210,7 +210,7 @@ public class Bytecode {
     public static final int ILLEGAL = 255;
     public static final int END = 256;
 
-    public static String getBytecodeName(int bc) {
+    public static String forName(int bc) {
         Field[] fs = Bytecode.class.getFields();
         try {
             for (Field field : fs) {

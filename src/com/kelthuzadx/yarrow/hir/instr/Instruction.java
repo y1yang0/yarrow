@@ -23,6 +23,10 @@ public class Instruction {
         }
     }
 
+    public static boolean matchType(Instruction ia, Instruction ib) {
+        return ia.value.getType() == ib.value.getType();
+    }
+
     public int getId() {
         return id;
     }
@@ -57,13 +61,6 @@ public class Instruction {
         static int next() {
             return id++;
         }
-    }
-
-    public static boolean matchType(Instruction ia, Instruction ib){
-        if(ia.value.getType()!=ib.value.getType()){
-            return false;
-        }
-        return true;
     }
 }
 

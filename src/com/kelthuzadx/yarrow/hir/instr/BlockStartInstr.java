@@ -11,7 +11,6 @@ import jdk.vm.ci.meta.JavaKind;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class BlockStartInstr extends StateInstr {
@@ -120,6 +119,7 @@ public class BlockStartInstr extends StateInstr {
      * If a block has more than one predecessor, PhiInstrc might be needed at
      * the beginning of this block. If I find different values of the same variable,
      * I will merge existing VmState(this.getVmState()) and new VmState.
+     *
      * @param newState state of one of predecessors
      */
     public void mergeVmState(VmState newState) {
@@ -145,33 +145,33 @@ public class BlockStartInstr extends StateInstr {
             } else {
                 for (int i = 0; i < getVmState().getStackSize(); i++) {
                     Instruction val = newState.getStack().get(i);
-                    if(val!=getVmState().getStack().get(i)){
-                        if(val instanceof PhiInstr){
-                            if(((PhiInstr) val).getBlock()!=this){
-                                getVmState().createPhiForStack(this,i);
+                    if (val != getVmState().getStack().get(i)) {
+                        if (val instanceof PhiInstr) {
+                            if (((PhiInstr) val).getBlock() != this) {
+                                getVmState().createPhiForStack(this, i);
                             }
-                        }else{
-                            getVmState().createPhiForStack(this,i);
+                        } else {
+                            getVmState().createPhiForStack(this, i);
                         }
                     }
                 }
                 for (int i = 0; i < getVmState().getLocalSize(); i++) {
                     Instruction val = newState.getLocal()[i];
                     // If val exists and two local variable typees match
-                    if(val!=null && Instruction.matchType(val,getVmState().getLocal()[i])){
+                    if (val != null && Instruction.matchType(val, getVmState().getLocal()[i])) {
                         // if existing local variable is not PhiInstr OR
                         // if existing local variable is PhiInstr and it
                         // doesn't belong to this block
-                        if(val!=newState.getLocal()[i]){
-                            if(val instanceof PhiInstr){
-                                if (((PhiInstr) val).getBlock()!=this){
-                                    getVmState().createPhiForLocal(this,i);
+                        if (val != newState.getLocal()[i]) {
+                            if (val instanceof PhiInstr) {
+                                if (((PhiInstr) val).getBlock() != this) {
+                                    getVmState().createPhiForLocal(this, i);
                                 }
-                            }else{
-                                getVmState().createPhiForLocal(this,i);
+                            } else {
+                                getVmState().createPhiForLocal(this, i);
                             }
                         }
-                    }else{
+                    } else {
                         getVmState().getLocal()[i] = null;
                     }
                 }

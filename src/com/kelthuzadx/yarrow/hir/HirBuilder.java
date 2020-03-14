@@ -574,11 +574,21 @@ public class HirBuilder {
                 case Bytecode.PUTFIELD:
                     accessField(bs.getBytecodeData(), opcode);
                     break;
-                case Bytecode.INVOKEVIRTUAL:call(bs.getInvokeVirtual(),opcode);break;
-                case Bytecode.INVOKESPECIAL:call(bs.getInvokeSpecial(),opcode);break;
-                case Bytecode.INVOKESTATIC:call(bs.getInvokeStatic(),opcode);break;
-                case Bytecode.INVOKEINTERFACE:call(bs.getInvokeInterface(),opcode);break;
-                case Bytecode.INVOKEDYNAMIC:call(bs.getInvokeDynamic(),opcode);break;
+                case Bytecode.INVOKEVIRTUAL:
+                    call(bs.getInvokeVirtual(), opcode);
+                    break;
+                case Bytecode.INVOKESPECIAL:
+                    call(bs.getInvokeSpecial(), opcode);
+                    break;
+                case Bytecode.INVOKESTATIC:
+                    call(bs.getInvokeStatic(), opcode);
+                    break;
+                case Bytecode.INVOKEINTERFACE:
+                    call(bs.getInvokeInterface(), opcode);
+                    break;
+                case Bytecode.INVOKEDYNAMIC:
+                    call(bs.getInvokeDynamic(), opcode);
+                    break;
                 case Bytecode.NEW:
                     newInstance(bs.getBytecodeData());
                     break;
@@ -673,7 +683,7 @@ public class HirBuilder {
                     temp = new Value(JavaKind.Long, ((JavaConstant) item).asDouble());
                     break;
                 case Object:
-                    temp = new Value(JavaKind.Object, ((HotSpotObjectConstant)item).asObject(((HotSpotObjectConstant)item).getType()));
+                    temp = new Value(JavaKind.Object, ((HotSpotObjectConstant) item).asObject(((HotSpotObjectConstant) item).getType()));
                     break;
                 default:
                     JVMCIError.shouldNotReachHere();
@@ -1018,50 +1028,50 @@ public class HirBuilder {
     }
 
     private void call(BytecodeStream.Invoke invoke, int opcode) {
-        if(opcode==Bytecode.INVOKEDYNAMIC){
+        if (opcode == Bytecode.INVOKEDYNAMIC) {
             CompilerErrors.bailOut();
         }
 
         Signature sig = method.getSignature();
         HotSpotResolvedObjectType holder = method.getDeclaringClass();
-        VmState  stateBefore = state.copy();
-        int argc =sig.getParameterCount(method.hasReceiver());
+        VmState stateBefore = state.copy();
+        int argc = sig.getParameterCount(method.hasReceiver());
         Instruction[] arguments = new Instruction[argc];
-        for(int i=0;i<argc;i++){
+        for (int i = 0; i < argc; i++) {
             arguments[i] = state.pop();
         }
         JavaMethod javaMethod = null;
-        switch (opcode){
+        switch (opcode) {
             case Bytecode.INVOKEINTERFACE: {
                 var m = ((BytecodeStream.InvokeInterface) invoke);
-                JVMCIError.guarantee(method.hasReceiver()?
-                        m.getCount()+1==arguments.length:m.getCount()==arguments.length
-                ,"Mismatch signature and bytecode data");
-                javaMethod = method.getConstantPool().lookupMethod(m.getConstPoolIndex(),opcode);
+                JVMCIError.guarantee(method.hasReceiver() ?
+                                m.getCount() + 1 == arguments.length : m.getCount() == arguments.length
+                        , "Mismatch signature and bytecode data");
+                javaMethod = method.getConstantPool().lookupMethod(m.getConstPoolIndex(), opcode);
                 break;
             }
             case Bytecode.INVOKESPECIAL: {
                 var m = ((BytecodeStream.InvokeSpecial) invoke);
-                javaMethod = method.getConstantPool().lookupMethod(m.getConstPoolIndex(),opcode);
+                javaMethod = method.getConstantPool().lookupMethod(m.getConstPoolIndex(), opcode);
                 break;
             }
             case Bytecode.INVOKESTATIC: {
                 var m = ((BytecodeStream.InvokeStatic) invoke);
-                javaMethod = method.getConstantPool().lookupMethod(m.getConstPoolIndex(),opcode);
+                javaMethod = method.getConstantPool().lookupMethod(m.getConstPoolIndex(), opcode);
                 break;
             }
             case Bytecode.INVOKEVIRTUAL: {
                 var m = ((BytecodeStream.InvokeVirtual) invoke);
-                javaMethod = method.getConstantPool().lookupMethod(m.getConstPoolIndex(),opcode);
+                javaMethod = method.getConstantPool().lookupMethod(m.getConstPoolIndex(), opcode);
                 break;
             }
             default:
                 JVMCIError.unimplemented();
         }
-        CallInstr instr = new CallInstr(new Value(sig.getReturnKind()),stateBefore,arguments,javaMethod,sig,opcode);
+        CallInstr instr = new CallInstr(new Value(sig.getReturnKind()), stateBefore, arguments, javaMethod, sig, opcode);
         appendToBlock(instr);
 
-        if(sig.getReturnKind()!=JavaKind.Void){
+        if (sig.getReturnKind() != JavaKind.Void) {
             state.push(instr);
         }
     }
@@ -1166,7 +1176,7 @@ public class HirBuilder {
             return;
         }
         Logger.logf("{}", block.getVmState().toString());
-        iterateBytecode(block,instr -> Logger.logf("{}", instr.toString()));
+        iterateBytecode(block, instr -> Logger.logf("{}", instr.toString()));
         Logger.logf("");
         visit.add(block);
         for (BlockStartInstr succ : block.getBlockEnd().getSuccessor()) {
@@ -1175,7 +1185,7 @@ public class HirBuilder {
     }
 
 
-    public void iterateBytecode(BlockStartInstr block,Consumer<Instruction> closure) {
+    public void iterateBytecode(BlockStartInstr block, Consumer<Instruction> closure) {
         Instruction last = block;
         while (last != null && last != block.getBlockEnd()) {
             closure.accept(last);

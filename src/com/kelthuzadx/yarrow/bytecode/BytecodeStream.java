@@ -44,7 +44,7 @@ public class BytecodeStream implements Iterator<Integer> {
         int c = code[curBci] & 0xff;
 
         StringBuilder sb = new StringBuilder();
-        sb.append(curBci).append(":").append(Bytecode.getBytecodeName(c));
+        sb.append(curBci).append(":").append(Bytecode.forName(c));
         switch (c) {
             case NOP:
             case ACONST_NULL:
@@ -383,6 +383,9 @@ public class BytecodeStream implements Iterator<Integer> {
         return (code[i] << 24) | ((code[i + 1] & 0xff) << 16) | ((code[i + 2] & 0xff) << 8) | (code[i + 3] & 0xff);
     }
 
+    public interface Invoke {
+    }
+
     public final class IINC {
         public int getIncrementIndex() {
             if (isWide) {
@@ -453,15 +456,13 @@ public class BytecodeStream implements Iterator<Integer> {
         }
     }
 
-    public interface Invoke{ }
-
-    public final class InvokeDynamic implements Invoke{
+    public final class InvokeDynamic implements Invoke {
         public int getConstPoolIndex() {
             return readS2(curBci + 1);
         }
     }
 
-    public final class InvokeInterface  implements Invoke{
+    public final class InvokeInterface implements Invoke {
         public int getConstPoolIndex() {
             return readS2(curBci + 1);
         }
@@ -471,7 +472,7 @@ public class BytecodeStream implements Iterator<Integer> {
         }
     }
 
-    public final class InvokeVirtual  implements Invoke{
+    public final class InvokeVirtual implements Invoke {
         public int getConstPoolIndex() {
             return readS2(curBci + 1);
         }
@@ -483,7 +484,7 @@ public class BytecodeStream implements Iterator<Integer> {
         }
     }
 
-    public final class InvokeStatic  implements Invoke{
+    public final class InvokeStatic implements Invoke {
         public int getConstPoolIndex() {
             return readS2(curBci + 1);
         }
