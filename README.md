@@ -21,5 +21,18 @@ role of code generation, instruction selection based on BURS, I'm not sure which
 algorithms would be implemented. If I have enough time, I will examine a peephole optimization phase
 for LIR.
 
+# Usage
+```
+-XX:+UnlockExperimentalVMOptions
+-XX:+EnableJVMCI
+-XX:+UseJVMCICompiler
+-Djvmci.Compiler=yarrow
+-Xcomp
+-Dyarrow.Debug.PrintCFG=true
+-Dyarrow.Debug.PrintIR=true
+-Dyarrow.Debug.PrintIRToFile=true
+-XX:CompileCommand=compileonly,*<class>.<method>
+```
+
 ## Reference 
 [1] https://docs.oracle.com/javase/specs/jvms/se12/html/jvms-6.html#jvms-6.5.ldc

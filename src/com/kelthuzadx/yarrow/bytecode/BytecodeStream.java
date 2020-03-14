@@ -453,13 +453,15 @@ public class BytecodeStream implements Iterator<Integer> {
         }
     }
 
-    public final class InvokeDynamic {
+    public interface Invoke{ }
+
+    public final class InvokeDynamic implements Invoke{
         public int getConstPoolIndex() {
             return readS2(curBci + 1);
         }
     }
 
-    public final class InvokeInterface {
+    public final class InvokeInterface  implements Invoke{
         public int getConstPoolIndex() {
             return readS2(curBci + 1);
         }
@@ -469,19 +471,19 @@ public class BytecodeStream implements Iterator<Integer> {
         }
     }
 
-    public final class InvokeVirtual {
+    public final class InvokeVirtual  implements Invoke{
         public int getConstPoolIndex() {
             return readS2(curBci + 1);
         }
     }
 
-    public final class InvokeSpecial {
+    public final class InvokeSpecial implements Invoke {
         public int getConstPoolIndex() {
             return readS2(curBci + 1);
         }
     }
 
-    public final class InvokeStatic {
+    public final class InvokeStatic  implements Invoke{
         public int getConstPoolIndex() {
             return readS2(curBci + 1);
         }
