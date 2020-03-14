@@ -60,19 +60,18 @@ public class ExceptionTest {
         System.out.println(s);
     }
 
-    static void b2(int i) throws Exception {
-        throw new Exception("integer" + i);
+    static void b2(int i){
+        try {
+            throw new Exception("integer" + i);
+        } catch (Exception e) {
+
+            //e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
-        int sum = 0;
         for (int i = 0; i < 99999; i++) {
-            try {
-                f1(i);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            b2(i);
         }
-        System.out.println(sum);
     }
 }

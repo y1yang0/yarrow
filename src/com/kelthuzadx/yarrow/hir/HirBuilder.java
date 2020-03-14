@@ -543,7 +543,7 @@ public class HirBuilder {
                 case Bytecode.JSR:
                 case Bytecode.RET:
                 case Bytecode.JSR_W:
-                    JVMCIError.unimplemented();
+                    JVMCIError.unimplemented("ret/jsr considers deprecated and thus not supported");
                 case Bytecode.TABLESWITCH:
                     tableSwitch(bs.getTableSwitch(), curBci);
                     break;

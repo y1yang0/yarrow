@@ -1,5 +1,6 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
+import com.kelthuzadx.yarrow.hir.BlockFlag;
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.hir.VmState;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
@@ -20,9 +21,9 @@ public class BlockStartInstr extends StateInstr {
     private int endBci;
     // Successor of this block, when HIR construction accomplish, it will be cleared
     private List<BlockStartInstr> successor;
-    private boolean mayThrowEx;
     private boolean loopHeader;
-    private ExceptionHandler xhandler;
+    private ExceptionHandler exHandler;
+    private BlockFlag flag;
 
     // For instruction itself
     private BlockEndInstr blockEnd;
@@ -34,7 +35,6 @@ public class BlockStartInstr extends StateInstr {
         this.startBci = this.endBci = bci;
         this.successor = new ArrayList<>();
         this.predecessor = new ArrayList<>();
-        this.mayThrowEx = false;
         this.loopHeader = false;
         this.blockEnd = null;
     }
@@ -63,6 +63,10 @@ public class BlockStartInstr extends StateInstr {
         return successor;
     }
 
+    public boolean hasSuccessor(BlockStartInstr block){
+        return successor.contains(block);
+    }
+
     public List<BlockStartInstr> getPredecessor() {
         return predecessor;
     }
@@ -79,24 +83,16 @@ public class BlockStartInstr extends StateInstr {
         this.loopHeader = loopHeader;
     }
 
-    public boolean isMayThrowEx() {
-        return mayThrowEx;
-    }
-
-    public void setMayThrowEx(boolean mayThrowEx) {
-        this.mayThrowEx = mayThrowEx;
-    }
-
     public int getBlockId() {
         return blockId;
     }
 
-    public ExceptionHandler getXhandler() {
-        return xhandler;
+    public void setExHandler(ExceptionHandler exHandler) {
+        this.exHandler = exHandler;
     }
 
-    public void setXhandler(ExceptionHandler xhandler) {
-        this.xhandler = xhandler;
+    public void setFlag(BlockFlag flag) {
+        this.flag = flag;
     }
 
     public BlockEndInstr getBlockEnd() {
@@ -195,13 +191,13 @@ public class BlockStartInstr extends StateInstr {
 
     public String toCFGString() {
         String successorString = successor.stream().map(
-                b -> "#" + b.getBlockId() + " " + (b.xhandler != null ? "!" : "") + "[" + b.getStartBci() + "," + b.getEndBci() + "]"
+                b -> "#" + b.getBlockId() + " " + (b.exHandler != null ? "!" : "") + "[" + b.getStartBci() + "," + b.getEndBci() + "]"
         ).collect(Collectors.toList()).toString();
 
         return "#" +
                 blockId +
                 " " +
-                (xhandler != null ? "!" : "") +
+                (exHandler != null ? "!" : "") +
                 "[" +
                 startBci +
                 "," +

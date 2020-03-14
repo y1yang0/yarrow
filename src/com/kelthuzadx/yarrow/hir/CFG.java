@@ -17,10 +17,11 @@ import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintCFG;
 import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintIRToFile;
 
 class CFG {
+    private final HotSpotResolvedJavaMethod method;
     private int globalBlockId;
     private int codeSize;
     private byte[] code;
-    private ExceptionHandler[] xhandler;
+    private ExHandler[] exHandler;
     private BlockStartInstr[] bciToBlockMapping;
     private BlockStartInstr[] blocks;
     private HashMap<Integer, Integer> loopMap;
@@ -28,10 +29,11 @@ class CFG {
 
 
     public CFG(HotSpotResolvedJavaMethod method) {
+        this.method = method;
         this.globalBlockId = 0;
         this.codeSize = method.getCodeSize();
         this.code = method.getCode();
-        this.xhandler = method.getExceptionHandlers();
+        this.exHandler = new ExHandler[method.getExceptionHandlers().length];
         this.bciToBlockMapping = null;
         this.blocks = null;
         this.loopMap = new HashMap<>();
@@ -42,9 +44,7 @@ class CFG {
     public void build() {
         mapBciToBlocks();
         uniqueBlocks();
-        HashSet<Integer> visit = new HashSet<>(blocks.length);
-        HashSet<Integer> active = new HashSet<>(blocks.length);
-        identifyLoop(visit, active, bciToBlockMapping[0]);
+        identifyLoop(new HashSet<>(blocks.length), new HashSet<>(blocks.length), bciToBlockMapping[0]);
         if (PrintCFG) {
             printBciToBlocks();
             printAllBlockRange();
@@ -69,6 +69,7 @@ class CFG {
 
     private void mapBciToBlocks() {
         this.bciToBlockMapping = new BlockStartInstr[this.codeSize];
+        createExceptionBlock();
 
         BlockStartInstr currentBlock = null;
         BytecodeStream stream = new BytecodeStream(code);
@@ -78,7 +79,9 @@ class CFG {
                 currentBlock = createBlockAt(bci);
             } else {
                 if (bciToBlockMapping[bci] != null) {
-                    bciToBlockMapping[currentBlock.getEndBci()].addSuccessor(bciToBlockMapping[bci]);
+                    if(!bciToBlockMapping[currentBlock.getEndBci()].hasSuccessor(bciToBlockMapping[bci])){
+                        bciToBlockMapping[currentBlock.getEndBci()].addSuccessor(bciToBlockMapping[bci]);
+                    }
                     currentBlock = bciToBlockMapping[bci];
                 }
             }
@@ -117,7 +120,7 @@ class CFG {
                 case RET:
                 case JSR:
                 case JSR_W: {
-                    JVMCIError.unimplemented();
+                    JVMCIError.unimplemented("ret/jsr considers deprecated and thus not supported");
                 }
                 case TABLESWITCH: {
                     currentBlock = null;
@@ -148,13 +151,15 @@ class CFG {
                     break;
                 }
                 default: {
-                    if (!currentBlock.isMayThrowEx()) {
-                        BlockStartInstr xh = handleException(bci);
-                        if (xh != null) {
-                            currentBlock = null;
-                            bciToBlockMapping[bci].addSuccessor(xh);
-                            bciToBlockMapping[bci].setMayThrowEx(true);
-                            bciToBlockMapping[bci].addSuccessor(createBlockAt(stream.peekNextBci()));
+                    for(ExHandler handler:exHandler){
+                        if(handler.tryCover(bci)){
+                            BlockStartInstr catchBlock = handler.getCatchEntry();
+                            if(!currentBlock.hasSuccessor(catchBlock)){
+                                currentBlock.addSuccessor(catchBlock);
+                            }
+                            if(handler.isCatchAll()){
+                                break;
+                            }
                         }
                     }
                     break;
@@ -173,6 +178,15 @@ class CFG {
         this.blocks = bs.toArray(new BlockStartInstr[0]);
 
         Arrays.sort(blocks, Comparator.comparingInt(BlockStartInstr::getBlockId));
+    }
+
+    private void createExceptionBlock(){
+        for(int i=0;i<method.getExceptionHandlers().length;i++){
+            var handler = method.getExceptionHandlers()[i];
+            BlockStartInstr exBlock = createBlockAt(handler.getHandlerBCI());
+            exBlock.setFlag(BlockFlag.CatchEntry);
+            exHandler[i] = new ExHandler(handler,exBlock);
+        }
     }
 
     private BlockStartInstr createBlockAt(int bci) {
@@ -201,23 +215,6 @@ class CFG {
         } else {
             return formerBlock;
         }
-    }
-
-    private BlockStartInstr handleException(int bci) {
-        BlockStartInstr lastXHandler = null;
-        for (ExceptionHandler xh : xhandler) {
-            if (xh.getStartBCI() <= bci && bci < xh.getEndBCI()) {
-                BlockStartInstr xBlock = createBlockAt(xh.getHandlerBCI());
-                xBlock.setXhandler(xh);
-                bciToBlockMapping[xh.getHandlerBCI()] = xBlock;
-                if (xh.isCatchAll()) {
-                    return xBlock;
-                } else {
-                    lastXHandler = xBlock;
-                }
-            }
-        }
-        return lastXHandler;
     }
 
     private int identifyLoop(Set<Integer> visit, Set<Integer> active, BlockStartInstr blockStart) {
