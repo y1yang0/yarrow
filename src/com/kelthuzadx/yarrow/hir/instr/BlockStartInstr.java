@@ -116,37 +116,53 @@ public class BlockStartInstr extends StateInstr {
         blockEnd.setBlockStart(this);
     }
 
-    public void mergeVmState(VmState state) {
+    /**
+     * If a block has more than one predecessor, PhiInstrc might be needed at
+     * the beginning of this block. If I find different values of the same variable,
+     * I will merge existing VmState(this.getVmState()) and new VmState.
+     * @param newState state of one of predecessors
+     */
+    public void mergeVmState(VmState newState) {
         if (getVmState() == null) {
-            VmState newState = state.copy();
+            VmState state = newState.copy();
             if (this.isLoopHeader()) {
-                for (int i = 0; i < newState.getStackSize(); i++) {
-                    newState.createPhiForStack(this, i);
+                for (int i = 0; i < state.getStackSize(); i++) {
+                    state.createPhiForStack(this, i);
                 }
-                for (int i = 0; i < newState.getLocalSize(); i++) {
-                    newState.createPhiForLocal(this, i);
+                for (int i = 0; i < state.getLocalSize(); i++) {
+                    state.createPhiForLocal(this, i);
                 }
             }
-            setVmState(newState);
+            setVmState(state);
         } else {
-            Constraint.matchVmState(getVmState(), state);
+            Constraint.matchVmState(getVmState(), newState);
             if (this.isLoopHeader()) {
-                for (int i = 0; i < state.getLocalSize(); i++) {
-                    if (state.get(i) == null || !state.get(i).isType(getVmState().get(i).getType())) {
+                for (int i = 0; i < newState.getLocalSize(); i++) {
+                    if (newState.get(i) == null || !newState.get(i).isType(getVmState().get(i).getType())) {
                         CompilerErrors.bailOut();
                     }
                 }
             } else {
-                CompilerErrors.bailOut();
                 for (int i = 0; i < getVmState().getStackSize(); i++) {
-                    PhiInstr val = (PhiInstr) state.getStack().get(i);
-                    if (val != getVmState().getStack().get(i) &&
-                            !(getVmState().getStack().get(i) instanceof PhiInstr)
-                    ) {
-                        getVmState().createPhiForStack(this, i);
+                    Instruction val = newState.getStack().get(i);
+                    if(val!=newState.getStack().get(i) ||
+                            (!(val instanceof PhiInstr) && ((PhiInstr)val).getBlock()!=this)
+                    ){
+                        getVmState().createPhiForStack(this,i);
                     }
                 }
-
+                for (int i = 0; i < getVmState().getLocalSize(); i++) {
+                    Instruction val = newState.getLocal()[i];
+                    if(val!=null && !Instruction.matchType(val,newState.getLocal()[i])){
+                        if(val!=newState.getLocal()[i] ||
+                                (!(val instanceof PhiInstr) && ((PhiInstr)val).getBlock()!=this)
+                        ){
+                            getVmState().createPhiForLocal(this,i);
+                        }
+                    }else{
+                        getVmState().getLocal()[i] = null;
+                    }
+                }
             }
         }
     }

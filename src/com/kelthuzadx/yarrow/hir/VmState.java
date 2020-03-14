@@ -76,6 +76,10 @@ public class VmState {
         return lock;
     }
 
+    public Instruction[] getLocal() {
+        return local;
+    }
+
     public VmState copy() {
         VmState newState = new VmState(this.maxStackSize, this.local.length);
         newState.stack.addAll(this.stack);

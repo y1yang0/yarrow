@@ -1,3 +1,3 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-dot "$1" -T png -o out.png
+dot "$1" -T png -o cfg.png

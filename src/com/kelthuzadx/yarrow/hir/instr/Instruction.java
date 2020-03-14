@@ -58,5 +58,12 @@ public class Instruction {
             return id++;
         }
     }
+
+    public static boolean matchType(Instruction ia, Instruction ib){
+        if(ia.value.getType()!=ib.value.getType()){
+            return false;
+        }
+        return true;
+    }
 }
 

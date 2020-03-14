@@ -17,6 +17,10 @@ public class PhiInstr extends Instruction {
         this.block = block;
     }
 
+    public BlockStartInstr getBlock() {
+        return block;
+    }
+
     public Instruction operand(int index) {
         VmState state = block.getPredecessor().get(index).getBlockEnd().getVmState();
         if (state != null) {
