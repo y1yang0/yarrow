@@ -52,6 +52,7 @@ class CFG {
         }
         if (PrintIRToFile) {
             printCFGToDotFile();
+            printCFGDetailToDotFile();
         }
     }
 
@@ -299,6 +300,34 @@ class CFG {
         }
         for (BlockStartInstr block : blocks) {
             content.append("\tB").append(block.getBlockId()).append("[shape=box];\n");
+        }
+        content.append("}");
+
+        Logger.log(Mode.File, "pure_cfg.dot", content.toString());
+    }
+
+    private void printCFGDetailToDotFile() {
+        StringBuilder content = new StringBuilder();
+        content.append("digraph G{\n");
+        for (BlockStartInstr block : blocks) {
+            if (!block.getSuccessor().isEmpty()) {
+                for (BlockStartInstr succ : block.getSuccessor()) {
+                    content.append("\tB").append(block.getBlockId()).append("-> B").append(succ.getBlockId()).append(";\n");
+                }
+            }
+        }
+        for (BlockStartInstr block : blocks) {
+            content.append("\tB").append(block.getBlockId()).append("[shape=record,label=\"");
+            content.append("{ B").append(block.getBlockId()).append(" | ");
+            BytecodeStream bs = new BytecodeStream(code, block.getStartBci());
+            while (bs.hasNext()) {
+                int bci = bs.next();
+                content.append(bs.getCurrentBytecodeString()).append("\\n");
+                if (bci == block.getEndBci()) {
+                    break;
+                }
+            }
+            content.append(" }\"];\n");
         }
         content.append("}");
 
