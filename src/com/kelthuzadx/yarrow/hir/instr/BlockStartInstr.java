@@ -145,19 +145,31 @@ public class BlockStartInstr extends StateInstr {
             } else {
                 for (int i = 0; i < getVmState().getStackSize(); i++) {
                     Instruction val = newState.getStack().get(i);
-                    if(val!=newState.getStack().get(i) ||
-                            (!(val instanceof PhiInstr) && ((PhiInstr)val).getBlock()!=this)
-                    ){
-                        getVmState().createPhiForStack(this,i);
+                    if(val!=getVmState().getStack().get(i)){
+                        if(val instanceof PhiInstr){
+                            if(((PhiInstr) val).getBlock()!=this){
+                                getVmState().createPhiForStack(this,i);
+                            }
+                        }else{
+                            getVmState().createPhiForStack(this,i);
+                        }
                     }
                 }
                 for (int i = 0; i < getVmState().getLocalSize(); i++) {
                     Instruction val = newState.getLocal()[i];
-                    if(val!=null && !Instruction.matchType(val,newState.getLocal()[i])){
-                        if(val!=newState.getLocal()[i] ||
-                                (!(val instanceof PhiInstr) && ((PhiInstr)val).getBlock()!=this)
-                        ){
-                            getVmState().createPhiForLocal(this,i);
+                    // If val exists and two local variable typees match
+                    if(val!=null && Instruction.matchType(val,getVmState().getLocal()[i])){
+                        // if existing local variable is not PhiInstr OR
+                        // if existing local variable is PhiInstr and it
+                        // doesn't belong to this block
+                        if(val!=newState.getLocal()[i]){
+                            if(val instanceof PhiInstr){
+                                if (((PhiInstr) val).getBlock()!=this){
+                                    getVmState().createPhiForLocal(this,i);
+                                }
+                            }else{
+                                getVmState().createPhiForLocal(this,i);
+                            }
                         }
                     }else{
                         getVmState().getLocal()[i] = null;
