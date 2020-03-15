@@ -301,7 +301,7 @@ class CFG {
         }
         content.append("}");
 
-        Logger.log(Mode.File, "phase1_pure.dot", content.toString());
+        Logger.log(Mode.File, method.getName()+"_phase1_pure.dot", content.toString());
     }
 
     private void printCFGDetailToDotFile() {
@@ -329,7 +329,7 @@ class CFG {
         }
         content.append("}");
 
-        Logger.log(Mode.File, "phase1.dot", content.toString());
+        Logger.log(Mode.File, method.getName()+"_phase1.dot", content.toString());
     }
 }
 

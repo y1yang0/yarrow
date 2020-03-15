@@ -92,7 +92,7 @@ public class SumTest {
 //            88 : []
 //            89 : #1[89,90] => []
 //            90 : #1[89,90] => []
-    public static int sum2(int base) {
+    public static int yarrow_sum2(int base) {
         int r = base;
         for (int i = 0; i < 10; i++) {
             r += i * 1 / 1;
@@ -195,7 +195,7 @@ public class SumTest {
 //            75 : []
 //            76 : #1[76,77] => []
 //            77 : #1[76,77] => []
-    public static int sum1(int base) {
+    public static int yarrow_sum1(int base) {
         int r = base;
         for (int i = 0; i < 10; i++) {
             r += i * 1 / 1;
@@ -243,7 +243,7 @@ public class SumTest {
 //        23 : []
 //        24 : #1[24,25] => []
 //        25 : #1[24,25] => []
-    public static int sum(int base) {
+    public static int yarrow_sum(int base) {
         int r = base;
         for (int i = 0; i < 10; i++) {
             r += i * 1 / 1;
@@ -254,8 +254,9 @@ public class SumTest {
     public static void main(String[] args) {
         int sum = 0;
         for (int i = 0; i < 999998; i++) {
-            sum += sum(1);
-            sum += sum2(i);
+            sum += yarrow_sum(1);
+            sum += yarrow_sum2(i);
+            sum += yarrow_sum1(i);
         }
         System.out.println(sum);
     }

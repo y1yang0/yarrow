@@ -7,11 +7,11 @@ public class FieldTest {
 
     public static void main(String[] args) {
         for (int i = 0; i < 999998; i++) {
-            new FieldTest().field(i);
+            new FieldTest().yarrow_field(i);
         }
     }
 
-    public void field(int val) {
+    public void yarrow_field(int val) {
         String s = String.valueOf(val);
         s += field2;
         field1 = s;

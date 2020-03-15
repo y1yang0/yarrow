@@ -1,7 +1,7 @@
 package com.kelthuzadx.yarrow.test;
 
 public class NewTest {
-    public static void newObj(int val) {
+    public static void yarrow_newObj(int val) {
         for (int i = 0; i < 100; i++) {
             Object obj = null;
             if (val > 0 && val <= 100) {
@@ -18,7 +18,7 @@ public class NewTest {
 
     public static void main(String[] args) {
         for (int i = 0; i < 999998; i++) {
-            newObj(i);
+            yarrow_newObj(i);
         }
     }
 }

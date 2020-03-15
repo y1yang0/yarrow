@@ -3,7 +3,7 @@ package com.kelthuzadx.yarrow.test;
 public class CastTest {
     private static int val = 45;
 
-    public static void typeCast(int val) {
+    public static void yarrow_typeCast(int val) {
         double d = val + 2;
         d *= 2.0;
         long x = (long) d;
@@ -14,7 +14,7 @@ public class CastTest {
         val = p;
     }
 
-    private static void instanceOf(Object obj) {
+    private static void yarrow_instanceOf(Object obj) {
         if (obj instanceof A) {
             ((A) obj).stuff();
         } else {
@@ -26,8 +26,8 @@ public class CastTest {
 
     public static void main(String[] args) {
         for (int i = 0; i < 9999998; i++) {
-            typeCast(i);
-            instanceOf(new B(i));
+            yarrow_typeCast(i);
+            yarrow_instanceOf(new B(i));
         }
     }
 
