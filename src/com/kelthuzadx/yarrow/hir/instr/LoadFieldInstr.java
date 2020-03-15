@@ -10,6 +10,7 @@ public class LoadFieldInstr extends AccessFieldInstr {
 
     @Override
     public String toString() {
-        return Logger.format("i{}: load i{}.#{}", super.id, super.object, super.offset, super.field.getDeclaringClass());
+        return Logger.format("i{}: load i{}+{} [{}.{}]", super.id,super.object.id,
+                super.offset,field.getDeclaringClass().getUnqualifiedName(),field.getName());
     }
 }
