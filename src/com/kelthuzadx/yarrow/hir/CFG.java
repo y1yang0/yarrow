@@ -1,5 +1,6 @@
 package com.kelthuzadx.yarrow.hir;
 
+import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.bytecode.BytecodeStream;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
@@ -151,14 +152,16 @@ class CFG {
                     break;
                 }
                 default: {
-                    for(ExHandler handler:exHandler){
-                        if(handler.tryCover(bci)){
-                            BlockStartInstr catchBlock = handler.getCatchEntry();
-                            if(!currentBlock.hasSuccessor(catchBlock)){
-                                currentBlock.addSuccessor(catchBlock);
-                            }
-                            if(handler.isCatchAll()){
-                                break;
+                    if(Bytecode.canTrap(bci)){
+                        for(ExHandler handler:exHandler){
+                            if(handler.tryCover(bci)){
+                                BlockStartInstr catchBlock = handler.getCatchEntry();
+                                if(!currentBlock.hasSuccessor(catchBlock)){
+                                    currentBlock.addSuccessor(catchBlock);
+                                }
+                                if(handler.isCatchAll()){
+                                    break;
+                                }
                             }
                         }
                     }
@@ -248,7 +251,7 @@ class CFG {
     }
 
     private boolean isLoopBlock(int blockId) {
-        return loopMap.get(blockId) != 0;
+        return loopMap.get(blockId)!=null && loopMap.get(blockId)!= 0;
     }
 
     private void printBciToBlocks() {
@@ -319,7 +322,7 @@ class CFG {
             BytecodeStream bs = new BytecodeStream(code, block.getStartBci());
             while (bs.hasNext()) {
                 int bci = bs.next();
-                content.append(bs.getCurrentBytecodeString()).append("\\n");
+                content.append(bs.getCurrentBytecodeString()).append("\\l");
                 if (bci == block.getEndBci()) {
                     break;
                 }

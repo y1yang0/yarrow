@@ -224,4 +224,52 @@ public class Bytecode {
         }
         return "<NotFound>";
     }
+
+    public static boolean canTrap(int bc){
+        switch (bc){
+            case Bytecode.LDC:
+            case Bytecode.LDC_W:
+            case Bytecode.LDC2_W:
+            case Bytecode.IALOAD:
+            case Bytecode.LALOAD:
+            case Bytecode.FALOAD:
+            case Bytecode.DALOAD:
+            case Bytecode.AALOAD:
+            case Bytecode.BALOAD:
+            case Bytecode.CALOAD:
+            case Bytecode.SALOAD:
+            case Bytecode.IASTORE:
+            case Bytecode.LASTORE:
+            case Bytecode.FASTORE:
+            case Bytecode.DASTORE:
+            case Bytecode.AASTORE:
+            case Bytecode.BASTORE:
+            case Bytecode.CASTORE:
+            case Bytecode.SASTORE:
+            case Bytecode.IDIV:
+            case Bytecode.LDIV:
+            case Bytecode.IREM:
+            case Bytecode.LREM:
+            case Bytecode.GETSTATIC:
+            case Bytecode.PUTSTATIC:
+            case Bytecode.GETFIELD:
+            case Bytecode.PUTFIELD:
+            case Bytecode.INVOKEVIRTUAL:
+            case Bytecode.INVOKESPECIAL:
+            case Bytecode.INVOKESTATIC:
+            case Bytecode.INVOKEDYNAMIC:
+            case Bytecode.INVOKEINTERFACE:
+            case Bytecode.NEW:
+            case Bytecode.NEWARRAY:
+            case Bytecode.ANEWARRAY:
+            case Bytecode.ARRAYLENGTH:
+            case Bytecode.ATHROW:
+            case Bytecode.CHECKCAST:
+            case Bytecode.INSTANCEOF:
+            case Bytecode.MONITORENTER:
+            case Bytecode.MULTIANEWARRAY:
+                return true;
+        }
+        return false;
+    }
 }
