@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.regex.Matcher;
 
 public class Logger<M extends Mode> {
 
@@ -45,7 +46,9 @@ public class Logger<M extends Mode> {
     @SafeVarargs
     private static <T> String replacePlaceHolder(String format, T... args) {
         for (T arg : args) {
-            format = format.replaceFirst("\\{.*?\\}", arg.toString());
+            // If replacement contains "$" character, replaceFirst would treat it as group reference
+            // so I need escape dollar character before using it as replacement string
+            format = format.replaceFirst("\\{.*?\\}", Matcher.quoteReplacement(arg.toString()));
         }
 
         return format;
