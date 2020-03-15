@@ -240,7 +240,9 @@ public class BytecodeStream implements Iterator<Integer> {
             case INSTANCEOF:
             case IFNULL:
             case IFNONNULL:
-            case IINC: {
+            case IINC:
+            case LDC_W:
+            case LDC2_W:{
                 if (c == LDC_W || c == LDC2_W) {
                     data = readU2(curBci + 1);
                 } else {

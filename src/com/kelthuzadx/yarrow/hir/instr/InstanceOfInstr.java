@@ -18,6 +18,6 @@ public class InstanceOfInstr extends StateInstr {
 
     @Override
     public String toString() {
-        return Logger.format("i{}: instanceof i{} -> {}", super.id, object.id, klass.toClassName());
+        return Logger.format("i{}: instanceof i{} -> {}", super.id, object.id, klass.getUnqualifiedName());
     }
 }

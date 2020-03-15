@@ -677,10 +677,10 @@ public class HirBuilder {
                     temp = new Value(JavaKind.Long, ((JavaConstant) item).asLong());
                     break;
                 case Float:
-                    temp = new Value(JavaKind.Long, ((JavaConstant) item).asFloat());
+                    temp = new Value(JavaKind.Float, ((JavaConstant) item).asFloat());
                     break;
                 case Double:
-                    temp = new Value(JavaKind.Long, ((JavaConstant) item).asDouble());
+                    temp = new Value(JavaKind.Double, ((JavaConstant) item).asDouble());
                     break;
                 case Object:
                     temp = new Value(JavaKind.Object, ((HotSpotObjectConstant) item).asObject(((HotSpotObjectConstant) item).getType()));
