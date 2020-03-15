@@ -251,7 +251,7 @@ class CFG {
     }
 
     private boolean isLoopBlock(int blockId) {
-        return loopMap.get(blockId)!=null && loopMap.get(blockId)!= 0;
+        return loopMap.get(blockId)!=null && loopMap.get(blockId) != 0;
     }
 
     private void printBciToBlocks() {
@@ -269,7 +269,7 @@ class CFG {
     }
 
     private void printAllBlock() {
-        Logger.logf("{}", "=====All blocks=====>");
+        Logger.logf("{}", "=====Phase1: Control Flow Graph=====>");
         for (BlockStartInstr block : blocks) {
             String flag = block.isLoopHeader() ? "[LH]" : "";
             flag += isLoopBlock(block.getBlockId()) ? "[L]" : "";
@@ -303,7 +303,7 @@ class CFG {
         }
         content.append("}");
 
-        Logger.log(Mode.File, "pure_cfg.dot", content.toString());
+        Logger.log(Mode.File, "phase1_pure.dot", content.toString());
     }
 
     private void printCFGDetailToDotFile() {
@@ -331,7 +331,7 @@ class CFG {
         }
         content.append("}");
 
-        Logger.log(Mode.File, "cfg.dot", content.toString());
+        Logger.log(Mode.File, "phase1.dot", content.toString());
     }
 }
 
