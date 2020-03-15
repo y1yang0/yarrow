@@ -458,12 +458,15 @@ public class BytecodeStream implements Iterator<Integer> {
 
     public final class InvokeDynamic implements Invoke {
         public int getConstPoolIndex() {
-            return readS2(curBci + 1);
+            // DON'T TRUST F**KING OFFICIAL DOCUMENTATION, READ ENTIRE FOUR BYTES
+            // 2020.3.15
+            return readS4(curBci + 1);
         }
     }
 
     public final class InvokeInterface implements Invoke {
         public int getConstPoolIndex() {
+            Constraint.matchInt(curBci+4,0);
             return readS2(curBci + 1);
         }
 

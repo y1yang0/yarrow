@@ -1028,9 +1028,9 @@ public class HirBuilder {
     }
 
     private void call(BytecodeStream.Invoke invoke, int opcode) {
-        if (opcode == Bytecode.INVOKEDYNAMIC) {
-            CompilerErrors.bailOut();
-        }
+//        if (opcode == Bytecode.INVOKEDYNAMIC) {
+//            CompilerErrors.bailOut();
+//        }
 
 
         JavaMethod target = null;
@@ -1065,7 +1065,9 @@ public class HirBuilder {
                 break;
             }
             case Bytecode.INVOKEDYNAMIC:{
-                YarrowError.unimplemented();
+                var m = ((BytecodeStream.InvokeDynamic) invoke);
+                target = method.getConstantPool().lookupMethod(m.getConstPoolIndex(), opcode);
+                receiver = null;
                 break;
             }
             default:
