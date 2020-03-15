@@ -20,6 +20,6 @@ public class StoreIndexInstr extends AccessArrayInstr {
 
     @Override
     public String toString() {
-        return Logger.format("i{}: store i{}[i{}],i{} [{}]", super.id, super.array.id, index.id,value.id, elementType.getJavaName());
+        return Logger.format("i{}: store i{}[i{}],i{} [{}]", super.id, super.array.id, index.id, value.id, elementType.getJavaName());
     }
 }

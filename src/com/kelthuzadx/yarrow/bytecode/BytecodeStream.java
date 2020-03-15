@@ -242,7 +242,7 @@ public class BytecodeStream implements Iterator<Integer> {
             case IFNONNULL:
             case IINC:
             case LDC_W:
-            case LDC2_W:{
+            case LDC2_W: {
                 if (c == LDC_W || c == LDC2_W) {
                     data = readU2(curBci + 1);
                 } else {
@@ -468,7 +468,7 @@ public class BytecodeStream implements Iterator<Integer> {
 
     public final class InvokeInterface implements Invoke {
         public int getConstPoolIndex() {
-            Constraint.matchInt(curBci+4,0);
+            Constraint.matchInt(curBci + 4, 0);
             return readS2(curBci + 1);
         }
 

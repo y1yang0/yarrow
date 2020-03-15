@@ -4,13 +4,11 @@ import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.bytecode.BytecodeStream;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.*;
-import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Converter;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.hotspot.HotSpotObjectConstant;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaField;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
-import jdk.vm.ci.hotspot.HotSpotResolvedObjectType;
 import jdk.vm.ci.meta.*;
 
 import java.util.*;
@@ -1041,14 +1039,14 @@ public class HirBuilder {
                 var m = ((BytecodeStream.InvokeInterface) invoke);
                 target = method.getConstantPool().lookupMethod(m.getConstPoolIndex(), opcode);
                 receiver = state.pop();
-                Instruction.assertType(receiver,JavaKind.Object);
+                Instruction.assertType(receiver, JavaKind.Object);
                 break;
             }
             case Bytecode.INVOKESPECIAL: {
                 var m = ((BytecodeStream.InvokeSpecial) invoke);
                 target = method.getConstantPool().lookupMethod(m.getConstPoolIndex(), opcode);
                 receiver = state.pop();
-                Instruction.assertType(receiver,JavaKind.Object);
+                Instruction.assertType(receiver, JavaKind.Object);
                 break;
             }
             case Bytecode.INVOKESTATIC: {
@@ -1061,10 +1059,10 @@ public class HirBuilder {
                 var m = ((BytecodeStream.InvokeVirtual) invoke);
                 target = method.getConstantPool().lookupMethod(m.getConstPoolIndex(), opcode);
                 receiver = state.pop();
-                Instruction.assertType(receiver,JavaKind.Object);
+                Instruction.assertType(receiver, JavaKind.Object);
                 break;
             }
-            case Bytecode.INVOKEDYNAMIC:{
+            case Bytecode.INVOKEDYNAMIC: {
                 var m = ((BytecodeStream.InvokeDynamic) invoke);
                 target = method.getConstantPool().lookupMethod(m.getConstPoolIndex(), opcode);
                 receiver = null;
@@ -1080,7 +1078,7 @@ public class HirBuilder {
         for (int i = 0; i < argc; i++) {
             arguments[i] = state.pop();
         }
-        CallInstr instr = new CallInstr(new Value(sig.getReturnKind()), stateBefore, receiver,arguments, target, sig, opcode);
+        CallInstr instr = new CallInstr(new Value(sig.getReturnKind()), stateBefore, receiver, arguments, target, sig, opcode);
         appendToBlock(instr);
 
         if (sig.getReturnKind() != JavaKind.Void) {
