@@ -49,7 +49,7 @@ public class ArithmeticInstr extends Op2Instr {
                 op = '%';
                 break;
             default:
-                JVMCIError.shouldNotReachHere();
+                YarrowError.shouldNotReachHere();
         }
 
         return Logger.format("i{}: i{} {} i{}", super.id, super.left.id, op, super.right.id);

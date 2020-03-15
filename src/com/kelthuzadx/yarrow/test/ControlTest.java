@@ -35,7 +35,10 @@ public class ControlTest {
 
     public static void main(String[] args) {
         for (int i = 0; i < 99999; i++) {
+            whileLoop(i);
             forLoop(i);
+            forLoop2(i);
+            forLoopWithIf(i);
         }
     }
 }

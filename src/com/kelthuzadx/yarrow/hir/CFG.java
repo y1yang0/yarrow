@@ -121,7 +121,7 @@ class CFG {
                 case RET:
                 case JSR:
                 case JSR_W: {
-                    JVMCIError.unimplemented("ret/jsr considers deprecated and thus not supported");
+                    YarrowError.unimplemented("ret/jsr considers deprecated and thus not supported");
                 }
                 case TABLESWITCH: {
                     currentBlock = null;

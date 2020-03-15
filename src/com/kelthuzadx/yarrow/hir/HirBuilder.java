@@ -2,6 +2,7 @@ package com.kelthuzadx.yarrow.hir;
 
 import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.bytecode.BytecodeStream;
+import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.*;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Converter;
@@ -543,7 +544,7 @@ public class HirBuilder {
                 case Bytecode.JSR:
                 case Bytecode.RET:
                 case Bytecode.JSR_W:
-                    JVMCIError.unimplemented("ret/jsr considers deprecated and thus not supported");
+                    YarrowError.unimplemented("ret/jsr considers deprecated and thus not supported");
                 case Bytecode.TABLESWITCH:
                     tableSwitch(bs.getTableSwitch(), curBci);
                     break;
@@ -617,7 +618,7 @@ public class HirBuilder {
                     monitorExit();
                     break;
                 case Bytecode.WIDE:
-                    JVMCIError.shouldNotReachHere();
+                    YarrowError.shouldNotReachHere();
                 case Bytecode.MULTIANEWARRAY:
                     multiNewArray(bs.getMultiNewArray());
                     break;
@@ -628,7 +629,7 @@ public class HirBuilder {
                     branchIfNull(JavaKind.Object, Cond.NE, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 default:
-                    JVMCIError.shouldNotReachHere();
+                    YarrowError.shouldNotReachHere();
             }
         }
 
@@ -686,7 +687,7 @@ public class HirBuilder {
                     temp = new Value(JavaKind.Object, ((HotSpotObjectConstant) item).asObject(((HotSpotObjectConstant) item).getType()));
                     break;
                 default:
-                    JVMCIError.shouldNotReachHere();
+                    YarrowError.shouldNotReachHere();
             }
         }
         ConstantInstr instr = new ConstantInstr(temp);
@@ -786,7 +787,7 @@ public class HirBuilder {
                 break;
             }
             default:
-                JVMCIError.shouldNotReachHere();
+                YarrowError.shouldNotReachHere();
         }
     }
 
@@ -1023,7 +1024,7 @@ public class HirBuilder {
                 break;
             }
             default:
-                JVMCIError.shouldNotReachHere();
+                YarrowError.shouldNotReachHere();
         }
     }
 
@@ -1044,7 +1045,7 @@ public class HirBuilder {
         switch (opcode) {
             case Bytecode.INVOKEINTERFACE: {
                 var m = ((BytecodeStream.InvokeInterface) invoke);
-                JVMCIError.guarantee(method.hasReceiver() ?
+                YarrowError.guarantee(method.hasReceiver() ?
                                 m.getCount() + 1 == arguments.length : m.getCount() == arguments.length
                         , "Mismatch signature and bytecode data");
                 javaMethod = method.getConstantPool().lookupMethod(m.getConstPoolIndex(), opcode);
@@ -1066,7 +1067,7 @@ public class HirBuilder {
                 break;
             }
             default:
-                JVMCIError.unimplemented();
+                YarrowError.unimplemented();
         }
         CallInstr instr = new CallInstr(new Value(sig.getReturnKind()), stateBefore, arguments, javaMethod, sig, opcode);
         appendToBlock(instr);

@@ -1,5 +1,6 @@
 package com.kelthuzadx.yarrow.bytecode;
 
+import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.util.Constraint;
 import jdk.vm.ci.common.JVMCIError;
 
@@ -292,7 +293,7 @@ public class BytecodeStream implements Iterator<Integer> {
             case ILLEGAL:
             case END:
             default:
-                JVMCIError.shouldNotReachHere();
+                YarrowError.shouldNotReachHere();
         }
         this.bcString = sb.toString();
 
