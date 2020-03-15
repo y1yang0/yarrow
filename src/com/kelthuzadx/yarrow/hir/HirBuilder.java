@@ -921,7 +921,7 @@ public class HirBuilder {
         VmState stateBefore = state.copy();
         Instruction index = state.pop();
         Instruction.assertType(index, JavaKind.Int);
-        TableSwitchInstr instr = new TableSwitchInstr(stateBefore, Arrays.asList(succ), index, sw.getLowKey(), sw.getHighKey());
+        TableSwitchInstr instr = new TableSwitchInstr(stateBefore, Arrays.asList(succ), index, sw.getLowKey());
         appendToBlock(instr);
     }
 
