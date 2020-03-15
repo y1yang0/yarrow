@@ -60,7 +60,7 @@ public class ExceptionTest {
         System.out.println(s);
     }
 
-    static void b2(int i){
+    static void b2(int i) {
         try {
             throw new Exception("integer" + i);
         } catch (Exception e) {

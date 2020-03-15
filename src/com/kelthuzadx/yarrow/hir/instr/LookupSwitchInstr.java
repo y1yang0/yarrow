@@ -20,14 +20,14 @@ public class LookupSwitchInstr extends BlockEndInstr {
     @Override
     public String toString() {
         String caseStr = "";
-        for(int i=0;i<key.length;i++){
-            if(key.length-1!=i){
-                caseStr +="#"+i+"->i"+getSuccessor().get(i).id+",";
-            }else{
-                caseStr +="*"+i+"->i"+getSuccessor().get(i).id;
+        for (int i = 0; i < key.length; i++) {
+            if (key.length - 1 != i) {
+                caseStr += "#" + i + "->i" + getSuccessor().get(i).id + ",";
+            } else {
+                caseStr += "*" + i + "->i" + getSuccessor().get(i).id;
             }
 
         }
-        return Logger.format("i{}: switch [{}]",super.id,caseStr);
+        return Logger.format("i{}: switch [{}]", super.id, caseStr);
     }
 }

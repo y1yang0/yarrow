@@ -7,7 +7,6 @@ import com.kelthuzadx.yarrow.hir.instr.*;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Converter;
 import com.kelthuzadx.yarrow.util.Logger;
-import jdk.vm.ci.common.JVMCIError;
 import jdk.vm.ci.hotspot.HotSpotObjectConstant;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaField;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
@@ -1033,43 +1032,53 @@ public class HirBuilder {
             CompilerErrors.bailOut();
         }
 
-        Signature sig = method.getSignature();
-        HotSpotResolvedObjectType holder = method.getDeclaringClass();
+
+        JavaMethod target = null;
+        Instruction receiver = null;
         VmState stateBefore = state.copy();
-        int argc = sig.getParameterCount(method.hasReceiver());
-        Instruction[] arguments = new Instruction[argc];
-        for (int i = 0; i < argc; i++) {
-            arguments[i] = state.pop();
-        }
-        JavaMethod javaMethod = null;
         switch (opcode) {
             case Bytecode.INVOKEINTERFACE: {
                 var m = ((BytecodeStream.InvokeInterface) invoke);
-                YarrowError.guarantee(method.hasReceiver() ?
-                                m.getCount() + 1 == arguments.length : m.getCount() == arguments.length
-                        , "Mismatch signature and bytecode data");
-                javaMethod = method.getConstantPool().lookupMethod(m.getConstPoolIndex(), opcode);
+                target = method.getConstantPool().lookupMethod(m.getConstPoolIndex(), opcode);
+                receiver = state.pop();
+                Instruction.assertType(receiver,JavaKind.Object);
                 break;
             }
             case Bytecode.INVOKESPECIAL: {
                 var m = ((BytecodeStream.InvokeSpecial) invoke);
-                javaMethod = method.getConstantPool().lookupMethod(m.getConstPoolIndex(), opcode);
+                target = method.getConstantPool().lookupMethod(m.getConstPoolIndex(), opcode);
+                receiver = state.pop();
+                Instruction.assertType(receiver,JavaKind.Object);
                 break;
             }
             case Bytecode.INVOKESTATIC: {
                 var m = ((BytecodeStream.InvokeStatic) invoke);
-                javaMethod = method.getConstantPool().lookupMethod(m.getConstPoolIndex(), opcode);
+                target = method.getConstantPool().lookupMethod(m.getConstPoolIndex(), opcode);
+                receiver = null;
                 break;
             }
             case Bytecode.INVOKEVIRTUAL: {
                 var m = ((BytecodeStream.InvokeVirtual) invoke);
-                javaMethod = method.getConstantPool().lookupMethod(m.getConstPoolIndex(), opcode);
+                target = method.getConstantPool().lookupMethod(m.getConstPoolIndex(), opcode);
+                receiver = state.pop();
+                Instruction.assertType(receiver,JavaKind.Object);
+                break;
+            }
+            case Bytecode.INVOKEDYNAMIC:{
+                YarrowError.unimplemented();
                 break;
             }
             default:
                 YarrowError.unimplemented();
         }
-        CallInstr instr = new CallInstr(new Value(sig.getReturnKind()), stateBefore, arguments, javaMethod, sig, opcode);
+
+        Signature sig = target.getSignature();
+        int argc = sig.getParameterCount(false);
+        Instruction[] arguments = new Instruction[argc];
+        for (int i = 0; i < argc; i++) {
+            arguments[i] = state.pop();
+        }
+        CallInstr instr = new CallInstr(new Value(sig.getReturnKind()), stateBefore, receiver,arguments, target, sig, opcode);
         appendToBlock(instr);
 
         if (sig.getReturnKind() != JavaKind.Void) {

@@ -6,7 +6,6 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class TableSwitchInstr extends BlockEndInstr {
     private Instruction index;
@@ -21,14 +20,14 @@ public class TableSwitchInstr extends BlockEndInstr {
     @Override
     public String toString() {
         String caseStr = "";
-        for(int i=0;i<getSuccessor().size();i++){
-            if(getSuccessor().size()-1!=i){
-                caseStr +="#"+(lowKey+i)+"->i"+getSuccessor().get(i).id+",";
-            }else{
-                caseStr +="*"+(lowKey+i)+"->i"+getSuccessor().get(i).id;
+        for (int i = 0; i < getSuccessor().size(); i++) {
+            if (getSuccessor().size() - 1 != i) {
+                caseStr += "#" + (lowKey + i) + "->i" + getSuccessor().get(i).id + ",";
+            } else {
+                caseStr += "*" + (lowKey + i) + "->i" + getSuccessor().get(i).id;
             }
 
         }
-        return Logger.format("i{}: switch [{}]",super.id,caseStr);
+        return Logger.format("i{}: switch [{}]", super.id, caseStr);
     }
 }

@@ -4,7 +4,6 @@ import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.util.Logger;
-import jdk.vm.ci.common.JVMCIError;
 
 public class ArithmeticInstr extends Op2Instr {
     public ArithmeticInstr(int opcode, Instruction left, Instruction right) {

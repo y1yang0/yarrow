@@ -225,8 +225,8 @@ public class Bytecode {
         return "<NotFound>";
     }
 
-    public static boolean canTrap(int bc){
-        switch (bc){
+    public static boolean canTrap(int bc) {
+        switch (bc) {
             case Bytecode.LDC:
             case Bytecode.LDC_W:
             case Bytecode.LDC2_W:

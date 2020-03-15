@@ -12,16 +12,16 @@ public class ExHandler {
     private boolean isCatchAll;
     private BlockStartInstr catchEntry;
 
-    public ExHandler(ExceptionHandler handler,BlockStartInstr catchEntry){
-        startBci= handler.getStartBCI();
+    public ExHandler(ExceptionHandler handler, BlockStartInstr catchEntry) {
+        startBci = handler.getStartBCI();
         endBci = handler.getEndBCI();
         catchType = handler.getCatchType();
         isCatchAll = handler.isCatchAll();
         this.catchEntry = catchEntry;
     }
 
-    public boolean tryCover(int curBci){
-        return startBci>=curBci && curBci<endBci;
+    public boolean tryCover(int curBci) {
+        return startBci >= curBci && curBci < endBci;
     }
 
     public boolean isCatchAll() {

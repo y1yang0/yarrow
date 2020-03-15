@@ -6,9 +6,7 @@ import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.util.Logger;
 import com.kelthuzadx.yarrow.util.Mode;
-import jdk.vm.ci.common.JVMCIError;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
-import jdk.vm.ci.meta.ExceptionHandler;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -80,7 +78,7 @@ class CFG {
                 currentBlock = createBlockAt(bci);
             } else {
                 if (bciToBlockMapping[bci] != null) {
-                    if(!bciToBlockMapping[currentBlock.getEndBci()].hasSuccessor(bciToBlockMapping[bci])){
+                    if (!bciToBlockMapping[currentBlock.getEndBci()].hasSuccessor(bciToBlockMapping[bci])) {
                         bciToBlockMapping[currentBlock.getEndBci()].addSuccessor(bciToBlockMapping[bci]);
                     }
                     currentBlock = bciToBlockMapping[bci];
@@ -152,14 +150,14 @@ class CFG {
                     break;
                 }
                 default: {
-                    if(Bytecode.canTrap(bci)){
-                        for(ExHandler handler:exHandler){
-                            if(handler.tryCover(bci)){
+                    if (Bytecode.canTrap(bci)) {
+                        for (ExHandler handler : exHandler) {
+                            if (handler.tryCover(bci)) {
                                 BlockStartInstr catchBlock = handler.getCatchEntry();
-                                if(!currentBlock.hasSuccessor(catchBlock)){
+                                if (!currentBlock.hasSuccessor(catchBlock)) {
                                     currentBlock.addSuccessor(catchBlock);
                                 }
-                                if(handler.isCatchAll()){
+                                if (handler.isCatchAll()) {
                                     break;
                                 }
                             }
@@ -183,12 +181,12 @@ class CFG {
         Arrays.sort(blocks, Comparator.comparingInt(BlockStartInstr::getBlockId));
     }
 
-    private void createExceptionBlock(){
-        for(int i=0;i<method.getExceptionHandlers().length;i++){
+    private void createExceptionBlock() {
+        for (int i = 0; i < method.getExceptionHandlers().length; i++) {
             var handler = method.getExceptionHandlers()[i];
             BlockStartInstr exBlock = createBlockAt(handler.getHandlerBCI());
             exBlock.setFlag(BlockFlag.CatchEntry);
-            exHandler[i] = new ExHandler(handler,exBlock);
+            exHandler[i] = new ExHandler(handler, exBlock);
         }
     }
 
@@ -251,7 +249,7 @@ class CFG {
     }
 
     private boolean isLoopBlock(int blockId) {
-        return loopMap.get(blockId)!=null && loopMap.get(blockId) != 0;
+        return loopMap.get(blockId) != null && loopMap.get(blockId) != 0;
     }
 
     private void printBciToBlocks() {

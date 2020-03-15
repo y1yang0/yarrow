@@ -63,7 +63,7 @@ public class BlockStartInstr extends StateInstr {
         return successor;
     }
 
-    public boolean hasSuccessor(BlockStartInstr block){
+    public boolean hasSuccessor(BlockStartInstr block) {
         return successor.contains(block);
     }
 
@@ -123,12 +123,12 @@ public class BlockStartInstr extends StateInstr {
             VmState state = newState.copy();
             if (this.isLoopHeader()) {
                 for (int i = 0; i < state.getStackSize(); i++) {
-                    if(state.getStack().get(i)!=null){
+                    if (state.getStack().get(i) != null) {
                         state.createPhiForStack(this, i);
                     }
                 }
                 for (int i = 0; i < state.getLocalSize(); i++) {
-                    if(state.getLocal()[i]!=null){
+                    if (state.getLocal()[i] != null) {
                         state.createPhiForLocal(this, i);
                     }
                 }
@@ -138,9 +138,9 @@ public class BlockStartInstr extends StateInstr {
             Constraint.matchVmState(getVmState(), newState);
             if (this.isLoopHeader()) {
                 for (int i = 0; i < getVmState().getLocalSize(); i++) {
-                    if(getVmState().get(i)!=null){
-                        if(newState.getLocal()[i]==null ||
-                                !newState.getLocal()[i].isType(getVmState().get(i).getType())){
+                    if (getVmState().get(i) != null) {
+                        if (newState.getLocal()[i] == null ||
+                                !newState.getLocal()[i].isType(getVmState().get(i).getType())) {
                             CompilerErrors.bailOut();
                         }
                     }
