@@ -1,7 +1,7 @@
 package com.kelthuzadx.yarrow.core;
 
 
-import com.kelthuzadx.yarrow.hir.HirBuilder;
+import com.kelthuzadx.yarrow.hir.HIRBuilder;
 import jdk.vm.ci.code.CompilationRequest;
 import jdk.vm.ci.code.CompilationRequestResult;
 import jdk.vm.ci.hotspot.HotSpotCompilationRequestResult;
@@ -20,10 +20,10 @@ public class YarrowCompiler implements JVMCICompiler {
     @Override
     public CompilationRequestResult compileMethod(CompilationRequest request) {
         HotSpotResolvedJavaMethod method = (HotSpotResolvedJavaMethod) request.getMethod();
-        if (method.hasCompiledCodeAtLevel(YarrowHotSpotConfigAccess.CompLevel_full_optimization)) {
+        if (method.hasCompiledCodeAtLevel(YarrowConfigAccess.CompLevel_full_optimization)) {
             return HotSpotCompilationRequestResult.success(0);
         }
-        new HirBuilder(method).build();
+        new HIRBuilder(method).build();
         System.exit(0);
         return HotSpotCompilationRequestResult.success(0);
     }

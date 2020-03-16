@@ -1,9 +1,14 @@
 package com.kelthuzadx.yarrow.test;
 
 public class FieldTest {
+    private final Object special;
     private Object field1;
     private int field2;
     private Object[] arr = new Object[2];
+
+    public FieldTest() {
+        special = new Object();
+    }
 
     public static void main(String[] args) {
         for (int i = 0; i < 999998; i++) {

@@ -7,7 +7,6 @@ import jdk.vm.ci.meta.JavaKind;
 import jdk.vm.ci.meta.JavaType;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class MultiNewArrayInstr extends StateInstr {
     private JavaType klass;
@@ -22,6 +21,6 @@ public class MultiNewArrayInstr extends StateInstr {
     @Override
     public String toString() {
         return Logger.format("i{}: new_multi {}{}", super.id, klass.getUnqualifiedName(),
-                Arrays.stream(dimenInstrs).map(instr -> "[i" + instr.id + "]").reduce("",String::concat));
+                Arrays.stream(dimenInstrs).map(instr -> "[i" + instr.id + "]").reduce("", String::concat));
     }
 }

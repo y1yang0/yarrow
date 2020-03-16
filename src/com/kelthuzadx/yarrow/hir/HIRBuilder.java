@@ -4,38 +4,49 @@ import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.bytecode.BytecodeStream;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.*;
+import com.kelthuzadx.yarrow.optimize.Walker;
 import com.kelthuzadx.yarrow.util.Converter;
 import com.kelthuzadx.yarrow.util.Logger;
+import jdk.vm.ci.code.MemoryBarriers;
 import jdk.vm.ci.hotspot.HotSpotObjectConstant;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaField;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
 import jdk.vm.ci.meta.*;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintIR;
 
 /**
- * HirBuilder performs an abstract interpretation, it would transform java bytecode to compiler HIR.
+ * HirBuilder performs an abstract interpretation, it transform java bytecode to compiler HIR.
+ * Every single basic block has its own VmState, it would be holder by state instructions,(i.e
+ * any instructions which derived from StateInstr)
+ *
+ * @author kelthuzadx
  */
-public class HirBuilder {
+public class HIRBuilder {
+    // Target method to be compiled
     private HotSpotResolvedJavaMethod method;
-
+    // Control flow graph for method
     private CFG cfg;
-
+    // Last visited instruction
     private Instruction lastInstr;
-
+    // Work list to support BFS on CFG
     private Queue<BlockStartInstr> workList;
-
+    // Current vm state
     private VmState state;
 
-    public HirBuilder(HotSpotResolvedJavaMethod method) {
+    private boolean writeFinal;
+
+    private boolean writeVolatile;
+
+    public HIRBuilder(HotSpotResolvedJavaMethod method) {
         this.method = method;
         this.lastInstr = null;
+        this.writeFinal = this.writeVolatile = false;
     }
 
-    public HirBuilder build() {
+    public HIRBuilder build() {
         // Construct cfg and detect reducible loops
         cfg = new CFG(method);
         cfg.build();
@@ -980,43 +991,57 @@ public class HirBuilder {
                 break;
         }
 
+        // If <init> writes final field, a StoreStore barrier will be inserted before method return.
+        // FIXME: AlwaysSafeConstructor does the same thing
+        if (method.isJavaLangObjectInit() && writeFinal) {
+            MemBarrierInstr memBarInstr = new MemBarrierInstr(MemoryBarriers.STORE_STORE);
+            appendToBlock(memBarInstr);
+        }
+
         ReturnInstr instr = new ReturnInstr(val);
         appendToBlock(instr);
     }
 
     private void accessField(int index, int opcode) {
         ConstantInstr holder = null;
-        JavaField field = method.getConstantPool().lookupField(index, method, opcode);
+        HotSpotResolvedJavaField field = (HotSpotResolvedJavaField) method.getConstantPool().lookupField(index, method, opcode);
         if (opcode == Bytecode.PUTSTATIC || opcode == Bytecode.GETSTATIC) {
             holder = new ConstantInstr(new Value(JavaKind.Object, field.getJavaKind().toJavaClass()));
             appendToBlock(holder);
         }
+
         switch (opcode) {
             case Bytecode.GETSTATIC: {
-                LoadFieldInstr instr = new LoadFieldInstr(holder, ((HotSpotResolvedJavaField) field).getOffset(), field);
+                LoadFieldInstr instr = new LoadFieldInstr(holder, field.getOffset(), field);
                 appendToBlock(instr);
                 state.push(instr);
                 break;
             }
             case Bytecode.PUTSTATIC: {
                 Instruction val = state.pop();
-                StoreFieldInstr instr = new StoreFieldInstr(holder, ((HotSpotResolvedJavaField) field).getOffset(), field, val);
+                StoreFieldInstr instr = new StoreFieldInstr(holder, field.getOffset(), field, val);
                 appendToBlock(instr);
                 break;
             }
             case Bytecode.GETFIELD: {
                 Instruction object = state.pop();
                 Instruction.assertType(object, JavaKind.Object);
-                LoadFieldInstr instr = new LoadFieldInstr(object, ((HotSpotResolvedJavaField) field).getOffset(), field);
+                LoadFieldInstr instr = new LoadFieldInstr(object, field.getOffset(), field);
                 appendToBlock(instr);
                 state.push(instr);
                 break;
             }
             case Bytecode.PUTFIELD: {
+                if (field.isFinal()) {
+                    this.writeFinal = true;
+                }
+                if (field.isVolatile()) {
+                    this.writeVolatile = true;
+                }
                 Instruction val = state.pop();
                 Instruction object = state.pop();
                 Instruction.assertType(object, JavaKind.Object);
-                StoreFieldInstr instr = new StoreFieldInstr(object, ((HotSpotResolvedJavaField) field).getOffset(), field, val);
+                StoreFieldInstr instr = new StoreFieldInstr(object, field.getOffset(), field, val);
                 appendToBlock(instr);
                 break;
             }
@@ -1026,46 +1051,36 @@ public class HirBuilder {
     }
 
     private void call(BytecodeStream.Invoke invoke, int opcode) {
-//        if (opcode == Bytecode.INVOKEDYNAMIC) {
-//            CompilerErrors.bailOut();
-//        }
-
-
         JavaMethod target = null;
-        Instruction receiver = null;
+        boolean hasReceiver = false;
         VmState stateBefore = state.copy();
         switch (opcode) {
             case Bytecode.INVOKEINTERFACE: {
                 var m = ((BytecodeStream.InvokeInterface) invoke);
                 target = method.getConstantPool().lookupMethod(m.getConstPoolIndex(), opcode);
-                receiver = state.pop();
-                Instruction.assertType(receiver, JavaKind.Object);
+                hasReceiver = true;
                 break;
             }
             case Bytecode.INVOKESPECIAL: {
                 var m = ((BytecodeStream.InvokeSpecial) invoke);
                 target = method.getConstantPool().lookupMethod(m.getConstPoolIndex(), opcode);
-                receiver = state.pop();
-                Instruction.assertType(receiver, JavaKind.Object);
+                hasReceiver = true;
                 break;
             }
             case Bytecode.INVOKESTATIC: {
                 var m = ((BytecodeStream.InvokeStatic) invoke);
                 target = method.getConstantPool().lookupMethod(m.getConstPoolIndex(), opcode);
-                receiver = null;
                 break;
             }
             case Bytecode.INVOKEVIRTUAL: {
                 var m = ((BytecodeStream.InvokeVirtual) invoke);
                 target = method.getConstantPool().lookupMethod(m.getConstPoolIndex(), opcode);
-                receiver = state.pop();
-                Instruction.assertType(receiver, JavaKind.Object);
+                hasReceiver = true;
                 break;
             }
             case Bytecode.INVOKEDYNAMIC: {
                 var m = ((BytecodeStream.InvokeDynamic) invoke);
                 target = method.getConstantPool().lookupMethod(m.getConstPoolIndex(), opcode);
-                receiver = null;
                 break;
             }
             default:
@@ -1075,8 +1090,14 @@ public class HirBuilder {
         Signature sig = target.getSignature();
         int argc = sig.getParameterCount(false);
         Instruction[] arguments = new Instruction[argc];
+        Instruction receiver = null;
         for (int i = 0; i < argc; i++) {
             arguments[i] = state.pop();
+            Instruction.assertType(arguments[i], sig.getParameterKind(i));
+        }
+        if (hasReceiver) {
+            receiver = state.pop();
+            Instruction.assertType(receiver, JavaKind.Object);
         }
         CallInstr instr = new CallInstr(new Value(sig.getReturnKind()), stateBefore, receiver, arguments, target, sig, opcode);
         appendToBlock(instr);
@@ -1169,14 +1190,14 @@ public class HirBuilder {
         VmState stateBefore = state.copy();
         JavaType klass = method.getConstantPool().lookupType(mna.getConstPoolIndex(), -1);
         int dimension = mna.getDimension();
-        Instruction[] dimenInstrs = new Instruction[dimension];
+        Instruction[] dimenInstr = new Instruction[dimension];
         for (int i = dimension - 1; i >= 0; i--) {
             Instruction di = state.pop();
             Instruction.assertType(di, JavaKind.Int);
-            dimenInstrs[i] = di;
+            dimenInstr[i] = di;
         }
 
-        MultiNewArrayInstr instr = new MultiNewArrayInstr(stateBefore, klass, dimenInstrs);
+        MultiNewArrayInstr instr = new MultiNewArrayInstr(stateBefore, klass, dimenInstr);
         appendToBlock(instr);
         state.push(instr);
     }
@@ -1186,23 +1207,11 @@ public class HirBuilder {
             return;
         }
         Logger.logf("{}", block.getVmState().toString());
-        iterateBytecode(block, instr -> Logger.logf("{}", instr.toString()));
+        Walker.walkBytecode(block, instr -> Logger.logf("{}", instr.toString()));
         Logger.logf("");
         visit.add(block);
         for (BlockStartInstr succ : block.getBlockEnd().getSuccessor()) {
             printSSA(visit, succ);
-        }
-    }
-
-
-    public void iterateBytecode(BlockStartInstr block, Consumer<Instruction> closure) {
-        Instruction last = block;
-        while (last != null && last != block.getBlockEnd()) {
-            closure.accept(last);
-            last = last.getNext();
-        }
-        if (last != null && last == block.getBlockEnd()) {
-            closure.accept(last);
         }
     }
 }
