@@ -8,10 +8,10 @@ public class SyncTest {
         }
     }
 
-    public static synchronized void yarrow_sync2(int i){
-        int k = i+2;
-        k*=2;
-        k/=343;
+    public static synchronized void yarrow_sync2(int i) {
+        int k = i + 2;
+        k *= 2;
+        k /= 343;
         obj = k;
     }
 

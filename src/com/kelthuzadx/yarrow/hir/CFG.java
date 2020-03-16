@@ -40,7 +40,7 @@ class CFG {
 
     }
 
-    public void build() {
+    public CFG build() {
         mapBciToBlocks();
         uniqueBlocks();
         identifyLoop(new HashSet<>(blocks.length), new HashSet<>(blocks.length), bciToBlockMapping[0]);
@@ -53,6 +53,7 @@ class CFG {
             printCFGToDotFile();
             printCFGDetailToDotFile();
         }
+        return this;
     }
 
     public BlockStartInstr blockContain(int bci) {
@@ -329,7 +330,8 @@ class CFG {
         }
         content.append("}");
 
-        Logger.log(Mode.File, method.getName() + "_phase1.dot", content.toString());
+        Logger.log(Mode.File, method.getDeclaringClass().getUnqualifiedName() + "_" +
+                method.getName() + "_phase1.dot", content.toString());
     }
 }
 

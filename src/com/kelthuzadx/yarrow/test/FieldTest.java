@@ -23,7 +23,7 @@ public class FieldTest {
 
         arr[0] = s;
         arr[1] = arr[0];
-        double returnVal = field2+1;
+        double returnVal = field2 + 1;
         return returnVal;
     }
 }

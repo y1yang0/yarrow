@@ -1,8 +1,10 @@
 package com.kelthuzadx.yarrow.hir;
 
+import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.hir.instr.Instruction;
 import com.kelthuzadx.yarrow.hir.instr.PhiInstr;
+import jdk.vm.ci.meta.JavaKind;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,15 +27,61 @@ public class VmState {
         this.maxStackSize = maxStackSize;
     }
 
-    public void push(Instruction instr) {
-        if (stack.size() + 1 > maxStackSize) {
-            throw new RuntimeException("stack excess maximum capacity");
+    public void push(JavaKind type, Instruction instr) {
+        switch (type) {
+            case Int:
+            case Float:
+            case Object:
+                if (stack.size() + 1 > maxStackSize) {
+                    throw new YarrowError("stack excess maximum capacity");
+                }
+                stack.push(instr);
+                break;
+            case Long:
+            case Double:
+                if (stack.size() + 2 > maxStackSize) {
+                    throw new YarrowError("stack excess maximum capacity");
+                }
+                stack.push(instr);
+                stack.push(null);
+                break;
+            default:
+                YarrowError.shouldNotReachHere();
         }
+
+    }
+
+    public void unsafePush(Instruction instr) {
         stack.push(instr);
     }
 
-    public Instruction pop() {
+    public Instruction unsafePop() {
         return stack.pop();
+    }
+
+    public Instruction pop(JavaKind type) {
+        switch (type) {
+            case Int:
+            case Float:
+            case Object: {
+                var val = stack.pop();
+                Instruction.assertType(val, type);
+                return val;
+            }
+            case Long:
+            case Double: {
+                Instruction placeholder = stack.pop();
+                if (placeholder != null) {
+                    throw new YarrowError("Must be null slot");
+                }
+                var val = stack.pop();
+                Instruction.assertType(val, type);
+                return val;
+            }
+            default:
+                YarrowError.shouldNotReachHere();
+        }
+        return null;
     }
 
     public int getStackSize() {
@@ -103,7 +151,7 @@ public class VmState {
     public String toString() {
         String sk = stack.stream().map(instr -> "" + instr.getId()).collect(Collectors.joining(","));
         String lc = Arrays.stream(local).map(instr -> "" + instr).collect(Collectors.joining(","));
-        String lx = lock.stream().map(instr -> instr==null?"":"" + instr.getId()).collect(Collectors.joining(","));
+        String lx = lock.stream().map(instr -> instr == null ? "" : "" + instr.getId()).collect(Collectors.joining(","));
         return "VmState{" +
                 "lock=[" + lx +
                 "],stack=[" + sk +
