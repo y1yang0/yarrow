@@ -18,6 +18,6 @@ public class NewObjectArrayInstr extends StateInstr {
 
     @Override
     public String toString() {
-        return Logger.format("i{}: new_objarr #{}", super.id, klass.getName());
+        return Logger.format("i{}: new_objarr {}", super.id, klass.getUnqualifiedName());
     }
 }

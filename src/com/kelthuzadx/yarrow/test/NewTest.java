@@ -12,6 +12,10 @@ public class NewTest {
                 obj = new Class[3];
             } else if (val > 300 && val <= 400) {
                 obj = new String[]{"aa", "bb", "cc"};
+            } else if (val > 400 && val < 500) {
+                obj = new int[32];
+            } else {
+                Object[][][] multi = new Object[2][2][];
             }
         }
     }

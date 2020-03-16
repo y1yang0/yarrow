@@ -17,6 +17,6 @@ public class NewTypeArrayInstr extends StateInstr {
 
     @Override
     public String toString() {
-        return Logger.format("i{}: new_typearr #{}", super.id, elemType.getJavaName());
+        return Logger.format("i{}: new_typearr {}", super.id, elemType.getJavaName());
     }
 }

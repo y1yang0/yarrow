@@ -18,6 +18,6 @@ public class TypeCastInstr extends Instruction {
 
     @Override
     public String toString() {
-        return Logger.format("i{}: ({})i{}", super.id,toType.getJavaName(),from.id);
+        return Logger.format("i{}: ({})i{}", super.id, toType.getJavaName(), from.id);
     }
 }
