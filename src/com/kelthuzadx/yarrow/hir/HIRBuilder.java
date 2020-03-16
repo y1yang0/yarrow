@@ -1173,9 +1173,10 @@ public class HIRBuilder {
     }
 
     private void monitorEnter() {
-        Instruction lock = state.pop();
-        Instruction.assertType(lock, JavaKind.Object);
+        Instruction lockObj = state.pop();
+        Instruction.assertType(lockObj, JavaKind.Object);
         VmState stateBefore = state.copy(); // save state before locking(but after pop element) in case of deopt after a nullptr exception
+        Instruction lock = state.lock(lockObj);
         MonitorEnterInstr instr = new MonitorEnterInstr(lock, stateBefore);
         appendToBlock(instr);
     }

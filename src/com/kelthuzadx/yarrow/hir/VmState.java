@@ -57,7 +57,7 @@ public class VmState {
         return local.length;
     }
 
-    public Instruction lock(InstanceOfInstr object) {
+    public Instruction lock(Instruction object) {
         lock.add(object);
         return lock.get(lock.size() - 1);
     }
