@@ -3,10 +3,11 @@
 ## Preface
 This is my graduation project. I intend to write an optimizing JIT compiler for HotSpot VM. 
 Thanks to [JEP243](http://openjdk.java.net/jeps/243) JVMCI, I can easily plug a compiler into
-VM at runtime with `-XX:+EnableJVMCI -XX:+UseJVMCICompiler ` options. Since JVMCI is an experimental
-feature and it only exposes its services to Graal compiler backend, which is a default implementation 
-of JVMCI, I have to hack it so that JVMCI services can be exported to my yarrow module. For the sake of 
-the simplicity, I just modify the `module-info.java` from JVMCI module and rebuild entire JDK.
+JVM at runtime with `-XX:+EnableJVMCI -XX:+UseJVMCICompiler -Djvmci.Compiler=yarrow` options.
+Since JVMCI is an experimental feature and it only exposes its services to Graal compiler backend, 
+which is a default implementation of JVMCI, I have to hack it so that JVMCI services can be exported 
+to my yarrow module. For the sake of the simplicity, I just modify the `module-info.java` from JVMCI 
+module and rebuild entire JDK.
 
 # Internals
 Back to my project, the whole compilation is divided into two parts.  

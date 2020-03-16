@@ -43,7 +43,8 @@ public class HIRBuilder {
     public HIRBuilder(HotSpotResolvedJavaMethod method) {
         this.method = method;
         this.lastInstr = null;
-        this.writeFinal = this.writeVolatile = false;
+        this.writeFinal = false;
+        this.writeVolatile = false;
     }
 
     public HIRBuilder build() {
@@ -1208,7 +1209,7 @@ public class HIRBuilder {
             return;
         }
         Logger.logf("{}", block.getVmState().toString());
-        Walker.walkBytecode(block, instr -> Logger.logf("{}", instr.toString()));
+        Walker.walkBytecodes(block, instr -> Logger.logf("{}", instr.toString()));
         Logger.logf("");
         visit.add(block);
         for (BlockStartInstr succ : block.getBlockEnd().getSuccessor()) {
