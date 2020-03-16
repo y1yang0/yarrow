@@ -25,7 +25,7 @@ def build_cmd(class_name,method_name):
 
     class_path =  "-p "+os.getcwd()+ "/../target/classes -m yarrow/com.kelthuzadx.yarrow.test."
 
-    invoke = class_name+".yarrow_"+method_name
+    invoke = class_name+"."+method_name
     cmd = jdk+" "
     cmd += join(option_jvmci)+" "
     cmd += join(option_debug)+invoke+" "

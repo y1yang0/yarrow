@@ -14,9 +14,9 @@ public class ConstantInstr extends Instruction {
     public String toString() {
         if (!isType(JavaKind.Illegal)) {
             if (getValue().isEmpty() && isType(JavaKind.Object)) {
-                return Logger.format("i{}: const null", super.id);
+                return Logger.format("i{}: null", super.id);
             } else {
-                return Logger.format("i{}: const {}", super.id, getValue().get());
+                return Logger.format("i{}: {}", super.id, getValue().get());
             }
         }
         return "";

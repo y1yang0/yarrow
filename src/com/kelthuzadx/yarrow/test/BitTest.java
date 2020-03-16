@@ -10,6 +10,8 @@ public class BitTest {
         val &= 32;
         val >>>= 5;
     }
+
+
     public static void main(String[] args) {
         for (int i = 0; i < 999998; i++) {
             new BitTest().yarrow_bitShift(i);
