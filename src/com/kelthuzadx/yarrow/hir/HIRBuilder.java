@@ -1066,7 +1066,7 @@ public class HIRBuilder {
         int argc = sig.getParameterCount(false);
         Instruction[] arguments = new Instruction[argc];
         Instruction receiver = null;
-        for (int i = argc-1; i >= 0; i--) {
+        for (int i = argc - 1; i >= 0; i--) {
             arguments[i] = state.pop(sig.getParameterKind(i));
         }
         if (hasReceiver) {

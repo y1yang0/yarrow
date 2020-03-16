@@ -273,13 +273,10 @@ class CFG {
             String flag = block.isLoopHeader() ? "[LH]" : "";
             flag += isLoopBlock(block.getBlockId()) ? "[L]" : "";
             Logger.logf("#{} {}{", block.getBlockId(), flag);
-            BytecodeStream bs = new BytecodeStream(code, block.getStartBci());
+            BytecodeStream bs = new BytecodeStream(code, block.getStartBci(), block.getEndBci());
             while (bs.hasNext()) {
-                int bci = bs.next();
+                bs.next();
                 Logger.logf(" {}", bs.getCurrentBytecodeString());
-                if (bci == block.getEndBci()) {
-                    break;
-                }
             }
             Logger.logf("} => {}", block.getSuccessor().stream().map(
                     b -> "#" + b.getBlockId()
@@ -318,13 +315,10 @@ class CFG {
         for (BlockStartInstr block : blocks) {
             content.append("\tB").append(block.getBlockId()).append("[shape=record,label=\"");
             content.append("{ B").append(block.getBlockId()).append(" | ");
-            BytecodeStream bs = new BytecodeStream(code, block.getStartBci());
+            BytecodeStream bs = new BytecodeStream(code, block.getStartBci(), block.getEndBci());
             while (bs.hasNext()) {
-                int bci = bs.next();
+                bs.next();
                 content.append(bs.getCurrentBytecodeString()).append("\\l");
-                if (bci == block.getEndBci()) {
-                    break;
-                }
             }
             content.append(" }\"];\n");
         }
