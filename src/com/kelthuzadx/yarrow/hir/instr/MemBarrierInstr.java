@@ -33,6 +33,6 @@ public class MemBarrierInstr extends Instruction {
             default:
                 CompilerErrors.bailOut();
         }
-        return Logger.format("i{}: membar {}", type);
+        return Logger.format("i{}: membar {}", super.id, type);
     }
 }
