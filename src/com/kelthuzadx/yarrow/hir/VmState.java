@@ -28,6 +28,7 @@ public class VmState {
     }
 
     public void push(JavaKind type, Instruction instr) {
+        Instruction.assertType(instr,type);
         switch (type) {
             case Int:
             case Float:
