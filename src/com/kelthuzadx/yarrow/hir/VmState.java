@@ -1,7 +1,6 @@
 package com.kelthuzadx.yarrow.hir;
 
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
-import com.kelthuzadx.yarrow.hir.instr.InstanceOfInstr;
 import com.kelthuzadx.yarrow.hir.instr.Instruction;
 import com.kelthuzadx.yarrow.hir.instr.PhiInstr;
 

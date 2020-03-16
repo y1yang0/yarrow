@@ -994,7 +994,7 @@ public class HIRBuilder {
 
         // If <init> writes final field, a StoreStore barrier will be inserted before method return.
         // FIXME: AlwaysSafeConstructor does the same thing
-        if (method.isJavaLangObjectInit() && writeFinal) {
+        if (method.isConstructor() && writeFinal) {
             MemBarrierInstr memBarInstr = new MemBarrierInstr(MemoryBarriers.STORE_STORE);
             appendToBlock(memBarInstr);
         }
