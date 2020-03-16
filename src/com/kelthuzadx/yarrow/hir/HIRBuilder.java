@@ -1094,7 +1094,7 @@ public class HIRBuilder {
         Instruction receiver = null;
         for (int i = 0; i < argc; i++) {
             arguments[i] = state.pop();
-            Instruction.assertType(arguments[i], sig.getParameterKind(i));
+            //Instruction.assertType(arguments[i], sig.getParameterKind(i));
         }
         if (hasReceiver) {
             receiver = state.pop();

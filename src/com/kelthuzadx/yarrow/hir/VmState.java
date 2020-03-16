@@ -103,7 +103,7 @@ public class VmState {
     public String toString() {
         String sk = stack.stream().map(instr -> "" + instr.getId()).collect(Collectors.joining(","));
         String lc = Arrays.stream(local).map(instr -> "" + instr).collect(Collectors.joining(","));
-        String lx = lock.stream().map(instr -> "" + instr.getId()).collect(Collectors.joining(","));
+        String lx = lock.stream().map(instr -> instr==null?"":"" + instr.getId()).collect(Collectors.joining(","));
         return "VmState{" +
                 "lock=[" + lx +
                 "],stack=[" + sk +

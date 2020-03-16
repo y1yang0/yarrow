@@ -16,12 +16,14 @@ public class FieldTest {
         }
     }
 
-    public void yarrow_field(int val) {
+    public double yarrow_field(int val) {
         String s = String.valueOf(val);
         s += field2;
         field1 = s;
 
         arr[0] = s;
         arr[1] = arr[0];
+        double returnVal = field2+1;
+        return returnVal;
     }
 }

@@ -8,9 +8,17 @@ public class SyncTest {
         }
     }
 
+    public static synchronized void yarrow_sync2(int i){
+        int k = i+2;
+        k*=2;
+        k/=343;
+        obj = k;
+    }
+
     public static void main(String[] args) {
         for (int i = 0; i < 999998; i++) {
             yarrow_sync(i);
+            yarrow_sync2(i);
         }
     }
 }
