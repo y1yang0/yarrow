@@ -26,11 +26,6 @@ public class BytecodeStream implements Iterator<Integer> {
         reset(startBci, endBci);
     }
 
-    public BytecodeStream(byte[] code, int startBci) {
-        this.code = code;
-        reset(startBci, code.length);
-    }
-
     @Override
     public boolean hasNext() {
         return nextBci <= endBci;
@@ -278,10 +273,13 @@ public class BytecodeStream implements Iterator<Integer> {
             case WIDE:
                 isWide = true;
                 curBci = curBci + 1;
-                sb.append(" ").append(code[curBci]);
-                if (code[curBci] == IINC) {
+                if ((code[curBci] & 0xff) == IINC) {
+                    sb.append(" iinc ");
+                    data = readS4(curBci + 1);
+                    sb.append(data);
                     nextBci = curBci + 5;
                 } else {
+                    sb.append(" ").append(Bytecode.forName(code[curBci] & 0xff));
                     data = readU2(curBci + 1);
                     sb.append(" ").append(data);
                     nextBci = curBci + 3;
