@@ -243,7 +243,7 @@ public class SumTest {
 //        23 : []
 //        24 : #1[24,25] => []
 //        25 : #1[24,25] => []
-    public static int yarrow_sum(int base) {
+    public static int sum(int base) {
         int r = base;
         for (int i = 0; i < 10; i++) {
             r += i * 1 / 1;
@@ -254,7 +254,7 @@ public class SumTest {
     public static void main(String[] args) {
         int sum = 0;
         for (int i = 0; i < 999998; i++) {
-            sum += yarrow_sum(1);
+            sum += sum(1);
             sum += yarrow_sum2(i);
             sum += yarrow_sum1(i);
         }
