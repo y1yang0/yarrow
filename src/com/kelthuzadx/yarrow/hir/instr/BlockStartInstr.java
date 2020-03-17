@@ -103,6 +103,7 @@ public class BlockStartInstr extends StateInstr {
         // Connect to BlockEndInstr and remove BlockStartInstr's successors
         this.blockEnd = blockEnd;
         this.removeSuccessor();
+        this.successor = null;
 
         // Set predecessors of BlockStartInstr
         for (BlockStartInstr succ : blockEnd.getSuccessor()) {
