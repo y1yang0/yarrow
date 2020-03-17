@@ -7,8 +7,8 @@ import com.kelthuzadx.yarrow.util.Logger;
 
 public class ArithmeticInstr extends Op2Instr {
     public ArithmeticInstr(int opcode, Instruction left, Instruction right) {
-        super(new Value(left.getType()), opcode, left, right);
-        if (!right.isType(left.getType())) {
+        super(new Value(left.type()), opcode, left, right);
+        if (!right.isType(left.type())) {
             throw new YarrowError("Incompatible operand type");
         }
     }

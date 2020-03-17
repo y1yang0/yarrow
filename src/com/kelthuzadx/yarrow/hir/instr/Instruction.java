@@ -24,27 +24,20 @@ public class Instruction implements Visitable {
         }
     }
 
-    public static boolean matchType(Instruction ia, Instruction ib) {
-        return ia.value.getType() == ib.value.getType();
-    }
-
-    public int getInstrId() {
+    public int id() {
         return id;
     }
 
-    public Optional<Object> getValue() {
-        return value.getValue();
-    }
-
-    public void setValue(Value value) {
-        this.value = value;
+    public <T> T value() {
+        Optional<T> val = value.getValue();
+        return val.orElse(null);
     }
 
     public boolean isType(JavaKind type) {
-        return this.value.isType(type);
+        return value.getType() == type;
     }
 
-    public JavaKind getType() {
+    public JavaKind type() {
         return value.getType();
     }
 

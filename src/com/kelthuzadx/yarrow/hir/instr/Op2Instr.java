@@ -13,4 +13,12 @@ public abstract class Op2Instr extends Instruction {
         this.left = left;
         this.right = right;
     }
+
+    public Instruction getLeft() {
+        return left;
+    }
+
+    public Instruction getRight() {
+        return right;
+    }
 }

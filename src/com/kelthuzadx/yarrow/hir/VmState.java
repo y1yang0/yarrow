@@ -137,22 +137,22 @@ public class VmState {
     }
 
     public void createPhiForStack(BlockStartInstr block, int index) {
-        Value val = new Value(stack.elementAt(index).getType());
+        Value val = new Value(stack.elementAt(index).type());
         PhiInstr phi = new PhiInstr(val, -index - 1, block);
         stack.set(index, phi);
     }
 
     public void createPhiForLocal(BlockStartInstr block, int index) {
-        Value val = new Value(local[index].getType());
+        Value val = new Value(local[index].type());
         PhiInstr phi = new PhiInstr(val, index, block);
         local[index] = phi;
     }
 
     @Override
     public String toString() {
-        String sk = stack.stream().map(instr -> "i" + instr.getInstrId()).collect(Collectors.joining(","));
-        String lc = Arrays.stream(local).map(instr -> instr == null ? "" : "i" + instr.getInstrId()).collect(Collectors.joining(","));
-        String lx = lock.stream().map(instr -> instr == null ? "" : "i" + instr.getInstrId()).collect(Collectors.joining(","));
+        String sk = stack.stream().map(instr -> "i" + instr.id()).collect(Collectors.joining(","));
+        String lc = Arrays.stream(local).map(instr -> instr == null ? "" : "i" + instr.id()).collect(Collectors.joining(","));
+        String lx = lock.stream().map(instr -> instr == null ? "" : "i" + instr.id()).collect(Collectors.joining(","));
         return "VmState{" +
                 "lock=[" + lx +
                 "],stack=[" + sk +

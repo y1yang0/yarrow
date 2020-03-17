@@ -141,7 +141,7 @@ public class BlockStartInstr extends StateInstr {
                 for (int i = 0; i < getVmState().getLocalSize(); i++) {
                     if (getVmState().get(i) != null) {
                         if (newState.getLocal()[i] == null ||
-                                !newState.getLocal()[i].isType(getVmState().get(i).getType())) {
+                                !newState.getLocal()[i].isType(getVmState().get(i).type())) {
                             CompilerErrors.bailOut();
                         }
                     }
@@ -163,7 +163,7 @@ public class BlockStartInstr extends StateInstr {
                     Instruction val = newState.getLocal()[i];
                     if (getVmState().getLocal()[i] != null) {
                         // If val exists and two local variable types match
-                        if (val != null && Instruction.matchType(val, getVmState().getLocal()[i])) {
+                        if (val != null && val.isType(getVmState().getLocal()[i].type())) {
                             // if existing local variable is not PhiInstr OR
                             // if existing local variable is PhiInstr and it
                             // doesn't belong to this block

@@ -7,7 +7,7 @@ import com.kelthuzadx.yarrow.util.Logger;
 
 public class ShiftInstr extends Op2Instr {
     public ShiftInstr(int opcode, Instruction left, Instruction right) {
-        super(new Value(left.getType()), opcode, left, right);
+        super(new Value(left.type()), opcode, left, right);
     }
 
     @Override

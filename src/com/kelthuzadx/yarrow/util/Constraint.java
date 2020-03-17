@@ -20,7 +20,7 @@ public class Constraint {
         var stackA = a.getStack();
         var stackB = b.getStack();
         for (int i = 0; i < stackA.size(); i++) {
-            if (!stackB.get(i).isType(stackA.get(i).getType())) {
+            if (!stackB.get(i).isType(stackA.get(i).type())) {
                 throw new YarrowError("two VmState should be identical");
             }
         }

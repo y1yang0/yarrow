@@ -10,7 +10,7 @@ public class ReturnInstr extends BlockEndInstr {
     private Instruction returnValue;
 
     public ReturnInstr(Instruction returnValue) {
-        super(new Value(returnValue == null ? JavaKind.Void : returnValue.getType()),
+        super(new Value(returnValue == null ? JavaKind.Void : returnValue.type()),
                 null,
                 new ArrayList<>());
         this.returnValue = returnValue;

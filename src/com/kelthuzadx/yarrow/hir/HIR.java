@@ -55,11 +55,11 @@ public class HIR {
         // Block successors
         BlockEndInstr end = block.getBlockEnd();
         for (BlockStartInstr succ : end.getSuccessor()) {
-            content.append("\tB").append(block.getInstrId()).append("-> B").append(succ.getInstrId()).append(";\n");
+            content.append("\tB").append(block.id()).append("-> B").append(succ.id()).append(";\n");
         }
         // Block itself
-        content.append("\tB").append(block.getInstrId()).append("[shape=record,label=\"");
-        content.append("{ i").append(block.getInstrId()).append(" | ");
+        content.append("\tB").append(block.id()).append("[shape=record,label=\"");
+        content.append("{ i").append(block.id()).append(" | ");
         Instruction start = block;
         String temp = "";
         while (start != end) {

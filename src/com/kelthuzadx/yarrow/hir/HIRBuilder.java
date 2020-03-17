@@ -172,10 +172,12 @@ public class HIRBuilder implements Phase {
                     loadConst(JavaKind.Double, 1.0d);
                     break;
                 case Bytecode.BIPUSH:
-                    loadConst(JavaKind.Int, (byte) bs.getBytecodeData());
+                    byte bval = (byte) bs.getBytecodeData();
+                    loadConst(JavaKind.Int, (int)bval);
                     break;
                 case Bytecode.SIPUSH:
-                    loadConst(JavaKind.Int, (short) bs.getBytecodeData());
+                    short sval = (short)bs.getBytecodeData();
+                    loadConst(JavaKind.Int, (int)sval);
                     break;
                 case Bytecode.LDC:
                 case Bytecode.LDC_W:

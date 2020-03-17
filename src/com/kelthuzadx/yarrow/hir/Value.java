@@ -20,15 +20,11 @@ public class Value {
         this.value = Optional.ofNullable(value);
     }
 
-    public boolean isType(JavaKind type) {
-        return this.type == type;
-    }
-
     public JavaKind getType() {
         return type;
     }
 
-    public Optional<Object> getValue() {
-        return value;
+    public <T> Optional<T> getValue() {
+        return (Optional<T>) value;
     }
 }

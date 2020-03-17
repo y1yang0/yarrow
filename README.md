@@ -19,7 +19,25 @@ role of code generation, instruction selection based on BURS, I'm not sure which
 algorithm would be implemented. If I have enough time, I will examine a peephole optimization phase
 for LIR.
 
-## Dive into yarrow
+## Optimization Technique
+### 1. Constant folding
+In the following SSA instruction, yarrow finds both operands of `i14` is constant
+```java
+VmState{lock=[],stack=[],local=[i15,i17,i12,i13]}
+i2: block_start
+i12: 32
+i13: 31
+i14: i12 + i13
+i15: i7 + i14
+i16: 1
+i17: i8 + i16
+i18: goto i3
+```
+Therefore, it folds constant instead of do computation
+
+
+
+## Example
 Let say we have following java code, it repeats many times to calculate the sum of `[1,n]`:
 ```java
 package com.kelthuzadx.yarrow.test;

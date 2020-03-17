@@ -13,10 +13,11 @@ public class ConstantInstr extends Instruction {
     @Override
     public String toString() {
         if (!isType(JavaKind.Illegal)) {
-            if (getValue().isEmpty() && isType(JavaKind.Object)) {
+
+            if (value()==null) {
                 return Logger.format("i{}: nullptr", super.id);
             } else {
-                return Logger.format("i{}: {}", super.id, getValue().get());
+                return Logger.format("i{}: {}", super.id, value());
             }
         }
         return "";

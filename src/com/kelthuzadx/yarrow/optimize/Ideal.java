@@ -2,9 +2,11 @@ package com.kelthuzadx.yarrow.optimize;
 
 import com.kelthuzadx.yarrow.hir.HIR;
 import com.kelthuzadx.yarrow.hir.InstructionVisitor;
+import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.hir.instr.*;
 import com.kelthuzadx.yarrow.phase.Phase;
 import jdk.vm.ci.common.JVMCIError;
+import jdk.vm.ci.meta.JavaKind;
 
 import java.util.ArrayDeque;
 import java.util.HashSet;
@@ -127,7 +129,19 @@ public class Ideal extends InstructionVisitor implements Phase {
 
     @Override
     public void visitArithmeticInstr(ArithmeticInstr instr) {
-
+        Instruction left = instr.getLeft();
+        Instruction right = instr.getRight();
+        if(left instanceof ConstantInstr && right instanceof ConstantInstr){
+            switch (left.type()){
+                case Int:{
+                    int temp = (int)left.value()+ (int)right.value();
+                    ConstantInstr newInstr = new ConstantInstr(new Value(JavaKind.Int,temp));
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
     }
 
     @Override
@@ -220,8 +234,8 @@ public class Ideal extends InstructionVisitor implements Phase {
         workList.add(start);
         while (!workList.isEmpty()) {
             var block = workList.remove();
-            if (!visit.contains(block.getInstrId())) {
-                visit.add(block.getInstrId());
+            if (!visit.contains(block.id())) {
+                visit.add(block.id());
                 {
                     BlockEndInstr end = block.getBlockEnd();
                     Instruction cur = block;
