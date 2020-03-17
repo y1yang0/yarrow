@@ -7,13 +7,10 @@ JVM at runtime with `-XX:+EnableJVMCI -XX:+UseJVMCICompiler -Djvmci.Compiler=yar
 Since JVMCI is an experimental feature and it only exposes its services to Graal compiler backend, 
 which is a default implementation of JVMCI, I have to hack it so that JVMCI services can be exported 
 to my yarrow module. For the sake of the simplicity, I just modify the `module-info.java` from JVMCI 
-module and rebuild entire JDK.
-
-# Internals
-Back to my project, the whole compilation is divided into two parts.  
+module and rebuild entire JDK. Back to my project, the whole compilation is divided into two parts.  
 yarrow parses Java bytecode to HIR as soon as yarrow polls a compile task from compile queue,
 A so-called [abstract interpretation](https://en.wikipedia.org/wiki/Abstract_interpretation) phase
-interprets bytecode and generate corresponding SSA instruction, SSA form need to merge different 
+interprets bytecode and generate corresponding SSA instruction, SSA form needs to merge different 
 values of same variable. Therefore, if a basic block has more than one predecessor, PhiInstr might
 be needed at the start of block. Analyses and classic optimization phases will be applied when 
 parsing completes. After that, yarrow lowers HIR, it transforms machine-independent HIR instructions
@@ -22,18 +19,6 @@ role of code generation, instruction selection based on BURS, I'm not sure which
 algorithm would be implemented. If I have enough time, I will examine a peephole optimization phase
 for LIR.
 
-# Usage
-```
--XX:+UnlockExperimentalVMOptions
--XX:+EnableJVMCI
--XX:+UseJVMCICompiler
--Djvmci.Compiler=yarrow
--Xcomp
--Dyarrow.Debug.PrintCFG=true
--Dyarrow.Debug.PrintIR=true
--Dyarrow.Debug.PrintIRToFile=true
--XX:CompileCommand=compileonly,*<class>.<method>
-```
 
 ## Reference 
 [1] https://docs.oracle.com/javase/specs/jvms/se12/html/jvms-6.html#jvms-6.5.ldc

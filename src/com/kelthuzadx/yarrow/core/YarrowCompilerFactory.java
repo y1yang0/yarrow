@@ -11,7 +11,6 @@ import java.io.PrintStream;
 public class YarrowCompilerFactory extends HotSpotJVMCICompilerFactory {
 
     public YarrowCompilerFactory() {
-        Logger.logf("====={}=====", "Create Yarrow compiler factory");
     }
 
 
@@ -31,13 +30,11 @@ public class YarrowCompilerFactory extends HotSpotJVMCICompilerFactory {
 
     @Override
     public JVMCICompiler createCompiler(JVMCIRuntime runtime) {
-        try (TimingTracer t = new TimingTracer("create yarrow compiler")) {
-            return new YarrowCompiler(runtime);
-        }
+        return new YarrowCompiler(runtime);
     }
 
     @Override
     public void printProperties(PrintStream out) {
-        //todo: Prints a description of the properties used to configure this compiler.
+        //TODO: Prints a description of the properties used to configure this compiler.
     }
 }
