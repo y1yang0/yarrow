@@ -758,10 +758,10 @@ public class HIRBuilder {
             case Bytecode.DUP2: {
                 Instruction temp = state.unsafePop();
                 Instruction temp2 = state.unsafePop();
-                state.unsafePush(temp);
                 state.unsafePush(temp2);
                 state.unsafePush(temp);
                 state.unsafePush(temp2);
+                state.unsafePush(temp);
                 break;
             }
             case Bytecode.DUP2_X1: {

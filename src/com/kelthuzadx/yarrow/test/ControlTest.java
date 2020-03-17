@@ -53,6 +53,18 @@ public class ControlTest {
             } else {
                 for (int t = i; t < i + 10; t++) {
                     val += t;
+                    switch (t) {
+                        case 23:
+                            val += 32;
+                            break;
+                        case 323:
+                            val += 23;
+                        case 32:
+                            val += 3233;
+                            break;
+                        default:
+                            val = 44;
+                    }
                 }
                 break;
             }
