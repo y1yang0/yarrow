@@ -15,6 +15,11 @@ import java.util.stream.Collectors;
 import static com.kelthuzadx.yarrow.bytecode.Bytecode.*;
 import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.*;
 
+/**
+ * Construct control flow graph from Java bytecode
+ *
+ * @author kelthuzadx
+ */
 public class CFG implements Phase {
     public final HotSpotResolvedJavaMethod method;
     private int globalBlockId;
