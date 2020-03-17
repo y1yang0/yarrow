@@ -3,6 +3,7 @@ package com.kelthuzadx.yarrow.optimize;
 import com.kelthuzadx.yarrow.hir.HIR;
 import com.kelthuzadx.yarrow.hir.InstructionVisitor;
 import com.kelthuzadx.yarrow.hir.instr.*;
+import jdk.vm.ci.common.JVMCIError;
 
 import java.util.ArrayDeque;
 import java.util.HashSet;
@@ -137,7 +138,7 @@ public class Ideal extends InstructionVisitor implements Optimizer {
 
     @Override
     public void visitStateInstr(StateInstr instr) {
-
+        JVMCIError.shouldNotReachHere();
     }
 
     @Override
@@ -187,7 +188,7 @@ public class Ideal extends InstructionVisitor implements Optimizer {
 
     @Override
     public void visitInstruction(Instruction instr) {
-
+        JVMCIError.shouldNotReachHere();
     }
 
     @Override
@@ -217,7 +218,7 @@ public class Ideal extends InstructionVisitor implements Optimizer {
 
     @Override
     public void visitOp2Instr(Op2Instr instr) {
-
+        JVMCIError.shouldNotReachHere();
     }
 
     @Override
