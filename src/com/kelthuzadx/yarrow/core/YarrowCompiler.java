@@ -14,8 +14,7 @@ import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
 import jdk.vm.ci.runtime.JVMCICompiler;
 import jdk.vm.ci.runtime.JVMCIRuntime;
 
-import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintIR;
-import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintIRToFile;
+import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.*;
 
 public class YarrowCompiler implements JVMCICompiler {
 
@@ -35,6 +34,15 @@ public class YarrowCompiler implements JVMCICompiler {
         Logger.logf("=====Compiling {}.{}=====", method.getDeclaringClass().getUnqualifiedName(), method.getName());
 
         CFG cfg = new CFG(method).build();
+        if (PrintCFG) {
+            cfg.printBciToBlocks();
+            cfg.printAllBlockRange();
+            cfg.printAllBlock();
+        }
+        if (PrintIRToFile) {
+            // cfg.printCFGToDotFile();
+            cfg.printCFGDetailToDotFile();
+        }
         HIR hir = new HIRBuilder(cfg).build();
         if (PrintIR) {
             Logger.logf("=====Phase1: SSA Form=====>");

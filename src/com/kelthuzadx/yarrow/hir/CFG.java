@@ -44,15 +44,6 @@ public class CFG {
         mapBciToBlocks();
         uniqueBlocks();
         identifyLoop(new HashSet<>(blocks.length), new HashSet<>(blocks.length), bciToBlockMapping[0]);
-        if (PrintCFG) {
-            printBciToBlocks();
-            printAllBlockRange();
-            printAllBlock();
-        }
-        if (PrintIRToFile) {
-            // printCFGToDotFile();
-            printCFGDetailToDotFile();
-        }
         return this;
     }
 
@@ -253,21 +244,21 @@ public class CFG {
         return loopMap.get(blockId) != null && loopMap.get(blockId) != 0;
     }
 
-    private void printBciToBlocks() {
+    public void printBciToBlocks() {
         Logger.logf("=====Mapping bci to block=====>");
         for (int i = 0; i < bciToBlockMapping.length; i++) {
             Logger.logf("{} : {}", i, bciToBlockMapping[i] != null ? bciToBlockMapping[i].toCFGString() : "[]");
         }
     }
 
-    private void printAllBlockRange() {
+    public void printAllBlockRange() {
         Logger.logf("{}", "=====All block ranges=====>");
         for (BlockStartInstr block : blocks) {
             Logger.logf("{}", block.toCFGString());
         }
     }
 
-    private void printAllBlock() {
+    public void printAllBlock() {
         Logger.logf("{}", "=====Phase1: Control Flow Graph=====>");
         for (BlockStartInstr block : blocks) {
             String flag = block.isLoopHeader() ? "[LH]" : "";
@@ -285,7 +276,7 @@ public class CFG {
     }
 
     @SuppressWarnings("unused")
-    private void printCFGToDotFile() {
+    public void printCFGToDotFile() {
         StringBuilder content = new StringBuilder();
         content.append("digraph G{\n");
         for (BlockStartInstr block : blocks) {
@@ -303,7 +294,7 @@ public class CFG {
         Logger.log(Mode.File, method.getName() + "_phase0_pure.dot", content.toString());
     }
 
-    private void printCFGDetailToDotFile() {
+    public void printCFGDetailToDotFile() {
         StringBuilder content = new StringBuilder();
         content.append("digraph G{\n");
         for (BlockStartInstr block : blocks) {
