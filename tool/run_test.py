@@ -16,7 +16,7 @@ def build_cmd(class_name,method_name):
     option_debug=[
         "-Dyarrow.Debug.PrintCFG=true",
         "-Dyarrow.Debug.PrintIR=true",
-        "-Dyarrow.Debug.PrintIRToFile=true",
+        "-Dyarrow.Debug.PrintIRToFile=false",
         "-XX:CompileCommand=compileonly,*"
     ]
     temp  =os.getcwd()+ "/../target/classes"

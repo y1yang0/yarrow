@@ -1,8 +1,10 @@
 package com.kelthuzadx.yarrow.hir;
 
+import com.kelthuzadx.yarrow.hir.instr.BlockEndInstr;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.hir.instr.Instruction;
 import com.kelthuzadx.yarrow.util.Logger;
+import com.kelthuzadx.yarrow.util.Mode;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
 
 import java.util.HashSet;
@@ -33,11 +35,20 @@ public class HIR {
         }
     }
 
-    public void printHIR() {
-        printHIR(new HashSet<>(), entry);
+    public void printHIR(boolean toFile) {
+        if(!toFile){
+            printHIR(new HashSet<>(), entry);
+        }else{
+            StringBuilder content = new StringBuilder();
+            content.append("digraph G{\n");
+            printHIRToFile(new HashSet<>(), entry, content);
+            content.append("}");
+            Logger.log(Mode.File, method.getDeclaringClass().getUnqualifiedName() + "_" +
+                    method.getName() + "_phase2.dot", content.toString());
+        }
     }
 
-    private void printHIR(Set<BlockStartInstr> visit, BlockStartInstr block) {
+    private static void printHIR(Set<BlockStartInstr> visit, BlockStartInstr block) {
         if (block == null || visit.contains(block)) {
             return;
         }
@@ -47,6 +58,34 @@ public class HIR {
         visit.add(block);
         for (BlockStartInstr succ : block.getBlockEnd().getSuccessor()) {
             printHIR(visit, succ);
+        }
+    }
+
+    private static void printHIRToFile(Set<BlockStartInstr> visit, BlockStartInstr block,StringBuilder content) {
+        if (block == null || visit.contains(block)) {
+            return;
+        }
+        // Block successors
+        BlockEndInstr end = block.getBlockEnd();
+        for(BlockStartInstr succ:end.getSuccessor()){
+            content.append("\tB").append(block.getInstrId()).append("-> B").append(succ.getInstrId()).append("\n");
+        }
+        // Block itself
+        content.append("\tB").append(block.getInstrId()).append("[shape=record,label=\"");
+        content.append("{ B").append(block.getInstrId()).append(" | ");
+        Instruction start = block;
+        do{
+            content.append("\t");
+            content.append(start.toString()).append("\\l"); //left align
+            start = start.getNext();
+        }
+        while(start!=end);
+        content.append("}\"];\n");
+
+
+        visit.add(block);
+        for (BlockStartInstr succ : block.getBlockEnd().getSuccessor()) {
+            printHIRToFile(visit, succ,content);
         }
     }
 

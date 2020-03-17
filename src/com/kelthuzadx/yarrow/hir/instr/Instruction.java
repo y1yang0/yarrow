@@ -27,7 +27,7 @@ public class Instruction {
         return ia.value.getType() == ib.value.getType();
     }
 
-    public int getId() {
+    public int getInstrId() {
         return id;
     }
 

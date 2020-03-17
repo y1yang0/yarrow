@@ -16,6 +16,7 @@ import jdk.vm.ci.meta.*;
 import java.util.*;
 
 import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintIR;
+import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintIRToFile;
 
 /**
  * HirBuilder performs an abstract interpretation, it transform java bytecode to compiler HIR.
@@ -73,7 +74,11 @@ public class HIRBuilder {
 
         if (PrintIR) {
             Logger.logf("=====Phase1: SSA Form=====>");
-            hir.printHIR();
+            hir.printHIR(false);
+        }
+
+        if(PrintIRToFile){
+            hir.printHIR(true);
         }
 
         return hir;
