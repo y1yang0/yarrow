@@ -11,6 +11,13 @@ import java.util.HashSet;
 import java.util.Queue;
 import java.util.Set;
 
+/**
+ * Ideal iterates bytecodes from each basic block and applies many local optimizations
+ * on single instruction. Many classic optimization technique such as constant folding,
+ * dead code will be combined together.
+ *
+ * @author kelthuzadx
+ */
 public class Ideal extends InstructionVisitor implements Phase {
     private HIR hir;
 

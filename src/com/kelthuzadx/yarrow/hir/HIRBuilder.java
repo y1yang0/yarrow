@@ -56,7 +56,7 @@ public class HIRBuilder implements Phase {
     @Override
     public void log() {
         if (PrintIR) {
-            Logger.logf("=====Phase: {}", name());
+            Logger.logf("=====Phase: {}=====", name());
             hir.printHIR(false);
         }
 

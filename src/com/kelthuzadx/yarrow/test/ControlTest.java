@@ -29,7 +29,9 @@ public class ControlTest {
 
     static void yarrow_forLoop(int k) {
         for (int i = 0; i < 1000; i++) {
-            k += i;
+            int a = 32;
+            int b = 31;
+            k += a+b;
         }
     }
 
