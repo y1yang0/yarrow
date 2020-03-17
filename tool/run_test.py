@@ -19,7 +19,7 @@ def build_cmd(class_name,method_name):
         "-Dyarrow.Debug.PrintIRToFile=false",
         "-XX:CompileCommand=compileonly,*"
     ]
-    temp  =os.getcwd()+ "/../target/classes"
+    temp  =sys.path[0]+ "/../target/classes"
     class_path =  [
         "-p",
         temp,
@@ -59,8 +59,7 @@ def run_test(class_name,method_name):
     colored_output(ret,class_name,method_name)
 
 def run_all_test():
-    pwd = os.getcwd()
-    target_dir=pwd+"/../target/classes/com/kelthuzadx/yarrow/test"
+    target_dir=sys.path[0]+"/../target/classes/com/kelthuzadx/yarrow/test"
     target_files = os.listdir(target_dir)
     for filename in target_files:
         if "$" not in filename:
