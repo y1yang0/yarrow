@@ -1,8 +1,8 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.core.YarrowError;
-import com.kelthuzadx.yarrow.hir.Visitable;
 import com.kelthuzadx.yarrow.hir.Value;
+import com.kelthuzadx.yarrow.hir.Visitable;
 import jdk.vm.ci.meta.JavaKind;
 
 import java.util.Optional;

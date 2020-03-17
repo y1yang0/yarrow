@@ -4,6 +4,7 @@ import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.bytecode.BytecodeStream;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
+import com.kelthuzadx.yarrow.phase.Phase;
 import com.kelthuzadx.yarrow.util.Logger;
 import com.kelthuzadx.yarrow.util.Mode;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
@@ -12,10 +13,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.kelthuzadx.yarrow.bytecode.Bytecode.*;
-import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintCFG;
-import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintIRToFile;
+import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.*;
 
-public class CFG {
+public class CFG implements Phase {
     public final HotSpotResolvedJavaMethod method;
     private int globalBlockId;
     private int codeSize;
@@ -40,6 +40,7 @@ public class CFG {
 
     }
 
+    @Override
     public CFG build() {
         mapBciToBlocks();
         uniqueBlocks();
@@ -244,22 +245,22 @@ public class CFG {
         return loopMap.get(blockId) != null && loopMap.get(blockId) != 0;
     }
 
-    public void printBciToBlocks() {
+    private void printBciToBlocks() {
         Logger.logf("=====Mapping bci to block=====>");
         for (int i = 0; i < bciToBlockMapping.length; i++) {
             Logger.logf("{} : {}", i, bciToBlockMapping[i] != null ? bciToBlockMapping[i].toCFGString() : "[]");
         }
     }
 
-    public void printAllBlockRange() {
+    private void printAllBlockRange() {
         Logger.logf("{}", "=====All block ranges=====>");
         for (BlockStartInstr block : blocks) {
             Logger.logf("{}", block.toCFGString());
         }
     }
 
-    public void printAllBlock() {
-        Logger.logf("{}", "=====Phase1: Control Flow Graph=====>");
+    private void printAllBlock() {
+        Logger.logf("{}", "=====Phase: {}=====>", name());
         for (BlockStartInstr block : blocks) {
             String flag = block.isLoopHeader() ? "[LH]" : "";
             flag += isLoopBlock(block.getBlockId()) ? "[L]" : "";
@@ -276,7 +277,7 @@ public class CFG {
     }
 
     @SuppressWarnings("unused")
-    public void printCFGToDotFile() {
+    private void printCFGToDotFile() {
         StringBuilder content = new StringBuilder();
         content.append("digraph G{\n");
         for (BlockStartInstr block : blocks) {
@@ -294,7 +295,7 @@ public class CFG {
         Logger.log(Mode.File, method.getName() + "_phase0_pure.dot", content.toString());
     }
 
-    public void printCFGDetailToDotFile() {
+    private void printCFGDetailToDotFile() {
         StringBuilder content = new StringBuilder();
         content.append("digraph G{\n");
         for (BlockStartInstr block : blocks) {
@@ -321,6 +322,25 @@ public class CFG {
         fileName = fileName.replaceAll("<", "");
         fileName = fileName.replaceAll(">", "");
         Logger.log(Mode.File, fileName, content.toString());
+    }
+
+    @Override
+    public String name() {
+        return "Control Flow Graph";
+    }
+
+    @Override
+    public void log() {
+        if (PrintCFG) {
+            printBciToBlocks();
+            printAllBlockRange();
+        }
+        if (PrintIR) {
+            printAllBlock();
+        }
+        if (PrintIRToFile) {
+            printCFGDetailToDotFile();
+        }
     }
 }
 

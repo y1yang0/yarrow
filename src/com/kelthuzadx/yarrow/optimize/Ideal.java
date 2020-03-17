@@ -3,6 +3,7 @@ package com.kelthuzadx.yarrow.optimize;
 import com.kelthuzadx.yarrow.hir.HIR;
 import com.kelthuzadx.yarrow.hir.InstructionVisitor;
 import com.kelthuzadx.yarrow.hir.instr.*;
+import com.kelthuzadx.yarrow.phase.Phase;
 import jdk.vm.ci.common.JVMCIError;
 
 import java.util.ArrayDeque;
@@ -10,32 +11,11 @@ import java.util.HashSet;
 import java.util.Queue;
 import java.util.Set;
 
-public class Ideal extends InstructionVisitor implements Optimizer {
-    @Override
-    public HIR optimize(HIR hir) {
-        Queue<BlockStartInstr> workList = new ArrayDeque<>();
-        Set<Integer> visit = new HashSet<>();
+public class Ideal extends InstructionVisitor implements Phase {
+    private HIR hir;
 
-
-        BlockStartInstr start = hir.getEntryBlock();
-        workList.add(start);
-        while (!workList.isEmpty()) {
-            var block = workList.remove();
-            if (!visit.contains(block.getInstrId())) {
-                visit.add(block.getInstrId());
-                {
-                    BlockEndInstr end = block.getBlockEnd();
-                    Instruction cur = block;
-                    while (cur != end) {
-                        cur.visit(this);
-                        cur = cur.getNext();
-                    }
-                    cur.visit(this);
-                }
-                workList.addAll(block.getBlockEnd().getSuccessor());
-            }
-        }
-        return hir;
+    public Ideal(HIR hir) {
+        this.hir = hir;
     }
 
     @Override
@@ -220,6 +200,43 @@ public class Ideal extends InstructionVisitor implements Optimizer {
 
     @Override
     public void visitNewTypeArrayInstr(NewTypeArrayInstr instr) {
+
+    }
+
+    @Override
+    public Phase build() {
+        Queue<BlockStartInstr> workList = new ArrayDeque<>();
+        Set<Integer> visit = new HashSet<>();
+
+
+        BlockStartInstr start = hir.getEntryBlock();
+        workList.add(start);
+        while (!workList.isEmpty()) {
+            var block = workList.remove();
+            if (!visit.contains(block.getInstrId())) {
+                visit.add(block.getInstrId());
+                {
+                    BlockEndInstr end = block.getBlockEnd();
+                    Instruction cur = block;
+                    while (cur != end) {
+                        cur.visit(this);
+                        cur = cur.getNext();
+                    }
+                    cur.visit(this);
+                }
+                workList.addAll(block.getBlockEnd().getSuccessor());
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public String name() {
+        return "Ideal Optimization";
+    }
+
+    @Override
+    public void log() {
 
     }
 }

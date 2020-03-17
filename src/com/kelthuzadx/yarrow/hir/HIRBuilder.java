@@ -4,6 +4,7 @@ import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.bytecode.BytecodeStream;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.*;
+import com.kelthuzadx.yarrow.phase.Phase;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Converter;
 import com.kelthuzadx.yarrow.util.Logger;
@@ -25,7 +26,7 @@ import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintIRToFile;
  *
  * @author kelthuzadx
  */
-public class HIRBuilder {
+public class HIRBuilder implements Phase {
     // The final result:)
     private HIR hir;
     // Target method to be compiled
@@ -47,7 +48,25 @@ public class HIRBuilder {
         this.method = cfg.method;
     }
 
-    public HIR build() {
+    @Override
+    public String name() {
+        return "SSA Form";
+    }
+
+    @Override
+    public void log() {
+        if (PrintIR) {
+            Logger.logf("=====Phase: {}", name());
+            hir.printHIR(false);
+        }
+
+        if (PrintIRToFile) {
+            hir.printHIR(true);
+        }
+    }
+
+    @Override
+    public HIRBuilder build() {
         BlockStartInstr methodEntry = cfg.blockContain(0);
         methodEntry.mergeVmState(createEntryVmState());
         hir = new HIR(method, methodEntry);
@@ -69,6 +88,10 @@ public class HIRBuilder {
             }
         }
 
+        return this;
+    }
+
+    public HIR getHir() {
         return hir;
     }
 
