@@ -68,18 +68,25 @@ public class HIR {
         // Block successors
         BlockEndInstr end = block.getBlockEnd();
         for(BlockStartInstr succ:end.getSuccessor()){
-            content.append("\tB").append(block.getInstrId()).append("-> B").append(succ.getInstrId()).append("\n");
+            content.append("\tB").append(block.getInstrId()).append("-> B").append(succ.getInstrId()).append(";\n");
         }
         // Block itself
         content.append("\tB").append(block.getInstrId()).append("[shape=record,label=\"");
-        content.append("{ B").append(block.getInstrId()).append(" | ");
+        content.append("{ i").append(block.getInstrId()).append(" | ");
         Instruction start = block;
-        do{
-            content.append("\t");
-            content.append(start.toString()).append("\\l"); //left align
+        String temp = "";
+        while(start!=end){
+            temp= start.toString();
+            // escape "<" and ">" in graphviz record text
+            temp = temp.replaceAll("<","\\\\<");
+            temp = temp.replaceAll(">","\\\\>");
+            content.append(temp).append("\\l"); //left align
             start = start.getNext();
         }
-        while(start!=end);
+        temp= start.toString();
+        temp = temp.replaceAll("<","\\\\<");
+        temp = temp.replaceAll(">","\\\\>");
+        content.append(temp).append("\\l");
         content.append("}\"];\n");
 
 
