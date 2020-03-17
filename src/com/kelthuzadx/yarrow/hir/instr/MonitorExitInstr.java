@@ -14,6 +14,6 @@ public class MonitorExitInstr extends StateInstr {
 
     @Override
     public String toString() {
-        return Logger.format("i{}: monitoreixt i{}", super.id, lock.id);
+        return Logger.format("i{}: unlock i{}", super.id, lock.id);
     }
 }

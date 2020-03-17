@@ -18,7 +18,7 @@ public class ConstantInstr extends Instruction {
                 return Logger.format("i{}: nullptr", super.id);
             } else {
                 var val = value();
-                return Logger.format("i{}: \"{}\"", super.id, val);
+                return Logger.format("i{}: {}", super.id, val);
             }
         }
         return "";
