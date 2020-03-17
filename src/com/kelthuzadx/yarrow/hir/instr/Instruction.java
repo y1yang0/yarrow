@@ -7,7 +7,12 @@ import jdk.vm.ci.meta.JavaKind;
 
 import java.util.Optional;
 
-public class Instruction implements Visitable {
+/**
+ * Instruction represents single SSA form instruction.
+ *
+ * @author kelthuzadx
+ */
+public abstract class Instruction implements Visitable {
     protected int id;
     private Instruction next;
     private Value value;
@@ -47,6 +52,21 @@ public class Instruction implements Visitable {
 
     public void setNext(Instruction next) {
         this.next = next;
+    }
+
+    /**
+     * Each time HirBuilder appends new SSA instruction into basic block, Ideal would apply
+     * applies many local optimizations on this newly created single instruction, it may or
+     * may not transform newly created instruction. Many classic optimization technique
+     * such as constant folding, dead code will be combined together, so I called it "Ideal".
+     * <p>
+     * Note that NEVER RETURN NULL, if it can not transformed to optimized version, return this
+     * instead of `null`
+     *
+     * @return new instruction or `this`
+     */
+    public Instruction ideal() {
+        return this;
     }
 
     private static class IdGenerator {

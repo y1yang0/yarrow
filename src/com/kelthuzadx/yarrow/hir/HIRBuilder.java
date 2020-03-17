@@ -4,7 +4,6 @@ import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.bytecode.BytecodeStream;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.*;
-import com.kelthuzadx.yarrow.optimize.Ideal;
 import com.kelthuzadx.yarrow.phase.Phase;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Converter;
@@ -673,7 +672,12 @@ public class HIRBuilder implements Phase {
     }
 
     private Instruction appendToBlock(Instruction curInstr) {
-        curInstr = Ideal.optimize(curInstr);
+        // Try to idealize instruction
+        Instruction idealized = curInstr.ideal();
+        if (idealized != curInstr) {
+            Logger.logf("======Idealize {} -> {}=====", curInstr, idealized);
+        }
+        curInstr = idealized;
         lastInstr.setNext(curInstr);
         lastInstr = curInstr;
 

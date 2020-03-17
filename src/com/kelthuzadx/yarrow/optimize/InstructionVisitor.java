@@ -1,4 +1,4 @@
-package com.kelthuzadx.yarrow.hir;
+package com.kelthuzadx.yarrow.optimize;
 
 import com.kelthuzadx.yarrow.hir.instr.*;
 
