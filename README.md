@@ -56,4 +56,10 @@ Yarrow would output its internal intermediate representation. Furthermore, yarro
 dump IR to `*.dot` file which can be used by [graphviz](http://www.graphviz.org/), this 
 facilitates knowing what happens inside optimizing compiler.
 The following firgure shows the frist step compiler does, it finds leader instructions which 
-can split control flow and builds the complete control flow graph:
+can split control flow and builds the complete control flow graph
+
+![](doc/SumTest_sum_phase1.png)
+
+Ater that, yarrow generates corresponding SSA instructions
+
+![](doc/SumTest_sum_phase2.png)
