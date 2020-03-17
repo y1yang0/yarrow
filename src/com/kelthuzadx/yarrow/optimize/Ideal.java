@@ -1,19 +1,12 @@
 package com.kelthuzadx.yarrow.optimize;
 
 import com.kelthuzadx.yarrow.core.YarrowError;
-import com.kelthuzadx.yarrow.hir.HIR;
 import com.kelthuzadx.yarrow.hir.InstructionVisitor;
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.hir.instr.*;
-import com.kelthuzadx.yarrow.phase.Phase;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.common.JVMCIError;
 import jdk.vm.ci.meta.JavaKind;
-
-import java.util.ArrayDeque;
-import java.util.HashSet;
-import java.util.Queue;
-import java.util.Set;
 
 /**
  * Each time HirBuilder appends new SSA instruction into basic block, Ideal would apply
@@ -28,7 +21,20 @@ public class Ideal extends InstructionVisitor {
 
     private Instruction ideal;
 
-    private Ideal(){}
+    private Ideal() {
+    }
+
+    public static Instruction optimize(Instruction instr) {
+        // Set ideal to unoptimized instruction
+        instance.ideal = instr;
+        // Try to apply local optimizations
+        instr.visit(instance);
+        if (instr != instance.ideal) {
+            instance.logIdeal(instr);
+        }
+        // Return idealized instruction
+        return instance.ideal;
+    }
 
     @Override
     public void visitMemBarrierInstr(MemBarrierInstr instr) {
@@ -140,7 +146,7 @@ public class Ideal extends InstructionVisitor {
                 case Int: {
                     int left = leftInstr.value();
                     int right = rightInstr.value();
-                    ConstantInstr newInstr = new ConstantInstr(new Value(JavaKind.Int, left+right));
+                    ideal = new ConstantInstr(new Value(JavaKind.Int, left + right));
                     break;
                 }
                 default:
@@ -229,19 +235,7 @@ public class Ideal extends InstructionVisitor {
 
     }
 
-    private void logIdeal(Instruction before){
-        Logger.logf("======{} -> {} idealized=====",before.toString(),ideal.toString());
-    }
-
-    public static Instruction optimize(Instruction instr) {
-        // Set ideal to unoptimized instruction
-        instance.ideal = instr;
-        // Try to apply local optimizations
-        instr.visit(instance);
-        if(instr != instance.ideal){
-            instance.logIdeal(instr);
-        }
-        // Return idealized instruction
-        return instance.ideal;
+    private void logIdeal(Instruction before) {
+        Logger.logf("======Idealize {} -> {}=====", before.toString(), ideal.toString());
     }
 }
