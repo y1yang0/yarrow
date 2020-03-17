@@ -2,7 +2,7 @@ package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.Value;
 
-public class Op2Instr extends Instruction {
+public abstract class Op2Instr extends Instruction {
     protected int opcode;
     protected Instruction left;
     protected Instruction right;

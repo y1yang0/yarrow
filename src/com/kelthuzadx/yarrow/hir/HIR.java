@@ -24,10 +24,6 @@ public class HIR {
         this.method = method;
     }
 
-    public BlockStartInstr getEntryBlock() {
-        return entry;
-    }
-
     private static void iterateBytecodes(BlockStartInstr block, Consumer<Instruction> closure) {
         Instruction last = block;
         while (last != null && last != block.getBlockEnd()) {
@@ -85,6 +81,10 @@ public class HIR {
         for (BlockStartInstr succ : block.getBlockEnd().getSuccessor()) {
             printHIRToFile(visit, succ, content);
         }
+    }
+
+    public BlockStartInstr getEntryBlock() {
+        return entry;
     }
 
     public void printHIR(boolean toFile) {

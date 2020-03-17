@@ -1,12 +1,13 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.core.YarrowError;
+import com.kelthuzadx.yarrow.hir.Visitable;
 import com.kelthuzadx.yarrow.hir.Value;
 import jdk.vm.ci.meta.JavaKind;
 
 import java.util.Optional;
 
-public class Instruction {
+public class Instruction implements Visitable {
     protected int id;
     private Instruction next;
     private Value value;

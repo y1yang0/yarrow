@@ -1,7 +1,5 @@
 package com.kelthuzadx.yarrow.core;
 
-import com.kelthuzadx.yarrow.util.Logger;
-import com.kelthuzadx.yarrow.util.TimingTracer;
 import jdk.vm.ci.hotspot.HotSpotJVMCICompilerFactory;
 import jdk.vm.ci.runtime.JVMCICompiler;
 import jdk.vm.ci.runtime.JVMCIRuntime;

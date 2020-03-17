@@ -2,7 +2,7 @@ package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.Value;
 
-public class AccessArrayInstr extends Instruction {
+public abstract class AccessArrayInstr extends Instruction {
     protected Instruction array;
 
     public AccessArrayInstr(Value value, Instruction array) {

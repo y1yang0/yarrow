@@ -3,7 +3,7 @@ package com.kelthuzadx.yarrow.hir.instr;
 import com.kelthuzadx.yarrow.hir.Value;
 import jdk.vm.ci.meta.JavaField;
 
-public class AccessFieldInstr extends Instruction {
+public abstract class AccessFieldInstr extends Instruction {
     protected Instruction object;
     protected int offset;
     protected JavaField field;

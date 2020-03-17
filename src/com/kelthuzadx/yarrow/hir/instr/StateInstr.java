@@ -3,7 +3,7 @@ package com.kelthuzadx.yarrow.hir.instr;
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.hir.VmState;
 
-public class StateInstr extends Instruction {
+public abstract class StateInstr extends Instruction {
     private VmState state;
 
     StateInstr(Value value, VmState stateBefore) {
