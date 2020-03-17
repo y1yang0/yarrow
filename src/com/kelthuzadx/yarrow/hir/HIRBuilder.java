@@ -77,7 +77,7 @@ public class HIRBuilder {
             hir.printHIR(false);
         }
 
-        if(PrintIRToFile){
+        if (PrintIRToFile) {
             hir.printHIR(true);
         }
 

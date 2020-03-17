@@ -50,7 +50,7 @@ class CFG {
             printAllBlock();
         }
         if (PrintIRToFile) {
-            printCFGToDotFile();
+            // printCFGToDotFile();
             printCFGDetailToDotFile();
         }
         return this;
@@ -284,6 +284,7 @@ class CFG {
         }
     }
 
+    @SuppressWarnings("unused")
     private void printCFGToDotFile() {
         StringBuilder content = new StringBuilder();
         content.append("digraph G{\n");
@@ -324,8 +325,11 @@ class CFG {
         }
         content.append("}");
 
-        Logger.log(Mode.File, method.getDeclaringClass().getUnqualifiedName() + "_" +
-                method.getName() + "_phase1.dot", content.toString());
+        String fileName = method.getDeclaringClass().getUnqualifiedName() + "_" +
+                method.getName() + "_phase1.dot";
+        fileName = fileName.replaceAll("<", "");
+        fileName = fileName.replaceAll(">", "");
+        Logger.log(Mode.File, fileName, content.toString());
     }
 }
 

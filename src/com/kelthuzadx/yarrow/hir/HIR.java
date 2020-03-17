@@ -35,19 +35,6 @@ public class HIR {
         }
     }
 
-    public void printHIR(boolean toFile) {
-        if(!toFile){
-            printHIR(new HashSet<>(), entry);
-        }else{
-            StringBuilder content = new StringBuilder();
-            content.append("digraph G{\n");
-            printHIRToFile(new HashSet<>(), entry, content);
-            content.append("}");
-            Logger.log(Mode.File, method.getDeclaringClass().getUnqualifiedName() + "_" +
-                    method.getName() + "_phase2.dot", content.toString());
-        }
-    }
-
     private static void printHIR(Set<BlockStartInstr> visit, BlockStartInstr block) {
         if (block == null || visit.contains(block)) {
             return;
@@ -61,13 +48,13 @@ public class HIR {
         }
     }
 
-    private static void printHIRToFile(Set<BlockStartInstr> visit, BlockStartInstr block,StringBuilder content) {
+    private static void printHIRToFile(Set<BlockStartInstr> visit, BlockStartInstr block, StringBuilder content) {
         if (block == null || visit.contains(block)) {
             return;
         }
         // Block successors
         BlockEndInstr end = block.getBlockEnd();
-        for(BlockStartInstr succ:end.getSuccessor()){
+        for (BlockStartInstr succ : end.getSuccessor()) {
             content.append("\tB").append(block.getInstrId()).append("-> B").append(succ.getInstrId()).append(";\n");
         }
         // Block itself
@@ -75,24 +62,40 @@ public class HIR {
         content.append("{ i").append(block.getInstrId()).append(" | ");
         Instruction start = block;
         String temp = "";
-        while(start!=end){
-            temp= start.toString();
+        while (start != end) {
+            temp = start.toString();
             // escape "<" and ">" in graphviz record text
-            temp = temp.replaceAll("<","\\\\<");
-            temp = temp.replaceAll(">","\\\\>");
+            temp = temp.replaceAll("<", "\\\\<");
+            temp = temp.replaceAll(">", "\\\\>");
             content.append(temp).append("\\l"); //left align
             start = start.getNext();
         }
-        temp= start.toString();
-        temp = temp.replaceAll("<","\\\\<");
-        temp = temp.replaceAll(">","\\\\>");
+        temp = start.toString();
+        temp = temp.replaceAll("<", "\\\\<");
+        temp = temp.replaceAll(">", "\\\\>");
         content.append(temp).append("\\l");
         content.append("}\"];\n");
 
 
         visit.add(block);
         for (BlockStartInstr succ : block.getBlockEnd().getSuccessor()) {
-            printHIRToFile(visit, succ,content);
+            printHIRToFile(visit, succ, content);
+        }
+    }
+
+    public void printHIR(boolean toFile) {
+        if (!toFile) {
+            printHIR(new HashSet<>(), entry);
+        } else {
+            StringBuilder content = new StringBuilder();
+            content.append("digraph G{\n");
+            printHIRToFile(new HashSet<>(), entry, content);
+            content.append("}");
+            String fileName = method.getDeclaringClass().getUnqualifiedName() + "_" +
+                    method.getName() + "_phase2.dot";
+            fileName = fileName.replaceAll("<", "");
+            fileName = fileName.replaceAll(">", "");
+            Logger.log(Mode.File, fileName, content.toString());
         }
     }
 
