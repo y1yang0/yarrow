@@ -15,8 +15,8 @@ import static com.kelthuzadx.yarrow.bytecode.Bytecode.*;
 import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintCFG;
 import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintIRToFile;
 
-class CFG {
-    private final HotSpotResolvedJavaMethod method;
+public class CFG {
+    public final HotSpotResolvedJavaMethod method;
     private int globalBlockId;
     private int codeSize;
     private byte[] code;
@@ -300,7 +300,7 @@ class CFG {
         }
         content.append("}");
 
-        Logger.log(Mode.File, method.getName() + "_phase1_pure.dot", content.toString());
+        Logger.log(Mode.File, method.getName() + "_phase0_pure.dot", content.toString());
     }
 
     private void printCFGDetailToDotFile() {
@@ -326,7 +326,7 @@ class CFG {
         content.append("}");
 
         String fileName = method.getDeclaringClass().getUnqualifiedName() + "_" +
-                method.getName() + "_phase1.dot";
+                method.getName() + "_phase0.dot";
         fileName = fileName.replaceAll("<", "");
         fileName = fileName.replaceAll(">", "");
         Logger.log(Mode.File, fileName, content.toString());

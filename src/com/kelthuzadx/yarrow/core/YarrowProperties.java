@@ -46,5 +46,6 @@ public class YarrowProperties {
         public static boolean PrintCFG = false;
         public static boolean PrintIR = false;
         public static boolean PrintIRToFile = false;
+        public static boolean PrintIdeal = false;
     }
 }

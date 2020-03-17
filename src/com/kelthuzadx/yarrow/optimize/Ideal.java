@@ -11,18 +11,10 @@ import java.util.Queue;
 import java.util.Set;
 
 public class Ideal extends InstructionVisitor implements Optimizer {
-    private HIR hir;
-    private Queue<BlockStartInstr> workList;
-    private Set<Integer> visit;
-
-    public Ideal() {
-    }
-
     @Override
     public HIR optimize(HIR hir) {
-        this.hir = hir;
-        this.workList = new ArrayDeque<>();
-        this.visit = new HashSet<>();
+        Queue<BlockStartInstr> workList = new ArrayDeque<>();
+        Set<Integer> visit = new HashSet<>();
 
 
         BlockStartInstr start = hir.getEntryBlock();

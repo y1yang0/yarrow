@@ -1,6 +1,7 @@
 package com.kelthuzadx.yarrow.core;
 
 
+import com.kelthuzadx.yarrow.hir.CFG;
 import com.kelthuzadx.yarrow.hir.HIR;
 import com.kelthuzadx.yarrow.hir.HIRBuilder;
 import com.kelthuzadx.yarrow.optimize.Ideal;
@@ -12,6 +13,9 @@ import jdk.vm.ci.hotspot.HotSpotCompilationRequestResult;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
 import jdk.vm.ci.runtime.JVMCICompiler;
 import jdk.vm.ci.runtime.JVMCIRuntime;
+
+import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintIR;
+import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintIRToFile;
 
 public class YarrowCompiler implements JVMCICompiler {
 
@@ -27,8 +31,20 @@ public class YarrowCompiler implements JVMCICompiler {
         if (method.hasCompiledCodeAtLevel(YarrowConfigAccess.CompLevel_full_optimization)) {
             return HotSpotCompilationRequestResult.success(0);
         }
+
         Logger.logf("=====Compiling {}.{}=====", method.getDeclaringClass().getUnqualifiedName(), method.getName());
-        HIR hir = new HIRBuilder(method).build();
+
+        CFG cfg = new CFG(method).build();
+        HIR hir = new HIRBuilder(cfg).build();
+        if (PrintIR) {
+            Logger.logf("=====Phase1: SSA Form=====>");
+            hir.printHIR(false);
+        }
+
+        if (PrintIRToFile) {
+            hir.printHIR(true);
+        }
+
         Optimizer opt = new Ideal();
         opt.optimize(hir);
         System.exit(0);

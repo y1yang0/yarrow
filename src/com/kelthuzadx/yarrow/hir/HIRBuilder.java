@@ -42,15 +42,12 @@ public class HIRBuilder {
     private VmState state;
 
 
-    public HIRBuilder(HotSpotResolvedJavaMethod method) {
-        this.method = method;
-        this.lastInstr = null;
-        this.hir = null;
+    public HIRBuilder(CFG cfg) {
+        this.cfg = cfg;
+        this.method = cfg.method;
     }
 
     public HIR build() {
-        cfg = new CFG(method).build();
-
         BlockStartInstr methodEntry = cfg.blockContain(0);
         methodEntry.mergeVmState(createEntryVmState());
         hir = new HIR(method, methodEntry);
@@ -70,15 +67,6 @@ public class HIRBuilder {
                 }
                 fulfillBlock(blockStart);
             }
-        }
-
-        if (PrintIR) {
-            Logger.logf("=====Phase1: SSA Form=====>");
-            hir.printHIR(false);
-        }
-
-        if (PrintIRToFile) {
-            hir.printHIR(true);
         }
 
         return hir;
