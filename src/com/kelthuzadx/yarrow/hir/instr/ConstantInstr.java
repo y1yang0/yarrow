@@ -14,7 +14,7 @@ public class ConstantInstr extends Instruction {
     public String toString() {
         if (!isType(JavaKind.Illegal)) {
 
-            if (value()==null) {
+            if (value() == null) {
                 return Logger.format("i{}: nullptr", super.id);
             } else {
                 return Logger.format("i{}: {}", super.id, value());

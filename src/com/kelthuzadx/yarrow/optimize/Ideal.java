@@ -1,10 +1,12 @@
 package com.kelthuzadx.yarrow.optimize;
 
+import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.HIR;
 import com.kelthuzadx.yarrow.hir.InstructionVisitor;
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.hir.instr.*;
 import com.kelthuzadx.yarrow.phase.Phase;
+import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.common.JVMCIError;
 import jdk.vm.ci.meta.JavaKind;
 
@@ -14,18 +16,19 @@ import java.util.Queue;
 import java.util.Set;
 
 /**
- * Ideal iterates bytecodes from each basic block and applies many local optimizations
- * on single instruction. Many classic optimization technique such as constant folding,
- * dead code will be combined together.
+ * Each time HirBuilder appends new SSA instruction into basic block, Ideal would apply
+ * applies many local optimizations on this newly created single instruction, it may or
+ * may not transform newly created instruction. Many classic optimization technique
+ * such as constant folding, dead code will be combined together, so I called it "Ideal".
  *
  * @author kelthuzadx
  */
-public class Ideal extends InstructionVisitor implements Phase {
-    private HIR hir;
+public class Ideal extends InstructionVisitor {
+    private static Ideal instance = new Ideal();
 
-    public Ideal(HIR hir) {
-        this.hir = hir;
-    }
+    private Instruction ideal;
+
+    private Ideal(){}
 
     @Override
     public void visitMemBarrierInstr(MemBarrierInstr instr) {
@@ -129,13 +132,15 @@ public class Ideal extends InstructionVisitor implements Phase {
 
     @Override
     public void visitArithmeticInstr(ArithmeticInstr instr) {
-        Instruction left = instr.getLeft();
-        Instruction right = instr.getRight();
-        if(left instanceof ConstantInstr && right instanceof ConstantInstr){
-            switch (left.type()){
-                case Int:{
-                    int temp = (int)left.value()+ (int)right.value();
-                    ConstantInstr newInstr = new ConstantInstr(new Value(JavaKind.Int,temp));
+        Instruction leftInstr = instr.getLeft();
+        Instruction rightInstr = instr.getRight();
+        if (leftInstr instanceof ConstantInstr && rightInstr instanceof ConstantInstr) {
+            // i1: 1+2 -> i2: 3
+            switch (leftInstr.type()) {
+                case Int: {
+                    int left = leftInstr.value();
+                    int right = rightInstr.value();
+                    ConstantInstr newInstr = new ConstantInstr(new Value(JavaKind.Int, left+right));
                     break;
                 }
                 default:
@@ -181,7 +186,7 @@ public class Ideal extends InstructionVisitor implements Phase {
 
     @Override
     public void visitInstruction(Instruction instr) {
-        JVMCIError.shouldNotReachHere();
+        YarrowError.shouldNotReachHere();
     }
 
     @Override
@@ -211,12 +216,12 @@ public class Ideal extends InstructionVisitor implements Phase {
 
     @Override
     public void visitOp2Instr(Op2Instr instr) {
-        JVMCIError.shouldNotReachHere();
+        YarrowError.shouldNotReachHere();
     }
 
     @Override
     public void visitThrowInstr(ThrowInstr instr) {
-
+        YarrowError.unimplemented();
     }
 
     @Override
@@ -224,40 +229,19 @@ public class Ideal extends InstructionVisitor implements Phase {
 
     }
 
-    @Override
-    public Phase build() {
-        Queue<BlockStartInstr> workList = new ArrayDeque<>();
-        Set<Integer> visit = new HashSet<>();
+    private void logIdeal(Instruction before){
+        Logger.logf("======{} -> {} idealized=====",before.toString(),ideal.toString());
+    }
 
-
-        BlockStartInstr start = hir.getEntryBlock();
-        workList.add(start);
-        while (!workList.isEmpty()) {
-            var block = workList.remove();
-            if (!visit.contains(block.id())) {
-                visit.add(block.id());
-                {
-                    BlockEndInstr end = block.getBlockEnd();
-                    Instruction cur = block;
-                    while (cur != end) {
-                        cur.visit(this);
-                        cur = cur.getNext();
-                    }
-                    cur.visit(this);
-                }
-                workList.addAll(block.getBlockEnd().getSuccessor());
-            }
+    public static Instruction optimize(Instruction instr) {
+        // Set ideal to unoptimized instruction
+        instance.ideal = instr;
+        // Try to apply local optimizations
+        instr.visit(instance);
+        if(instr != instance.ideal){
+            instance.logIdeal(instr);
         }
-        return this;
-    }
-
-    @Override
-    public String name() {
-        return "Ideal Optimization";
-    }
-
-    @Override
-    public void log() {
-
+        // Return idealized instruction
+        return instance.ideal;
     }
 }

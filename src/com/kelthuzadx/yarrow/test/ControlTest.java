@@ -31,7 +31,7 @@ public class ControlTest {
         for (int i = 0; i < 1000; i++) {
             int a = 32;
             int b = 31;
-            k += a+b;
+            k += a + b;
         }
     }
 

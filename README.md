@@ -7,8 +7,10 @@ JVM at runtime with `-XX:+EnableJVMCI -XX:+UseJVMCICompiler -Djvmci.Compiler=yar
 Since JVMCI is an experimental feature and it only exposes its services to Graal compiler backend, 
 which is a default implementation of JVMCI, I have to hack it so that JVMCI services can be exported 
 to my yarrow module. For the sake of the simplicity, I just modify the `module-info.java` from JVMCI 
-module and rebuild entire JDK. Back to my project, the whole compilation is divided into two parts.  
-yarrow parses Java bytecode to HIR as soon as yarrow polls a compilation task from compile queue,
+module and rebuild entire JDK. Back to my project, yarrow is highly inspired by Client Compiler for 
+HotSpot VM(aka. C1). 
+The whole compilation is divided into two parts. yarrow parses Java bytecode to HIR as soon as yarrow
+polls a compilation task from compile queue,
 A so-called [abstract interpretation](https://en.wikipedia.org/wiki/Abstract_interpretation) phase
 interprets bytecode and generate corresponding SSA instruction, SSA form needs to merge different 
 values of same variable. Therefore, if a basic block has more than one predecessor, PhiInstr might
@@ -33,7 +35,7 @@ i16: 1
 i17: i8 + i16
 i18: goto i3
 ```
-Therefore, it folds constant instead of do computation
+Therefore, it folds constant instead of doing computation
 
 
 

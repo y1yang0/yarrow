@@ -32,7 +32,6 @@ public class YarrowCompiler implements JVMCICompiler {
 
         Logger.logf("=====Compiling {}.{}=====", method.getDeclaringClass().getUnqualifiedName(), method.getName());
 
-
         Stream.of(method)
                 .map(CFG::new)
                 .map(CFG::build)
@@ -41,11 +40,10 @@ public class YarrowCompiler implements JVMCICompiler {
                 .map(HIRBuilder::build)
                 .peek(HIRBuilder::log)
                 .map(HIRBuilder::getHir)
-                .map(Ideal::new)
-                .map(Ideal::build)
                 .collect(Collectors.toList());
 
         System.exit(0);
+
         return HotSpotCompilationRequestResult.success(0);
     }
 

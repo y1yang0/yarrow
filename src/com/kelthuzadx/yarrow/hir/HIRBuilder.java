@@ -4,6 +4,7 @@ import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.bytecode.BytecodeStream;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.*;
+import com.kelthuzadx.yarrow.optimize.Ideal;
 import com.kelthuzadx.yarrow.phase.Phase;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Converter;
@@ -173,11 +174,11 @@ public class HIRBuilder implements Phase {
                     break;
                 case Bytecode.BIPUSH:
                     byte bval = (byte) bs.getBytecodeData();
-                    loadConst(JavaKind.Int, (int)bval);
+                    loadConst(JavaKind.Int, (int) bval);
                     break;
                 case Bytecode.SIPUSH:
-                    short sval = (short)bs.getBytecodeData();
-                    loadConst(JavaKind.Int, (int)sval);
+                    short sval = (short) bs.getBytecodeData();
+                    loadConst(JavaKind.Int, (int) sval);
                     break;
                 case Bytecode.LDC:
                 case Bytecode.LDC_W:
@@ -672,6 +673,7 @@ public class HIRBuilder implements Phase {
     }
 
     private void appendToBlock(Instruction curInstr) {
+        curInstr = Ideal.optimize(curInstr);
         lastInstr.setNext(curInstr);
         lastInstr = curInstr;
 
