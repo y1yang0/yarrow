@@ -62,6 +62,32 @@ public class ArithmeticInstr extends Op2Instr {
             // As C1's sourcenote, I should must be extremely careful with floats
             // and double, so I give up ;-0
         }
+
+        if(right instanceof ConstantInstr){
+            if(left.isType(JavaKind.Int) && (int)right.value()==0){
+                int x = left.value();
+                switch (opcode) {
+                    case Bytecode.IADD:
+                    case Bytecode.ISUB:
+                        return new ConstantInstr(new Value(JavaKind.Int, x));
+                    case Bytecode.IMUL:
+                        return new ConstantInstr(new Value(JavaKind.Int, 0));
+                    default:
+                        YarrowError.shouldNotReachHere();
+                }
+            }else if(left.isType(JavaKind.Long)){
+                long x = left.value();
+                switch (opcode) {
+                    case Bytecode.IADD:
+                    case Bytecode.ISUB:
+                        return new ConstantInstr(new Value(JavaKind.Long, x));
+                    case Bytecode.IMUL:
+                        return new ConstantInstr(new Value(JavaKind.Long, 0L));
+                    default:
+                        YarrowError.shouldNotReachHere();
+                }
+            }
+        }
         return this;
     }
 

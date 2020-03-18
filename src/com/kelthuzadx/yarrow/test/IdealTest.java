@@ -5,6 +5,8 @@ public class IdealTest {
         for (int i = 0; i < 1000000; i++) {
             int k = 23;
             int q = k + k;
+            long d = 100L;
+            long p = d+d;
         }
     }
 }

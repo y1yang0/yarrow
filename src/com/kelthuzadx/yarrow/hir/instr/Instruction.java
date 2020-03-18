@@ -60,8 +60,8 @@ public abstract class Instruction implements Visitable {
      * may not transform newly created instruction. Many classic optimization technique
      * such as constant folding, dead code will be combined together, so I called it "Ideal".
      * <p>
-     * Note that NEVER RETURN NULL, if it can not transformed to optimized version, return this
-     * instead of `null`
+     * Note that NEVER RETURN NULL, if it can not transform to a optimized version, return this
+     * directly.
      *
      * @return new instruction or `this`
      */
