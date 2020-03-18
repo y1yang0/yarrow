@@ -50,8 +50,6 @@ i18: i8 + i17
 i19: goto i3
 ```
 
-
-
 ## Example
 Let say we have following java code, it repeats many times to calculate the sum of `[1,n]`:
 ```java

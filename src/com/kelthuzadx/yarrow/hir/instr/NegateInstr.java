@@ -14,15 +14,15 @@ public class NegateInstr extends Instruction {
 
     @Override
     public Instruction ideal() {
-        if(left instanceof ConstantInstr){
-            if(left.isType(JavaKind.Int)){
-                return new ConstantInstr(new Value(JavaKind.Int,-((int)left.value())));
-            }else if(left.isType(JavaKind.Long)){
-                return new ConstantInstr(new Value(JavaKind.Long,-((long)left.value())));
-            }else if(left.isType(JavaKind.Float)){
-                return new ConstantInstr(new Value(JavaKind.Float,-((float)left.value())));
-            }else if(left.isType(JavaKind.Double)){
-                return new ConstantInstr(new Value(JavaKind.Double,-((double)left.value())));
+        if (left instanceof ConstantInstr) {
+            if (left.isType(JavaKind.Int)) {
+                return new ConstantInstr(new Value(JavaKind.Int, -((int) left.value())));
+            } else if (left.isType(JavaKind.Long)) {
+                return new ConstantInstr(new Value(JavaKind.Long, -((long) left.value())));
+            } else if (left.isType(JavaKind.Float)) {
+                return new ConstantInstr(new Value(JavaKind.Float, -((float) left.value())));
+            } else if (left.isType(JavaKind.Double)) {
+                return new ConstantInstr(new Value(JavaKind.Double, -((double) left.value())));
             }
         }
         return this;

@@ -14,17 +14,17 @@ public class ArrayLenInstr extends AccessArrayInstr {
     public Instruction ideal() {
         // Object[] arr = new Object[3];
         // int p = arr.length;
-        if(array instanceof NewTypeArrayInstr){
+        if (array instanceof NewTypeArrayInstr) {
             Instruction lenInstr = ((NewTypeArrayInstr) array).arrayLength();
-            if(lenInstr instanceof ConstantInstr){
-                int len = ((ConstantInstr)lenInstr).value();
-                return new ConstantInstr(new Value(JavaKind.Int,len));
+            if (lenInstr instanceof ConstantInstr) {
+                int len = ((ConstantInstr) lenInstr).value();
+                return new ConstantInstr(new Value(JavaKind.Int, len));
             }
-        }else if(array instanceof NewObjectArrayInstr){
+        } else if (array instanceof NewObjectArrayInstr) {
             Instruction lenInstr = ((NewObjectArrayInstr) array).arrayLength();
-            if(lenInstr instanceof ConstantInstr){
-                int len = ((ConstantInstr)lenInstr).value();
-                return new ConstantInstr(new Value(JavaKind.Int,len));
+            if (lenInstr instanceof ConstantInstr) {
+                int len = ((ConstantInstr) lenInstr).value();
+                return new ConstantInstr(new Value(JavaKind.Int, len));
             }
         }
         return super.ideal();

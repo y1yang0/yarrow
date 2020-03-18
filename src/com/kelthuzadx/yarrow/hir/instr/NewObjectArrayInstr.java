@@ -22,6 +22,6 @@ public class NewObjectArrayInstr extends StateInstr {
 
     @Override
     public String toString() {
-        return Logger.format("i{}: new {}[i{}]", super.id, klass.getUnqualifiedName(),len.id);
+        return Logger.format("i{}: new {}[i{}]", super.id, klass.getUnqualifiedName(), len.id);
     }
 }

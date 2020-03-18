@@ -21,6 +21,6 @@ public class NewTypeArrayInstr extends StateInstr {
 
     @Override
     public String toString() {
-        return Logger.format("i{}: new {}[i{}]", super.id, elemType.getJavaName(),len.id);
+        return Logger.format("i{}: new {}[i{}]", super.id, elemType.getJavaName(), len.id);
     }
 }

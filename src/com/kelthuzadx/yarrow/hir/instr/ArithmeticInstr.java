@@ -16,12 +16,12 @@ public class ArithmeticInstr extends Op2Instr {
 
     @Override
     public Instruction ideal() {
-        if(left == right){
-            switch (opcode){
+        if (left == right) {
+            switch (opcode) {
                 case Bytecode.ISUB:
-                    return new ConstantInstr(new Value(JavaKind.Int,0));
+                    return new ConstantInstr(new Value(JavaKind.Int, 0));
                 case Bytecode.LSUB:
-                    return new ConstantInstr(new Value(JavaKind.Long,0L));
+                    return new ConstantInstr(new Value(JavaKind.Long, 0L));
             }
         }
 
@@ -72,8 +72,8 @@ public class ArithmeticInstr extends Op2Instr {
             // and double, so I give up ;-0
         }
 
-        if(right instanceof ConstantInstr){
-            if(left.isType(JavaKind.Int) && (int)right.value()==0){
+        if (right instanceof ConstantInstr) {
+            if (left.isType(JavaKind.Int) && (int) right.value() == 0) {
                 int x = left.value();
                 switch (opcode) {
                     case Bytecode.IADD:
@@ -84,7 +84,7 @@ public class ArithmeticInstr extends Op2Instr {
                     default:
                         YarrowError.shouldNotReachHere();
                 }
-            }else if(left.isType(JavaKind.Long)){
+            } else if (left.isType(JavaKind.Long)) {
                 long x = left.value();
                 switch (opcode) {
                     case Bytecode.IADD:

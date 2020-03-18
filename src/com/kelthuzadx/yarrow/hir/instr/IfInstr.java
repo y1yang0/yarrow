@@ -23,7 +23,6 @@ public class IfInstr extends BlockEndInstr {
         this.cond = cond;
     }
 
-
     @Override
     public String toString() {
         String op = "";
