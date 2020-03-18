@@ -24,6 +24,19 @@ public class IfInstr extends BlockEndInstr {
     }
 
     @Override
+    public Instruction ideal() {
+        if (left instanceof ConstantInstr && right instanceof ConstantInstr) {
+            var ifState = getVmState();
+            if (left == right && cond == Cond.EQ) {
+                return new GotoInstr(ifState, getSuccessor().get(0));
+            } else if (left == right && cond == Cond.NE) {
+                return new GotoInstr(ifState, getSuccessor().get(1));
+            }
+        }
+        return this;
+    }
+
+    @Override
     public String toString() {
         String op = "";
         switch (cond) {

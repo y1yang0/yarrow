@@ -6,8 +6,6 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 import jdk.vm.ci.meta.JavaType;
 
-import java.util.Arrays;
-
 public class MultiNewArrayInstr extends StateInstr {
     private JavaType klass;
     private Instruction[] dimenInstrs;
@@ -20,7 +18,10 @@ public class MultiNewArrayInstr extends StateInstr {
 
     @Override
     public String toString() {
-        return Logger.format("i{}: new_multi {}{}", super.id, klass.getUnqualifiedName(),
-                Arrays.stream(dimenInstrs).map(instr -> "[i" + instr.id + "]").reduce("", String::concat));
+        String typeStr = klass.toJavaName();
+        for (Instruction dimen : dimenInstrs) {
+            typeStr = typeStr.replaceFirst("\\[\\]", "[i" + dimen.id + "]");
+        }
+        return Logger.format("i{}: new {}", super.id, typeStr);
     }
 }

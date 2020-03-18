@@ -18,8 +18,8 @@ public class InstanceOfInstr extends StateInstr {
 
     @Override
     public Instruction ideal() {
-        if(object instanceof ConstantInstr && object.isType(JavaKind.Object) && object.value()==null){
-            return new ConstantInstr(new Value(JavaKind.Int,0));
+        if (object instanceof ConstantInstr && object.isType(JavaKind.Object) && object.value() == null) {
+            return new ConstantInstr(new Value(JavaKind.Int, 0));
         }
         return this;
     }
