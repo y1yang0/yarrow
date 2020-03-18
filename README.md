@@ -30,12 +30,25 @@ i2: block_start
 i12: 32
 i13: 31
 i14: i12 + i13
+      ^^^^^^^^^^
 i15: i7 + i14
 i16: 1
 i17: i8 + i16
 i18: goto i3
 ```
 Therefore, it folds constant instead of doing computation
+```java
+VmState{lock=[],stack=[],local=[i16,i18,i12,i13]}
+i2: block_start
+i12: 32
+i13: 31
+i15: 63
+    ^^^^^^^^^^
+i16: i7 + i15
+i17: 1
+i18: i8 + i17
+i19: goto i3
+```
 
 
 

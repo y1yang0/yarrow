@@ -18,22 +18,26 @@ public class ArithmeticInstr extends Op2Instr {
     public Instruction ideal() {
         if (left instanceof ConstantInstr && right instanceof ConstantInstr) {
             // i1: 1+2 -> i2: 3
+            // i1: 1-2 -> i2: 1
+            // i1: 1*2 -> i2: 2
+            // i1: 1/2 -> i2: 0
+            // i1: 1%2 -> i2: 1
             if (left.isType(JavaKind.Int)) {
                 int x = left.value();
                 int y = right.value();
                 switch (opcode) {
                     case Bytecode.IADD:
-                        return createConstant(JavaKind.Int, x + y);
+                        return new ConstantInstr(new Value(JavaKind.Int, x + y));
                     case Bytecode.ISUB:
-                        return createConstant(JavaKind.Int, x - y);
+                        return new ConstantInstr(new Value(JavaKind.Int, x - y));
                     case Bytecode.IMUL:
-                        return createConstant(JavaKind.Int, x * y);
+                        return new ConstantInstr(new Value(JavaKind.Int, x * y));
                     case Bytecode.IDIV:
-                        return createConstant(JavaKind.Int, x / y);
+                        return new ConstantInstr(new Value(JavaKind.Int, x / y));
                     case Bytecode.IREM:
-                        return createConstant(JavaKind.Int, x % y);
+                        return new ConstantInstr(new Value(JavaKind.Int, x % y));
                     default:
-                        return this;
+                        YarrowError.shouldNotReachHere();
                 }
 
             } else if (left.isType(JavaKind.Long)) {
@@ -41,46 +45,25 @@ public class ArithmeticInstr extends Op2Instr {
                 long y = right.value();
                 switch (opcode) {
                     case Bytecode.LADD:
-                        return createConstant(JavaKind.Long, x + y);
+                        return new ConstantInstr(new Value(JavaKind.Long, x + y));
                     case Bytecode.LSUB:
-                        return createConstant(JavaKind.Long, x - y);
+                        return new ConstantInstr(new Value(JavaKind.Long, x - y));
                     case Bytecode.LMUL:
-                        return createConstant(JavaKind.Long, x * y);
+                        return new ConstantInstr(new Value(JavaKind.Long, x * y));
                     case Bytecode.LDIV:
-                        return createConstant(JavaKind.Long, x / y);
+                        return new ConstantInstr(new Value(JavaKind.Long, x / y));
                     case Bytecode.LREM:
-                        return createConstant(JavaKind.Long, x % y);
+                        return new ConstantInstr(new Value(JavaKind.Long, x % y));
                     default:
-                        return this;
+                        YarrowError.shouldNotReachHere();
                 }
             }
             // else{ ... }
-            // As C1's note, I should must be extremely careful with floats
+            // As C1's sourcenote, I should must be extremely careful with floats
             // and double, so I give up ;-0
         }
         return this;
     }
-
-    private <T> ConstantInstr createConstant(JavaKind type, T value) {
-        switch (type) {
-            case Int: {
-                return new ConstantInstr(new Value(JavaKind.Int, value));
-            }
-            case Long: {
-                return new ConstantInstr(new Value(JavaKind.Long, value));
-            }
-            case Float: {
-                return new ConstantInstr(new Value(JavaKind.Float, value));
-            }
-            case Double: {
-                return new ConstantInstr(new Value(JavaKind.Double, value));
-            }
-            default:
-                YarrowError.shouldNotReachHere();
-        }
-        return null;
-    }
-
 
     @Override
     public String toString() {

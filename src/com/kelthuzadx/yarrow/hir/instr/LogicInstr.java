@@ -4,6 +4,7 @@ import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.util.Logger;
+import jdk.vm.ci.meta.JavaKind;
 
 public class LogicInstr extends Op2Instr {
     public LogicInstr(int opcode, Instruction left, Instruction right) {
@@ -13,6 +14,46 @@ public class LogicInstr extends Op2Instr {
         }
     }
 
+    @Override
+    public Instruction ideal() {
+        if (left instanceof ConstantInstr && right instanceof ConstantInstr) {
+            // i1: 1&2 -> i2: 0
+            // i1: 1|2 -> i2: 3
+            // i1: 1^2 -> i2: 3
+            if (left.isType(JavaKind.Int)) {
+                int x = left.value();
+                int y = right.value();
+                switch (opcode) {
+                    case Bytecode.IAND:
+                        return new ConstantInstr(new Value(JavaKind.Long, x & y));
+                    case Bytecode.IOR:
+                        return new ConstantInstr(new Value(JavaKind.Long, x | y));
+                    case Bytecode.IXOR:
+                        return new ConstantInstr(new Value(JavaKind.Long, x ^ y));
+                    default:
+                        YarrowError.shouldNotReachHere();
+                }
+
+            } else if (left.isType(JavaKind.Long)) {
+                long x = left.value();
+                long y = right.value();
+                switch (opcode) {
+                    case Bytecode.LAND:
+                        return new ConstantInstr(new Value(JavaKind.Long, x & y));
+                    case Bytecode.LOR:
+                        return new ConstantInstr(new Value(JavaKind.Long, x | y));
+                    case Bytecode.LXOR:
+                        return new ConstantInstr(new Value(JavaKind.Long, x ^ y));
+                    default:
+                        YarrowError.shouldNotReachHere();
+                }
+            }
+            // else{ ... }
+            // As C1's sourcenote, I should must be extremely careful with floats
+            // and double, so I give up ;-0
+        }
+        return this;
+    }
 
     @Override
     public String toString() {
