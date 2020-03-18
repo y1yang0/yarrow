@@ -28,7 +28,7 @@ public class VmState {
     }
 
     public void push(JavaKind type, Instruction instr) {
-        Instruction.assertType(instr, type);
+        YarrowError.guarantee(instr.isType(type),"type mismatch");
         switch (type) {
             case Int:
             case Float:
@@ -66,7 +66,7 @@ public class VmState {
             case Float:
             case Object: {
                 var val = stack.pop();
-                Instruction.assertType(val, type);
+                YarrowError.guarantee(val.isType(type),"type mismatch");
                 return val;
             }
             case Long:
@@ -76,7 +76,7 @@ public class VmState {
                     throw new YarrowError("Must be null slot");
                 }
                 var val = stack.pop();
-                Instruction.assertType(val, type);
+                YarrowError.guarantee(val.isType(type),"type mismatch");
                 return val;
             }
             default:

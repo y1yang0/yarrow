@@ -1,8 +1,17 @@
 package com.kelthuzadx.yarrow.test;
 
 public class IdealTest {
+    public static void ideal1(int cond){
+        if(cond>1000){
+            int a=3;
+            int b = 2;
+            int c = a+1;
+            int d = b+2;
+        }
+    }
     public static void main(String[] args) {
         for (int i = 0; i < 1000000; i++) {
+            ideal1(i);
             // Arithmetic
             int k = 23;
             int q = k + k;

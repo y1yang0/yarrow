@@ -5,6 +5,7 @@ import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.hir.Visitable;
 import jdk.vm.ci.meta.JavaKind;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -21,12 +22,6 @@ public abstract class Instruction implements Visitable {
         this.id = IdGenerator.next();
         this.value = value;
         this.next = null;
-    }
-
-    public static void assertType(Instruction value, JavaKind rhs) {
-        if (!value.isType(rhs)) {
-            throw new YarrowError("Type Mismatch");
-        }
     }
 
     public int id() {
@@ -52,6 +47,21 @@ public abstract class Instruction implements Visitable {
 
     public void setNext(Instruction next) {
         this.next = next;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Instruction)) return false;
+        Instruction that = (Instruction) o;
+        return id == that.id &&
+                Objects.equals(next, that.next) &&
+                value.equals(that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, next, value);
     }
 
     /**
