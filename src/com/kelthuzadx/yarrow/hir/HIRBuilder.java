@@ -16,8 +16,7 @@ import jdk.vm.ci.meta.*;
 
 import java.util.*;
 
-import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintIR;
-import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintIRToFile;
+import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.*;
 
 /**
  * HirBuilder performs an abstract interpretation, it transform java bytecode to compiler HIR.
@@ -674,7 +673,7 @@ public class HIRBuilder implements Phase {
     private Instruction appendToBlock(Instruction curInstr) {
         // Try to idealize instruction
         Instruction idealized = curInstr.ideal();
-        if (idealized != curInstr) {
+        if (PrintIdeal && idealized != curInstr) {
             Logger.logf("======Idealize {} -> {}=====", curInstr, idealized);
         }
         curInstr = idealized;

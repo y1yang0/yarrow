@@ -38,7 +38,10 @@ public class IdealTest {
         int p = 12;
         boolean cond = true;
         if (p == p) {
-            System.out.println("w");
+            String s = "";
+            if(null instanceof String){
+                p++;
+            }
         }
     }
 }
