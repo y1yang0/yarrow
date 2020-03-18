@@ -16,8 +16,12 @@ public class NewObjectArrayInstr extends StateInstr {
         this.klass = klass;
     }
 
+    public Instruction arrayLength() {
+        return len;
+    }
+
     @Override
     public String toString() {
-        return Logger.format("i{}: new_objarr {}", super.id, klass.getUnqualifiedName());
+        return Logger.format("i{}: new {}[i{}]", super.id, klass.getUnqualifiedName(),len.id);
     }
 }

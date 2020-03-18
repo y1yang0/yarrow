@@ -15,8 +15,12 @@ public class NewTypeArrayInstr extends StateInstr {
         this.elemType = elemType;
     }
 
+    public Instruction arrayLength() {
+        return len;
+    }
+
     @Override
     public String toString() {
-        return Logger.format("i{}: new_typearr {}", super.id, elemType.getJavaName());
+        return Logger.format("i{}: new {}[i{}]", super.id, elemType.getJavaName(),len.id);
     }
 }

@@ -21,7 +21,7 @@ role of code generation, instruction selection based on BURS, I'm not sure which
 algorithm would be implemented. If I have enough time, I will examine a peephole optimization phase
 for LIR.
 
-## Optimization Technique
+## Optimization
 ### 1. Constant folding
 In the following SSA instruction, yarrow finds both operands of `i14` is constant
 ```java
