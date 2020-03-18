@@ -877,7 +877,7 @@ public class HIRBuilder implements Phase {
         Instruction right = state.pop(type);
         Instruction left = state.pop(type);
         CompareInstr instr = new CompareInstr(opcode, left, right);
-        state.push(type, appendToBlock(instr));
+        state.push(JavaKind.Int, appendToBlock(instr));
     }
 
     private void branchIfZero(JavaKind type, Cond cond, int trueBci, int falseBci) {
