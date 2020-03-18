@@ -1,7 +1,7 @@
 # yarrow 
 
 ## Preface
-This is my graduation project. I intend to write an optimizing JIT compiler for HotSpot VM. 
+This is my graduation project, it still work in progress. I intend to write an optimizing JIT compiler for HotSpot VM. 
 Thanks to [JEP243](http://openjdk.java.net/jeps/243) JVMCI, I can easily plug a compiler into
 JVM at runtime with `-XX:+EnableJVMCI -XX:+UseJVMCICompiler -Djvmci.Compiler=yarrow` options.
 Since JVMCI is an experimental feature and it only exposes its services to Graal compiler backend, 
@@ -9,6 +9,7 @@ which is a default implementation of JVMCI, I have to hack it so that JVMCI serv
 to my yarrow module. For the sake of the simplicity, I just modify the `module-info.java` from JVMCI 
 module and rebuild entire JDK. Back to my project, yarrow is highly inspired by Client Compiler for 
 HotSpot VM(aka. C1). 
+
 The whole compilation is divided into two parts. yarrow parses Java bytecode to HIR as soon as yarrow
 polls a compilation task from compile queue,
 A so-called [abstract interpretation](https://en.wikipedia.org/wiki/Abstract_interpretation) phase
@@ -22,32 +23,88 @@ algorithm would be implemented. If I have enough time, I will examine a peephole
 for LIR.
 
 ## Optimization
-### 1. Constant folding
-In the following SSA instruction, yarrow finds both operands of `i14` is constant
 ```java
-VmState{lock=[],stack=[],local=[i15,i17,i12,i13]}
+VmState{lock=[],stack=[],local=[i9,i61,i16,i23,i19,null,i22,null,i45,i38,i41,i42,i58]}
 i2: block_start
-i12: 32
-i13: 31
-i14: i12 + i13
-      ^^^^^^^^^^
-i15: i7 + i14
-i16: 1
-i17: i8 + i16
-i18: goto i3
+i16: 23
+i17: i16 + i16
+i19: 100
+i20: i19 + i19
+i22: -i20
+i23: -i17
+i24: 23.0
+i25: 3.14
+i26: -i24
+i28: -i25
+i30: i16 & i16
+i32: i16 | i16
+i34: i16 ^ i16
+i36: 3
+i37: new int[i36]
+i38: arraylen i37
+i40: 56
+i41: new Object[i40]
+i42: arraylen i41
+i44: 4
+i45: new int[i44]
+i46: 0
+i47: 2
+i48: i45[i46] = i47 [int]
+i49: 1
+i50: 4
+i51: i45[i49] = i50 [int]
+i52: 2
+i53: 5
+i54: i45[i52] = i53 [int]
+i55: 3
+i56: 6
+i57: i45[i55] = i56 [int]
+i58: arraylen i45
+i60: 1
+i61: i10 + i60
+i62: goto i3
 ```
-Therefore, it folds constant instead of doing computation
+Compiler idealizes many instructions, it reduces computations and choose a simple canonical form:
 ```java
-VmState{lock=[],stack=[],local=[i16,i18,i12,i13]}
+VmState{lock=[],stack=[],local=[i9,i63,i16,i25,i19,null,i23,null,i47,i41,i43,i45,i61]}
 i2: block_start
-i12: 32
-i13: 31
-i15: 63
-    ^^^^^^^^^^
-i16: i7 + i15
-i17: 1
-i18: i8 + i17
-i19: goto i3
+i16: 23
+i18: 46
+i19: 100
+i21: 200
+i23: -200
+i25: -46
+i26: 23.0
+i27: 3.14
+i29: -23.0
+i31: -3.14
+i33: 23
+i35: 23
+i37: 0
+i38: 3
+i39: new int[i38]
+i41: 3
+i42: 56
+i43: new Object[i42]
+i45: 56
+i46: 4
+i47: new int[i46]
+i48: 0
+i49: 2
+i50: i47[i48] = i49 [int]
+i51: 1
+i52: 4
+i53: i47[i51] = i52 [int]
+i54: 2
+i55: 5
+i56: i47[i54] = i55 [int]
+i57: 3
+i58: 6
+i59: i47[i57] = i58 [int]
+i61: 4
+i62: 1
+i63: i10 + i62
+i64: goto i3
 ```
 
 ## Example
