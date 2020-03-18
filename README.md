@@ -23,7 +23,7 @@ algorithm would be implemented. If I have enough time, I will examine a peephole
 for LIR.
 
 ## Optimization
-### 1. Constant folding 
+###  Constant folding, simple constant propagation and algebraic simplification
 ```java
 VmState{lock=[],stack=[],local=[i9,i61,i16,i23,i19,null,i22,null,i45,i38,i41,i42,i58]}
 i2: block_start
@@ -107,7 +107,7 @@ i62: 1
 i63: i10 + i62
 i64: goto i3
 ```
-### 2. Remove impossible control flow
+###  Remove unreachable blocks
 CFG
 
 ![](doc/IdealTest_main_phase0.png)

@@ -39,47 +39,46 @@ public class IfInstr extends BlockEndInstr {
             // i1: 1
             // i2: 23
             // if i1 == i2 then i3 else i4
-            if(left.isType(JavaKind.Int) && right.isType(JavaKind.Int)){
+            if (left.isType(JavaKind.Int) && right.isType(JavaKind.Int)) {
                 int x = left.value();
                 int y = right.value();
-                if(Cond.EQ == cond){
-                    if(x==y){
-                        return new GotoInstr(ifState,getSuccessor().get(0));
-                    }else{
-                        return new GotoInstr(ifState,getSuccessor().get(1));
+                if (Cond.EQ == cond) {
+                    if (x == y) {
+                        return new GotoInstr(ifState, getSuccessor().get(0));
+                    } else {
+                        return new GotoInstr(ifState, getSuccessor().get(1));
                     }
-                }else if(Cond.NE == cond){
-                    if(x!=y){
-                        return new GotoInstr(ifState,getSuccessor().get(0));
-                    }else{
-                        return new GotoInstr(ifState,getSuccessor().get(1));
+                } else if (Cond.NE == cond) {
+                    if (x != y) {
+                        return new GotoInstr(ifState, getSuccessor().get(0));
+                    } else {
+                        return new GotoInstr(ifState, getSuccessor().get(1));
                     }
-                }else if(Cond.GE == cond){
-                    if(x>=y){
-                        return new GotoInstr(ifState,getSuccessor().get(0));
-                    }else{
-                        return new GotoInstr(ifState,getSuccessor().get(1));
+                } else if (Cond.GE == cond) {
+                    if (x >= y) {
+                        return new GotoInstr(ifState, getSuccessor().get(0));
+                    } else {
+                        return new GotoInstr(ifState, getSuccessor().get(1));
                     }
-                }
-                else if(Cond.GT == cond){
-                    if(x>y){
-                        return new GotoInstr(ifState,getSuccessor().get(0));
-                    }else{
-                        return new GotoInstr(ifState,getSuccessor().get(1));
+                } else if (Cond.GT == cond) {
+                    if (x > y) {
+                        return new GotoInstr(ifState, getSuccessor().get(0));
+                    } else {
+                        return new GotoInstr(ifState, getSuccessor().get(1));
                     }
-                }else if(Cond.LE == cond){
-                    if(x<=y){
-                        return new GotoInstr(ifState,getSuccessor().get(0));
-                    }else{
-                        return new GotoInstr(ifState,getSuccessor().get(1));
+                } else if (Cond.LE == cond) {
+                    if (x <= y) {
+                        return new GotoInstr(ifState, getSuccessor().get(0));
+                    } else {
+                        return new GotoInstr(ifState, getSuccessor().get(1));
                     }
-                }else if(Cond.LT == cond){
-                    if(x<y){
-                        return new GotoInstr(ifState,getSuccessor().get(0));
-                    }else{
-                        return new GotoInstr(ifState,getSuccessor().get(1));
+                } else if (Cond.LT == cond) {
+                    if (x < y) {
+                        return new GotoInstr(ifState, getSuccessor().get(0));
+                    } else {
+                        return new GotoInstr(ifState, getSuccessor().get(1));
                     }
-                }else{
+                } else {
                     YarrowError.shouldNotReachHere();
                 }
             }

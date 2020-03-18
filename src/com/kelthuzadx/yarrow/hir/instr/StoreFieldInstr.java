@@ -12,7 +12,6 @@ public class StoreFieldInstr extends AccessFieldInstr {
     }
 
 
-
     @Override
     public String toString() {
         return Logger.format("i{}: i{}.off+{} = i{} [{}.{}]",

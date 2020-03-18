@@ -1,14 +1,29 @@
 package com.kelthuzadx.yarrow.test;
 
 public class IdealTest {
-    public static void ideal1(int cond){
-        if(cond>1000){
-            int a=3;
-            int b = 2;
-            int c = a+1;
-            int d = b+2;
+    public static void ideal1(int cond) {
+//            int b = cond;
+//            int c = cond;
+//            int a = b+c;
+//            int d = b;
+//            int e = d+c;
+        long v1 = 12;
+        long v2 = 324;
+        float v3 = 32.f;
+        float v4 = 23.f;
+        double v5 = 23;
+        double v6 = 32;
+        if (v1 > v2) {
+            v2 += v1;
+        }
+        if (v3 < v4) {
+            v3 += v4;
+        }
+        if (v5 == v6) {
+            v5 += v6;
         }
     }
+
     public static void main(String[] args) {
         for (int i = 0; i < 1000000; i++) {
             ideal1(i);
@@ -51,10 +66,10 @@ public class IdealTest {
                 val++;
             }
         }
-        for(int i=0;i<100000;i++){
+        for (int i = 0; i < 100000; i++) {
             int val = 10240;
             boolean t = true;
-            if(t){
+            if (t) {
                 val++;
             }
         }
