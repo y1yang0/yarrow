@@ -32,6 +32,6 @@ public class ArrayLenInstr extends AccessArrayInstr {
 
     @Override
     public String toString() {
-        return Logger.format("i{}: arraylen i{}", super.id, super.array.id);
+        return Logger.format("i{}: i{}.length", super.id, super.array.id);
     }
 }

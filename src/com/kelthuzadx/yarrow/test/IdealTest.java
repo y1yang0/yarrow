@@ -1,7 +1,5 @@
 package com.kelthuzadx.yarrow.test;
 
-import java.io.BufferedWriter;
-
 public class IdealTest {
     public static void main(String[] args) {
         for (int i = 0; i < 1000000; i++) {
@@ -37,9 +35,9 @@ public class IdealTest {
             }
         }
 
-        int p=12;
+        int p = 12;
         boolean cond = true;
-        if(p==p){
+        if (p == p) {
             System.out.println("w");
         }
     }
