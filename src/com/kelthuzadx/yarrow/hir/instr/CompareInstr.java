@@ -21,7 +21,7 @@ public class CompareInstr extends Op2Instr {
                     return new ConstantInstr(new Value(JavaKind.Int, 1));
                 } else if (x == y) {
                     return new ConstantInstr(new Value(JavaKind.Int, 0));
-                } else if (x < y) {
+                } else {
                     return new ConstantInstr(new Value(JavaKind.Int, -1));
                 }
             } else if (left.isType(JavaKind.Float) && right.isType(JavaKind.Float)) {
@@ -48,6 +48,7 @@ public class CompareInstr extends Op2Instr {
             } else if (left.isType(JavaKind.Double) && right.isType(JavaKind.Double)) {
                 double x = left.value();
                 double y = right.value();
+                // ditto
                 if (Double.isNaN(x) || Double.isNaN(y)) {
                     if (opcode == Bytecode.DCMPL) {
                         return new ConstantInstr(new Value(JavaKind.Int, -1));
