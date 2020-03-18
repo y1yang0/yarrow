@@ -519,22 +519,22 @@ public class HIRBuilder implements Phase {
                     compare(JavaKind.Double, opcode);
                     break;
                 case Bytecode.IFEQ:
-                    branchIfZero(JavaKind.Int, Cond.EQ, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfZero(Cond.EQ, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 case Bytecode.IFNE:
-                    branchIfZero(JavaKind.Int, Cond.NE, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfZero(Cond.NE, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 case Bytecode.IFLT:
-                    branchIfZero(JavaKind.Int, Cond.LT, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfZero(Cond.LT, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 case Bytecode.IFGE:
-                    branchIfZero(JavaKind.Int, Cond.GE, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfZero(Cond.GE, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 case Bytecode.IFGT:
-                    branchIfZero(JavaKind.Int, Cond.GT, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfZero(Cond.GT, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 case Bytecode.IFLE:
-                    branchIfZero(JavaKind.Int, Cond.LE, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfZero(Cond.LE, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 case Bytecode.IF_ICMPEQ:
                     branchIfSame(JavaKind.Int, Cond.EQ, curBci + bs.getBytecodeData(), bs.peekNextBci());
@@ -646,10 +646,10 @@ public class HIRBuilder implements Phase {
                     multiNewArray(bs.getMultiNewArray());
                     break;
                 case Bytecode.IFNULL:
-                    branchIfNull(JavaKind.Object, Cond.EQ, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfNull(Cond.EQ, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 case Bytecode.IFNONNULL:
-                    branchIfNull(JavaKind.Object, Cond.NE, curBci + bs.getBytecodeData(), bs.peekNextBci());
+                    branchIfNull(Cond.NE, curBci + bs.getBytecodeData(), bs.peekNextBci());
                     break;
                 default:
                     YarrowError.shouldNotReachHere();
@@ -877,19 +877,22 @@ public class HIRBuilder implements Phase {
         Instruction right = state.pop(type);
         Instruction left = state.pop(type);
         CompareInstr instr = new CompareInstr(opcode, left, right);
+        // left > right => push 1
+        // left == right => push 0
+        // left < right => push -1
         state.push(JavaKind.Int, appendToBlock(instr));
     }
 
-    private void branchIfZero(JavaKind type, Cond cond, int trueBci, int falseBci) {
+    private void branchIfZero(Cond cond, int trueBci, int falseBci) {
         VmState stateBefore = state.copy();
-        Instruction left = state.pop(type);
+        Instruction left = state.pop(JavaKind.Int);
         ConstantInstr right = new ConstantInstr(new Value(JavaKind.Int, 0));
         branchIf(stateBefore, left, right, cond, trueBci, falseBci);
     }
 
-    private void branchIfNull(JavaKind type, Cond cond, int trueBci, int falseBci) {
+    private void branchIfNull(Cond cond, int trueBci, int falseBci) {
         VmState stateBefore = state.copy();
-        Instruction left = state.pop(type);
+        Instruction left = state.pop(JavaKind.Object);
         ConstantInstr right = new ConstantInstr(new Value(JavaKind.Object, null));
         branchIf(stateBefore, left, right, cond, trueBci, falseBci);
     }
@@ -980,7 +983,7 @@ public class HIRBuilder implements Phase {
         }
 
         // If <init> writes final field, a StoreStore barrier will be inserted before method return.
-        // FIXME: AlwaysSafeConstructor does the same thing
+        // FIXME: -XX:+AlwaysSafeConstructor does the same thing
         if (method.isConstructor() && hir.isWriteFinal()) {
             MemBarrierInstr memBarInstr = new MemBarrierInstr(MemoryBarriers.STORE_STORE);
             appendToBlock(memBarInstr);
@@ -1170,25 +1173,3 @@ public class HIRBuilder implements Phase {
         state.push(JavaKind.Object, appendToBlock(instr));
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

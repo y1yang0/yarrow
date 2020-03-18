@@ -49,14 +49,13 @@ public class CFG implements Phase {
     public CFG build() {
         mapBciToBlocks();
         uniqueBlocks();
-        identifyLoop(new HashSet<>(blocks.length), new HashSet<>(blocks.length), bciToBlockMapping[0]);
+        var visit = new HashSet<Integer>(blocks.length);
+        var active = new HashSet<Integer>(blocks.length);
+        identifyLoop(visit,active, bciToBlockMapping[0]);
         return this;
     }
 
     public BlockStartInstr blockContain(int bci) {
-        if (bci < 0 || bci >= bciToBlockMapping.length) {
-            throw new YarrowError("invalid bytecode index " + bci);
-        }
         return bciToBlockMapping[bci];
     }
 

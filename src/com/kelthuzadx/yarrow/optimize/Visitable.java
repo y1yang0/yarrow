@@ -1,6 +1,4 @@
-package com.kelthuzadx.yarrow.hir;
-
-import com.kelthuzadx.yarrow.optimize.InstructionVisitor;
+package com.kelthuzadx.yarrow.optimize;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
