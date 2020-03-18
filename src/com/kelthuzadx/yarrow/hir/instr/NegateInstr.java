@@ -2,6 +2,7 @@ package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.util.Logger;
+import jdk.vm.ci.meta.JavaKind;
 
 public class NegateInstr extends Instruction {
     private Instruction left;
@@ -9,6 +10,22 @@ public class NegateInstr extends Instruction {
     public NegateInstr(Instruction left) {
         super(new Value(left.type()));
         this.left = left;
+    }
+
+    @Override
+    public Instruction ideal() {
+        if(left instanceof ConstantInstr){
+            if(left.isType(JavaKind.Int)){
+                return new ConstantInstr(new Value(JavaKind.Int,-((int)left.value())));
+            }else if(left.isType(JavaKind.Long)){
+                return new ConstantInstr(new Value(JavaKind.Long,-((long)left.value())));
+            }else if(left.isType(JavaKind.Float)){
+                return new ConstantInstr(new Value(JavaKind.Float,-((float)left.value())));
+            }else if(left.isType(JavaKind.Double)){
+                return new ConstantInstr(new Value(JavaKind.Double,-((double)left.value())));
+            }
+        }
+        return this;
     }
 
     @Override

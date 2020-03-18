@@ -16,6 +16,15 @@ public class ArithmeticInstr extends Op2Instr {
 
     @Override
     public Instruction ideal() {
+        if(left == right){
+            switch (opcode){
+                case Bytecode.ISUB:
+                    return new ConstantInstr(new Value(JavaKind.Int,0));
+                case Bytecode.LSUB:
+                    return new ConstantInstr(new Value(JavaKind.Long,0L));
+            }
+        }
+
         if (left instanceof ConstantInstr && right instanceof ConstantInstr) {
             // i1: 1+2 -> i2: 3
             // i1: 1-2 -> i2: 1
@@ -88,6 +97,7 @@ public class ArithmeticInstr extends Op2Instr {
                 }
             }
         }
+
         return this;
     }
 
