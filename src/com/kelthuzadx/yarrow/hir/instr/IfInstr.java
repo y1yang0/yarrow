@@ -1,5 +1,6 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
+import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.Cond;
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.hir.VmState;
@@ -27,10 +28,60 @@ public class IfInstr extends BlockEndInstr {
     public Instruction ideal() {
         if (left instanceof ConstantInstr && right instanceof ConstantInstr) {
             var ifState = getVmState();
+            // if i1 == i1 then i2 else i3
+            // if i2 != i2 then i3 else i4
             if (left == right && cond == Cond.EQ) {
                 return new GotoInstr(ifState, getSuccessor().get(0));
             } else if (left == right && cond == Cond.NE) {
                 return new GotoInstr(ifState, getSuccessor().get(1));
+            }
+
+            // i1: 1
+            // i2: 23
+            // if i1 == i2 then i3 else i4
+            if(left.isType(JavaKind.Int) && right.isType(JavaKind.Int)){
+                int x = left.value();
+                int y = right.value();
+                if(Cond.EQ == cond){
+                    if(x==y){
+                        return new GotoInstr(ifState,getSuccessor().get(0));
+                    }else{
+                        return new GotoInstr(ifState,getSuccessor().get(1));
+                    }
+                }else if(Cond.NE == cond){
+                    if(x!=y){
+                        return new GotoInstr(ifState,getSuccessor().get(0));
+                    }else{
+                        return new GotoInstr(ifState,getSuccessor().get(1));
+                    }
+                }else if(Cond.GE == cond){
+                    if(x>=y){
+                        return new GotoInstr(ifState,getSuccessor().get(0));
+                    }else{
+                        return new GotoInstr(ifState,getSuccessor().get(1));
+                    }
+                }
+                else if(Cond.GT == cond){
+                    if(x>y){
+                        return new GotoInstr(ifState,getSuccessor().get(0));
+                    }else{
+                        return new GotoInstr(ifState,getSuccessor().get(1));
+                    }
+                }else if(Cond.LE == cond){
+                    if(x<=y){
+                        return new GotoInstr(ifState,getSuccessor().get(0));
+                    }else{
+                        return new GotoInstr(ifState,getSuccessor().get(1));
+                    }
+                }else if(Cond.LT == cond){
+                    if(x<y){
+                        return new GotoInstr(ifState,getSuccessor().get(0));
+                    }else{
+                        return new GotoInstr(ifState,getSuccessor().get(1));
+                    }
+                }else{
+                    YarrowError.shouldNotReachHere();
+                }
             }
         }
         return this;
