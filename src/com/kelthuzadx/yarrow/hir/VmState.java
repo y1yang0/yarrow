@@ -3,6 +3,7 @@ package com.kelthuzadx.yarrow.hir;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.hir.instr.Instruction;
+import com.kelthuzadx.yarrow.hir.instr.ParamInstr;
 import com.kelthuzadx.yarrow.hir.instr.PhiInstr;
 import jdk.vm.ci.meta.JavaKind;
 
@@ -151,7 +152,16 @@ public class VmState {
     @Override
     public String toString() {
         String sk = stack.stream().map(instr -> "i" + instr.id()).collect(Collectors.joining(","));
-        String lc = Arrays.stream(local).map(instr -> instr == null ? "null" : "i" + instr.id()).collect(Collectors.joining(","));
+        String lc = Arrays.stream(local).map(instr -> {
+            if(instr==null){
+                return null;
+            }
+            if(instr instanceof ParamInstr){
+                return instr.toString();
+            }else{
+                return "i"+instr.id();
+            }
+        }).collect(Collectors.joining(","));
         String lx = lock.stream().map(instr -> instr == null ? "null" : "i" + instr.id()).collect(Collectors.joining(","));
         return "VmState{" +
                 "lock=[" + lx +

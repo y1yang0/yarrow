@@ -8,15 +8,30 @@ Since JVMCI is an experimental feature and it only exposes its services to Graal
 which is a default implementation of JVMCI, I have to hack it so that JVMCI services can be exported 
 to my yarrow module. For the sake of the simplicity, I just modify the `module-info.java` from JVMCI 
 module and rebuild entire JDK. Back to my project, yarrow is highly inspired by Client Compiler for 
-HotSpot VM(aka. C1). 
+HotSpot VM(aka. C1). As every knows, intermediate representation are the stepping stone form what the
+programmer wrote to what the machine understands. Intermediate representations must bridge a large semantic
+gap. Yarrow uses a two-tiered control flow graph containing basic blocks (tier 1) of SSA
+instructions(tier 2) HIR.
 
 The whole compilation is divided into two parts. yarrow parses Java bytecode to HIR as soon as yarrow
-polls a compilation task from compile queue,
-A so-called [abstract interpretation](https://en.wikipedia.org/wiki/Abstract_interpretation) phase
+polls a compilation task from compile queue. In order to achieve transformation, compiler finds leader
+instructions and creates a control flow graph within bytecode, the minimal component of control flow grpah
+is basic block, it connects to other blocks by `successors` field. Control flow graph becomes 1-Tier of HIR, you can dump the final graph by switching `-Dyarrow.Debug.PrintIRToFile=true`:
+
+![](doc/ControlTest_yarrow_complex_phase0.png)
+
+Later, a so-called [abstract interpretation](https://en.wikipedia.org/wiki/Abstract_interpretation) phase
 interprets bytecode and generate corresponding SSA instruction, SSA form needs to merge different 
 values of same variable. Therefore, if a basic block has more than one predecessor, PhiInstr might
-be needed at the start of block. Analyses and classic optimization phases will be applied when 
-parsing completes. After that, yarrow lowers HIR, it transforms machine-independent HIR instructions
+be needed at the start of block. Again, you can dump graph using mentioned option:
+
+![](doc/ControlTest_yarrow_complex_phase1.png)
+
+The simple structure of the HIR allows the easy implementation of global optimizations, which are applied
+both during and after the construction of HIR. Theoretically, all optimizations developed for traditional
+compilers could be applied, but most of them require the analysis of the data flow and are too time-consuming for 
+JIT compiler, so yarrow implements only simple and fast optimizations, that's why it is called optimizing
+compiler. After that, yarrow lowers HIR, it transforms machine-independent HIR instructions
 to machine instructions and eliminates dead code and PHI instruction, newly created LIR plays the main 
 role of code generation, instruction selection based on BURS, I'm not sure which register allocation
 algorithm would be implemented. If I have enough time, I will examine a peephole optimization phase
@@ -134,6 +149,7 @@ i2: i1 + i1
 i4: i2 + i2
 i5: return i4
 ```
+
 ## Example
 Let say we have following java code, it repeats many times to calculate the sum of `[1,n]`:
 ```java

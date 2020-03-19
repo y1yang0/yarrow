@@ -86,8 +86,11 @@ public class IdealTest {
         double dd1 = idealTest.arr[2];
         float ff3 = ff1 + ff2;
         int ret = e + a;
-        double dd2 = idealTest.arr[2];
+        int index = 2;
+        double dd2 = idealTest.arr[index];
         double dd3 = dd1 + dd2;
         return ret + (int) dd3;
     }
+
+
 }
