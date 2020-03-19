@@ -2,11 +2,6 @@ package com.kelthuzadx.yarrow.test;
 
 public class IdealTest {
     public static void ideal1(int cond) {
-//            int b = cond;
-//            int c = cond;
-//            int a = b+c;
-//            int d = b;
-//            int e = d+c;
         long v1 = 12;
         long v2 = 324;
         float v3 = 32.f;
@@ -27,6 +22,7 @@ public class IdealTest {
     public static void main(String[] args) {
         for (int i = 0; i < 1000000; i++) {
             ideal1(i);
+            ideal2(i);
             // Arithmetic
             int k = 23;
             int q = k + k;
@@ -73,5 +69,13 @@ public class IdealTest {
                 val++;
             }
         }
+    }
+
+    private static void ideal2(int cond) {
+        int b = cond;
+        int c = cond;
+        int a = b+c;
+        int d = b;
+        int e = d+c;
     }
 }

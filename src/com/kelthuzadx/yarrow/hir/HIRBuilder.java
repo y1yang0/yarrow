@@ -4,6 +4,7 @@ import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.bytecode.BytecodeStream;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.*;
+import com.kelthuzadx.yarrow.optimize.LVN;
 import com.kelthuzadx.yarrow.phase.Phase;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Converter;
@@ -40,6 +41,8 @@ public class HIRBuilder implements Phase {
     private Set<Integer> visit;
     // Current vm state
     private VmState state;
+    // Local value numbering for every basic block
+    private LVN lvn;
 
 
     public HIRBuilder(CFG cfg) {
@@ -77,6 +80,7 @@ public class HIRBuilder implements Phase {
             BlockStartInstr blockStart = workList.remove();
             if (!visit.contains(blockStart.getBlockId())) {
                 visit.add(blockStart.getBlockId());
+
                 if (lastInstr == null) {
                     lastInstr = methodEntry;
                 } else {
@@ -116,6 +120,7 @@ public class HIRBuilder implements Phase {
 
     private void fulfillBlock(BlockStartInstr block) {
         state = block.getVmState();
+        lvn = new LVN();
 
         BytecodeStream bs = new BytecodeStream(method.getCode(), block.getStartBci(), block.getEndBci());
         while (bs.hasNext()) {
@@ -671,12 +676,17 @@ public class HIRBuilder implements Phase {
     }
 
     private Instruction appendToBlock(Instruction curInstr) {
+        Instruction better;
         // Try to idealize instruction
-        Instruction idealized = curInstr.ideal();
-        if (PrintIdeal && idealized != curInstr) {
-            Logger.logf("======Idealize {} -> {}=====", curInstr, idealized);
+        better = curInstr.ideal();
+        if (PrintIdeal && better != curInstr) {
+            Logger.logf("======Idealize {} -> {}=====", curInstr, better);
         }
-        curInstr = idealized;
+        better = lvn.findReplacement(better);
+        if (PrintLVN && better != curInstr) {
+            Logger.logf("======LVN {} -> {}=====", curInstr, better);
+        }
+        curInstr = better;
         lastInstr.setNext(curInstr);
         lastInstr = curInstr;
 

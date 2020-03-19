@@ -15,6 +15,11 @@ public class ArithmeticInstr extends Op2Instr {
     }
 
     @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
     public Instruction ideal() {
         if (left == right) {
             switch (opcode) {

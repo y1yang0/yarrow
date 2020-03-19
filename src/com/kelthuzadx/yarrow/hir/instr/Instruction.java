@@ -48,21 +48,6 @@ public abstract class Instruction implements Visitable {
         this.next = next;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Instruction)) return false;
-        Instruction that = (Instruction) o;
-        return id == that.id &&
-                Objects.equals(next, that.next) &&
-                value.equals(that.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, next, value);
-    }
-
     /**
      * Each time HirBuilder appends new SSA instruction into basic block, Ideal would apply
      * applies many local optimizations on this newly created single instruction, it may or
