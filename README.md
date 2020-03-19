@@ -116,6 +116,24 @@ HIR with optimizations
 
 ![](doc/IdealTest_main_phase1.png)
 
+## Local value numbering
+Before
+```java
+VmState{lock=[],stack=[],local=[i1,i1,i1,i2,i1,i3]}
+i0: block_start
+i2: i1 + i1
+i3: i1 + i1
+i4: i3 + i2
+i5: return i4
+```
+After
+```java
+VmState{lock=[],stack=[],local=[i1,i1,i1,i2,i1,i2]}
+i0: block_start
+i2: i1 + i1
+i4: i2 + i2
+i5: return i4
+```
 ## Example
 Let say we have following java code, it repeats many times to calculate the sum of `[1,n]`:
 ```java

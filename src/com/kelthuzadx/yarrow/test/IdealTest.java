@@ -74,9 +74,9 @@ public class IdealTest {
     private static int ideal2(int init) {
         int b = init;
         int c = init;
-        int a = b+c;
+        int a = b + c;
         int d = b;
-        int e = d+c;
-        return e+a;
+        int e = d + c;
+        return e + a;
     }
 }

@@ -51,7 +51,7 @@ public class CFG implements Phase {
         uniqueBlocks();
         var visit = new HashSet<Integer>(blocks.length);
         var active = new HashSet<Integer>(blocks.length);
-        identifyLoop(visit,active, bciToBlockMapping[0]);
+        identifyLoop(visit, active, bciToBlockMapping[0]);
         return this;
     }
 

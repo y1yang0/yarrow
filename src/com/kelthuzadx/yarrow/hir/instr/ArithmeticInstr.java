@@ -26,7 +26,7 @@ public class ArithmeticInstr extends Op2Instr {
 
     @Override
     public int hashCode() {
-        return Objects.hash(left,right,opcode);
+        return Objects.hash(left, right, opcode);
     }
 
     @Override
