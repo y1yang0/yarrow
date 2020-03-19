@@ -9,18 +9,19 @@ import com.kelthuzadx.yarrow.util.Logger;
 import java.util.*;
 
 public class LVN{
-    private HashMap<Integer,Instruction> valueMap;
+    private Set<Instruction> valueSet;
 
     public LVN(){
-        valueMap = new HashMap<>();
+        valueSet = new HashSet<>();
     }
 
     public Instruction findReplacement(Instruction instr){
-        var i = valueMap.get(instr);
-        if(i!=null){
-            return i;
+        for(Instruction i:valueSet){
+            if(i.hashCode()== instr.hashCode() && i.equals(instr)){
+                return i;
+            }
         }
-        valueMap.put(instr.hashCode(),instr);
+        valueSet.add(instr);
         return instr;
     }
 

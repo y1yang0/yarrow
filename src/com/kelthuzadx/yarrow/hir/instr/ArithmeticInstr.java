@@ -6,6 +6,8 @@ import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 
+import java.util.Objects;
+
 public class ArithmeticInstr extends Op2Instr {
     public ArithmeticInstr(int opcode, Instruction left, Instruction right) {
         super(new Value(left.type()), opcode, left, right);
@@ -15,8 +17,16 @@ public class ArithmeticInstr extends Op2Instr {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ArithmeticInstr)) return false;
+        var that = (ArithmeticInstr) o;
+        return opcode == that.opcode && left.equals(that.left) && right.equals(that.right);
+    }
+
+    @Override
     public int hashCode() {
-        return super.hashCode();
+        return Objects.hash(left,right,opcode);
     }
 
     @Override
