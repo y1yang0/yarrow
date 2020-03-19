@@ -71,11 +71,12 @@ public class IdealTest {
         }
     }
 
-    private static void ideal2(int cond) {
-        int b = cond;
-        int c = cond;
+    private static int ideal2(int init) {
+        int b = init;
+        int c = init;
         int a = b+c;
         int d = b;
         int e = d+c;
+        return e+a;
     }
 }

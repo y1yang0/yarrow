@@ -682,9 +682,12 @@ public class HIRBuilder implements Phase {
         if (PrintIdeal && better != curInstr) {
             Logger.logf("======Idealize {} -> {}=====", curInstr, better);
         }
-        better = lvn.findReplacement(better);
-        if (PrintLVN && better != curInstr) {
-            Logger.logf("======LVN {} -> {}=====", curInstr, better);
+        if(lvn.hasReplacement(better)){
+            var moreBetter = lvn.getReplacement();
+            if (PrintLVN) {
+                Logger.logf("======LVN {} -> {}=====", better,moreBetter);
+            }
+            return moreBetter;
         }
         curInstr = better;
         lastInstr.setNext(curInstr);

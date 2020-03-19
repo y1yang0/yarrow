@@ -10,19 +10,24 @@ import java.util.*;
 
 public class LVN{
     private Set<Instruction> valueSet;
+    private Instruction replacement;
 
     public LVN(){
         valueSet = new HashSet<>();
     }
 
-    public Instruction findReplacement(Instruction instr){
+    public boolean hasReplacement(Instruction instr){
         for(Instruction i:valueSet){
             if(i.hashCode()== instr.hashCode() && i.equals(instr)){
-                return i;
+                replacement = i;
+                return true;
             }
         }
         valueSet.add(instr);
-        return instr;
+        return false;
     }
 
+    public Instruction getReplacement(){
+        return replacement;
+    }
 }
