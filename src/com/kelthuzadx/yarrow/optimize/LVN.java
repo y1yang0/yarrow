@@ -18,7 +18,7 @@ public class LVN {
     public boolean hasReplacement(Instruction instr) {
         for (Instruction i : valueSet) {
             if (i.hashCode() == instr.hashCode() && i.equals(instr)) {
-                YarrowError.guarantee(!(instr instanceof BlockEndInstr),"should never value numbering BlockEndInstr and its subclasses");
+                YarrowError.guarantee(!(instr instanceof BlockEndInstr), "should never value numbering BlockEndInstr and its subclasses");
                 replacement = i;
                 return true;
             }

@@ -1,6 +1,9 @@
 package com.kelthuzadx.yarrow.test;
 
 public class IdealTest {
+    private float f = 12.0f;
+    private double[] arr = new double[]{3, 35, 5};
+
     public static void ideal1(int cond) {
         long v1 = 12;
         long v2 = 324;
@@ -72,11 +75,19 @@ public class IdealTest {
     }
 
     private static int ideal2(int init) {
+        IdealTest idealTest = new IdealTest();
+        float ff1 = idealTest.f;
         int b = init;
         int c = init;
         int a = b + c;
         int d = b;
         int e = d + c;
-        return e + a;
+        float ff2 = idealTest.f;
+        double dd1 = idealTest.arr[2];
+        float ff3 = ff1 + ff2;
+        int ret = e + a;
+        double dd2 = idealTest.arr[2];
+        double dd3 = dd1 + dd2;
+        return ret + (int) dd3;
     }
 }
