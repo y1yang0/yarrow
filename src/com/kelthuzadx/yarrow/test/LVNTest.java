@@ -14,13 +14,14 @@ public class LVNTest {
             new LVNTest().lvn1(i);
         }
     }
-    public int lvn1(int n){
+
+    public int lvn1(int n) {
         { // KILL
             int p = n;
-            int a = p +5;
+            int a = p + 5;
             p = 11;
-            int b = p+5;
-            int c = a+b;
+            int b = p + 5;
+            int c = a + b;
             return c;
         }
     }
@@ -63,7 +64,7 @@ public class LVNTest {
             arr2 = new float[n];
             int len1 = arr2.length;
             int len2 = arr2.length;
-            int len3 = len1+len2;
+            int len3 = len1 + len2;
         }
         return b + d;
     }
