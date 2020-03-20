@@ -18,7 +18,7 @@ public class LVN {
     /**
      * Assignment instruction and monitor instruction may kill instructions in valueSet.
      *
-     * @param instr instruction may kill other instructions in the value set
+     * @param instr instruction may kill other instructions in the value setz
      */
     private void killValue(Instruction instr) {
         // long a = obj.field;

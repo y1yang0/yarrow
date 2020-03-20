@@ -21,7 +21,7 @@ is basic block, it connects to other blocks by `successors` field. Control flow 
 ![](doc/ControlTest_yarrow_complex_phase0.png)
 
 Later, a so-called [abstract interpretation](https://en.wikipedia.org/wiki/Abstract_interpretation) phase
-interprets bytecode and generate corresponding SSA instruction, SSA form needs to merge different 
+interprets bytecode and generates corresponding SSA instructions, SSA form needs to merge different 
 values of same variable. Therefore, if a basic block has more than one predecessor, PhiInstr might
 be needed at the start of block. Again, you can dump graph using mentioned option:
 
@@ -31,14 +31,8 @@ The simple structure of the HIR allows the easy implementation of global optimiz
 both during and after the construction of HIR. Theoretically, all optimizations developed for traditional
 compilers could be applied, but most of them require the analysis of the data flow and are too time-consuming for 
 JIT compiler, so yarrow implements only simple and fast optimizations, that's why it is called optimizing
-compiler. After that, yarrow lowers HIR, it transforms machine-independent HIR instructions
-to machine instructions and eliminates dead code and PHI instruction, newly created LIR plays the main 
-role of code generation, instruction selection based on BURS, I'm not sure which register allocation
-algorithm would be implemented. If I have enough time, I will examine a peephole optimization phase
-for LIR.
-
-## Optimization
-###  Constant folding, simple constant propagation and algebraic simplification
+compiler. The most classic optimizations such as constant folding,algebraic simplification and simple constant
+propagation will be applied as soon as instruction tries to insert it into a basic block
 ```java
 VmState{lock=[],stack=[],local=[i9,i61,i16,i23,i19,null,i22,null,i45,i38,i41,i42,i58]}
 i2: block_start
@@ -80,7 +74,7 @@ i60: 1
 i61: i10 + i60
 i62: goto i3
 ```
-Compiler idealizes many instructions, it reduces computations and choose a simple canonical form:
+Compiler idealizes many instructions, it reduces computations and chooses a simple canonical form:
 ```java
 VmState{lock=[],stack=[],local=[i9,i63,i16,i25,i19,null,i23,null,i47,i41,i43,i45,i61]}
 i2: block_start
@@ -122,17 +116,14 @@ i62: 1
 i63: i10 + i62
 i64: goto i3
 ```
-###  Remove unreachable blocks
-CFG
-
+Also compiler removes unreachable blocks
 ![](doc/IdealTest_main_phase0.png)
-
-HIR with optimizations
 
 ![](doc/IdealTest_main_phase1.png)
 
-## Local value numbering
-Before
+Compiler uses local value numbering to find whether newly appended instruction can be replaced by previous 
+instruction
+
 ```java
 VmState{lock=[],stack=[],local=[i1,i1,i1,i2,i1,i3]}
 i0: block_start
@@ -141,7 +132,6 @@ i3: i1 + i1
 i4: i3 + i2
 i5: return i4
 ```
-After
 ```java
 VmState{lock=[],stack=[],local=[i1,i1,i1,i2,i1,i2]}
 i0: block_start
@@ -149,6 +139,11 @@ i2: i1 + i1
 i4: i2 + i2
 i5: return i4
 ```
+After that, yarrow lowers HIR, it transforms machine-independent HIR instructions
+to machine instructions and eliminates dead code and PHI instruction, newly created LIR plays the main 
+role of code generation, instruction selection based on BURS, I'm not sure which register allocation
+algorithm would be implemented. If I have enough time, I will examine a peephole optimization phase
+for LIR.
 
 ## Example
 Let say we have following java code, it repeats many times to calculate the sum of `[1,n]`:
