@@ -4,6 +4,8 @@ import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 
+import java.util.Objects;
+
 public class ArrayLenInstr extends AccessArrayInstr {
 
     public ArrayLenInstr(Instruction array) {

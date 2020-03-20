@@ -4,6 +4,8 @@ import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 
+import java.util.Objects;
+
 public class NegateInstr extends Instruction {
     private Instruction left;
 
@@ -31,5 +33,18 @@ public class NegateInstr extends Instruction {
     @Override
     public String toString() {
         return Logger.format("i{}: -i{}", super.id, left.id);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof NegateInstr)) return false;
+        var that = (NegateInstr) o;
+        return left.equals(that.left);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(left);
     }
 }

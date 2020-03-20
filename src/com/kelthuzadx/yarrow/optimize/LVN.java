@@ -3,6 +3,7 @@ package com.kelthuzadx.yarrow.optimize;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.*;
 
+import java.lang.reflect.Array;
 import java.util.HashSet;
 import java.util.Set;
 
