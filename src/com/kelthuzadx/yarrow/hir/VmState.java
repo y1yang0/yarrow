@@ -153,13 +153,13 @@ public class VmState {
     public String toString() {
         String sk = stack.stream().map(instr -> "i" + instr.id()).collect(Collectors.joining(","));
         String lc = Arrays.stream(local).map(instr -> {
-            if(instr==null){
+            if (instr == null) {
                 return null;
             }
-            if(instr instanceof ParamInstr){
+            if (instr instanceof ParamInstr) {
                 return instr.toString();
-            }else{
-                return "i"+instr.id();
+            } else {
+                return "i" + instr.id();
             }
         }).collect(Collectors.joining(","));
         String lx = lock.stream().map(instr -> instr == null ? "null" : "i" + instr.id()).collect(Collectors.joining(","));

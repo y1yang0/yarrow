@@ -18,6 +18,14 @@ public class LoadIndexInstr extends AccessArrayInstr {
         this.elementType = elementType;
     }
 
+    public Instruction getIndex() {
+        return index;
+    }
+
+    public JavaKind getElementType() {
+        return elementType;
+    }
+
     @Override
     public String toString() {
         return Logger.format("i{}: i{}[i{}] [{}]", super.id, super.array.id, index.id, elementType.getJavaName());

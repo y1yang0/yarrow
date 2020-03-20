@@ -18,6 +18,14 @@ public class StoreIndexInstr extends AccessArrayInstr {
         this.value = value;
     }
 
+    public Instruction getIndex() {
+        return index;
+    }
+
+    public JavaKind getElementType() {
+        return elementType;
+    }
+
     @Override
     public String toString() {
         return Logger.format("i{}: i{}[i{}] = i{} [{}]", super.id, super.array.id, index.id, value.id, elementType.getJavaName());

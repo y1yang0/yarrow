@@ -15,7 +15,7 @@ public abstract class AccessFieldInstr extends Instruction {
         this.field = field;
     }
 
-    public Instruction getObject(){
+    public Instruction getObject() {
         return object;
     }
 

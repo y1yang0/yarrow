@@ -9,4 +9,8 @@ public abstract class AccessArrayInstr extends Instruction {
         super(value);
         this.array = array;
     }
+
+    public Instruction getArray() {
+        return array;
+    }
 }

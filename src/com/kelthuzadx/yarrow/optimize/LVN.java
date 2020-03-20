@@ -1,10 +1,7 @@
 package com.kelthuzadx.yarrow.optimize;
 
 import com.kelthuzadx.yarrow.core.YarrowError;
-import com.kelthuzadx.yarrow.hir.instr.BlockEndInstr;
-import com.kelthuzadx.yarrow.hir.instr.Instruction;
-import com.kelthuzadx.yarrow.hir.instr.LoadFieldInstr;
-import com.kelthuzadx.yarrow.hir.instr.StoreFieldInstr;
+import com.kelthuzadx.yarrow.hir.instr.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,19 +15,54 @@ public class LVN {
     }
 
 
-    private void killValue(Instruction instr){
-        if(instr instanceof StoreFieldInstr){
-            var temp = (StoreFieldInstr)instr;
-            for(Instruction i:valueSet){
-                if(i instanceof LoadFieldInstr){
-                    var existing = (LoadFieldInstr)i;
-                    if(existing.getOffset() == temp.getOffset() &&
-                    existing.getObject() == temp.getObject() &&
-                    existing.getField() == temp.getField()){
-                        //kill
+    /**
+     * Assignment instruction and monitor instruction may kill instructions in valueSet.
+     *
+     * @param instr instruction may kill other instructions in the value set
+     */
+    private void killValue(Instruction instr) {
+        // long a = obj.field;
+        // obj.field = ...
+        // long b = obj.field;  prevent from LVN
+        if (instr instanceof StoreFieldInstr) {
+            var temp = (StoreFieldInstr) instr;
+            var iter = valueSet.iterator();
+            while (iter.hasNext()) {
+                var i = iter.next();
+                if (i instanceof LoadFieldInstr) {
+                    var existing = (LoadFieldInstr) i;
+                    if (existing.getOffset() == temp.getOffset() &&
+                            existing.getObject().equals(temp.getObject()) &&
+                            existing.getField().equals(temp.getField())) {
+                        iter.remove();
                     }
                 }
             }
+        }
+        // long a = arr[2];
+        // arr[..] = ...
+        // long b = arr[2];  prevent from LVN, kill the whole array
+        else if (instr instanceof StoreIndexInstr) {
+            var temp = (StoreIndexInstr) instr;
+            var iter = valueSet.iterator();
+            while (iter.hasNext()) {
+                var i = iter.next();
+                if (i instanceof LoadIndexInstr) {
+                    var existing = (LoadIndexInstr) i;
+                    if (existing.getArray().equals(temp.getArray()) &&
+                            existing.getElementType() == temp.getElementType()) {
+                        iter.remove();
+                    }
+                }
+            }
+        }
+        // long a = obj.field;
+        // invokestatic <class.method>
+        // long b = obj.field; prevent from LVN, kill the whole memory
+        else if (instr instanceof MonitorEnterInstr ||
+                instr instanceof MonitorExitInstr ||
+                instr instanceof CallInstr) {
+            valueSet.removeIf(i -> i instanceof LoadIndexInstr || i instanceof LoadFieldInstr);
         }
     }
 
@@ -39,7 +71,6 @@ public class LVN {
             if (i.hashCode() == instr.hashCode() && i.equals(instr)) {
                 YarrowError.guarantee(!(instr instanceof BlockEndInstr), "should never value numbering BlockEndInstr and its subclasses");
                 replacement = i;
-                // assignment statement of monitor statement might kill instructions in valueSet.
                 killValue(instr);
                 return true;
             }
