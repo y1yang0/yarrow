@@ -682,6 +682,7 @@ public class HIRBuilder implements Phase {
         if (PrintIdeal && better != curInstr) {
             Logger.logf("======Idealize {} -> {}=====", curInstr, better);
         }
+        // Try to find a replacement for current instruction
         if (lvn.hasReplacement(better)) {
             var moreBetter = lvn.getReplacement();
             if (PrintLVN) {

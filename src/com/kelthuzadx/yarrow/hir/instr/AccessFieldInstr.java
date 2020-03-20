@@ -14,4 +14,16 @@ public abstract class AccessFieldInstr extends Instruction {
         this.offset = offset;
         this.field = field;
     }
+
+    public Instruction getObject(){
+        return object;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public JavaField getField() {
+        return field;
+    }
 }
