@@ -124,21 +124,11 @@ Also compiler removes unreachable blocks
 Compiler uses local value numbering to find whether newly appended instruction can be replaced by previous 
 instruction
 
-```java
-VmState{lock=[],stack=[],local=[i1,i1,i1,i2,i1,i3]}
-i0: block_start
-i2: i1 + i1
-i3: i1 + i1
-i4: i3 + i2
-i5: return i4
-```
-```java
-VmState{lock=[],stack=[],local=[i1,i1,i1,i2,i1,i2]}
-i0: block_start
-i2: i1 + i1
-i4: i2 + i2
-i5: return i4
-```
+![](doc/LVNTest_lvn_phase0.png)
+
+![](doc/LVNTest_lvn_phase1.png)
+
+This could eliminate many redundant field access operations and computations. 
 After that, yarrow lowers HIR, it transforms machine-independent HIR instructions
 to machine instructions and eliminates dead code and PHI instruction, newly created LIR plays the main 
 role of code generation, instruction selection based on BURS, I'm not sure which register allocation
