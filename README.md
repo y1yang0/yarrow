@@ -117,6 +117,7 @@ i63: i10 + i62
 i64: goto i3
 ```
 Also compiler removes unreachable blocks
+
 ![](doc/IdealTest_main_phase0.png)
 
 ![](doc/IdealTest_main_phase1.png)
