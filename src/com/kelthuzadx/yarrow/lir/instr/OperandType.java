@@ -1,4 +1,4 @@
-package com.kelthuzadx.yarrow.lir;
+package com.kelthuzadx.yarrow.lir.instr;
 
 public enum OperandType {
     Register,

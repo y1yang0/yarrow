@@ -1,7 +1,6 @@
-package com.kelthuzadx.yarrow.lir;
+package com.kelthuzadx.yarrow.lir.instr;
 
 import jdk.vm.ci.meta.JavaKind;
-import jdk.vm.ci.meta.PlatformKind;
 
 public class Op1Instr extends LirInstr {
     private JavaKind type;
