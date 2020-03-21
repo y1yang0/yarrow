@@ -14,7 +14,7 @@ public class LIRBuilder implements Phase {
 
     @Override
     public Phase build() {
-        return null;
+        return this;
     }
 
     @Override
