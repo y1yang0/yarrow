@@ -1,6 +1,6 @@
 package com.kelthuzadx.yarrow.lir;
 
-public enum LirOpcode {
+public enum Opcode {
     Illegal,
 
     // 1 operand opcode
