@@ -8,10 +8,10 @@ import jdk.vm.ci.meta.JavaKind;
 import java.util.List;
 
 public class TableSwitchInstr extends BlockEndInstr {
-    private Instruction index;
+    private HirInstruction index;
     private int lowKey;
 
-    public TableSwitchInstr(VmState stateBefore, List<BlockStartInstr> successor, Instruction index, int lowKey) {
+    public TableSwitchInstr(VmState stateBefore, List<BlockStartInstr> successor, HirInstruction index, int lowKey) {
         super(new Value(JavaKind.Illegal), stateBefore, successor);
         this.index = index;
         this.lowKey = lowKey;

@@ -8,7 +8,7 @@ import java.util.List;
 public class LIR {
     private List<LirInstr> instructions;
 
-    public LIR(){
+    public LIR() {
         this.instructions = new ArrayList<>();
     }
 }

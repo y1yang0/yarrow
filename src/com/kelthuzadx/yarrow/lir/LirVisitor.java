@@ -3,7 +3,7 @@ package com.kelthuzadx.yarrow.lir;
 import com.kelthuzadx.yarrow.hir.instr.*;
 import com.kelthuzadx.yarrow.optimize.InstructionVisitor;
 
-public class HirVisitor extends InstructionVisitor {
+public class LirVisitor extends InstructionVisitor {
     @Override
     public void visitMemBarrierInstr(MemBarrierInstr instr) {
 
@@ -21,7 +21,6 @@ public class HirVisitor extends InstructionVisitor {
 
     @Override
     public void visitBlockEndInstr(BlockEndInstr instr) {
-
     }
 
     @Override
@@ -145,7 +144,7 @@ public class HirVisitor extends InstructionVisitor {
     }
 
     @Override
-    public void visitInstruction(Instruction instr) {
+    public void visitInstruction(HirInstruction instr) {
 
     }
 
@@ -176,7 +175,6 @@ public class HirVisitor extends InstructionVisitor {
 
     @Override
     public void visitOp2Instr(Op2Instr instr) {
-
     }
 
     @Override

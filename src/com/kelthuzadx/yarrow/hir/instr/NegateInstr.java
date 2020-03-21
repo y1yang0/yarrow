@@ -6,16 +6,16 @@ import jdk.vm.ci.meta.JavaKind;
 
 import java.util.Objects;
 
-public class NegateInstr extends Instruction {
-    private Instruction left;
+public class NegateInstr extends HirInstruction {
+    private HirInstruction left;
 
-    public NegateInstr(Instruction left) {
+    public NegateInstr(HirInstruction left) {
         super(new Value(left.type()));
         this.left = left;
     }
 
     @Override
-    public Instruction ideal() {
+    public HirInstruction ideal() {
         if (left instanceof ConstantInstr) {
             if (left.isType(JavaKind.Int)) {
                 return new ConstantInstr(new Value(JavaKind.Int, -((int) left.value())));

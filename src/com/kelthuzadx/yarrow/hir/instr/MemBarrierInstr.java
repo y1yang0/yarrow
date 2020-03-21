@@ -6,7 +6,7 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.code.MemoryBarriers;
 import jdk.vm.ci.meta.JavaKind;
 
-public class MemBarrierInstr extends Instruction {
+public class MemBarrierInstr extends HirInstruction {
     private int barrierType;
 
     public MemBarrierInstr(int barrierType) {

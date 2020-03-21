@@ -4,9 +4,9 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaField;
 
 public class StoreFieldInstr extends AccessFieldInstr {
-    private Instruction value;
+    private HirInstruction value;
 
-    public StoreFieldInstr(Instruction object, int offset, JavaField field, Instruction value) {
+    public StoreFieldInstr(HirInstruction object, int offset, JavaField field, HirInstruction value) {
         super(object, offset, field);
         this.value = value;
     }

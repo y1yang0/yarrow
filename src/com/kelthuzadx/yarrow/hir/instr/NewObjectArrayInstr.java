@@ -7,16 +7,16 @@ import jdk.vm.ci.meta.JavaKind;
 import jdk.vm.ci.meta.JavaType;
 
 public class NewObjectArrayInstr extends StateInstr {
-    private Instruction len;
+    private HirInstruction len;
     private JavaType klass;
 
-    public NewObjectArrayInstr(VmState stateBefore, Instruction len, JavaType klass) {
+    public NewObjectArrayInstr(VmState stateBefore, HirInstruction len, JavaType klass) {
         super(new Value(JavaKind.Object), stateBefore);
         this.len = len;
         this.klass = klass;
     }
 
-    public Instruction arrayLength() {
+    public HirInstruction arrayLength() {
         return len;
     }
 

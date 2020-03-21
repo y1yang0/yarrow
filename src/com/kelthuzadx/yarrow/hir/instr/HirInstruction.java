@@ -11,12 +11,12 @@ import java.util.Optional;
  *
  * @author kelthuzadx
  */
-public abstract class Instruction implements Visitable {
+public abstract class HirInstruction implements Visitable {
     protected int id;
-    private Instruction next;
+    private HirInstruction next;
     private Value value;
 
-    Instruction(Value value) {
+    HirInstruction(Value value) {
         this.id = IdGenerator.next();
         this.value = value;
         this.next = null;
@@ -39,11 +39,11 @@ public abstract class Instruction implements Visitable {
         return value.getType();
     }
 
-    public Instruction getNext() {
+    public HirInstruction getNext() {
         return next;
     }
 
-    public void setNext(Instruction next) {
+    public void setNext(HirInstruction next) {
         this.next = next;
     }
 
@@ -58,7 +58,7 @@ public abstract class Instruction implements Visitable {
      *
      * @return new instruction or `this`
      */
-    public Instruction ideal() {
+    public HirInstruction ideal() {
         return this;
     }
 

@@ -8,9 +8,9 @@ import jdk.vm.ci.meta.JavaKind;
 import java.util.List;
 
 public class ThrowInstr extends BlockEndInstr {
-    private Instruction exception;
+    private HirInstruction exception;
 
-    public ThrowInstr(VmState stateBefore, List<BlockStartInstr> successor, Instruction exception) {
+    public ThrowInstr(VmState stateBefore, List<BlockStartInstr> successor, HirInstruction exception) {
         super(new Value(JavaKind.Illegal), stateBefore, successor);
         this.exception = exception;
     }

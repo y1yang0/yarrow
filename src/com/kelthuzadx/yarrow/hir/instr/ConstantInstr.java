@@ -6,7 +6,7 @@ import jdk.vm.ci.meta.JavaKind;
 
 import java.util.Objects;
 
-public class ConstantInstr extends Instruction {
+public class ConstantInstr extends HirInstruction {
     public ConstantInstr(Value value) {
         super(value);
     }

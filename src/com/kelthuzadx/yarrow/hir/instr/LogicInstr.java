@@ -7,7 +7,7 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 
 public class LogicInstr extends Op2Instr {
-    public LogicInstr(int opcode, Instruction left, Instruction right) {
+    public LogicInstr(int opcode, HirInstruction left, HirInstruction right) {
         super(new Value(left.type()), opcode, left, right);
         if (!right.isType(left.type())) {
             throw new YarrowError("Incompatible operand type");
@@ -15,7 +15,7 @@ public class LogicInstr extends Op2Instr {
     }
 
     @Override
-    public Instruction ideal() {
+    public HirInstruction ideal() {
         if (left == right) {
             switch (opcode) {
                 case Bytecode.IXOR:

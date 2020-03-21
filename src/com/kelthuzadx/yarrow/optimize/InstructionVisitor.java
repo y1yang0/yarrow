@@ -59,7 +59,7 @@ public abstract class InstructionVisitor {
 
     public abstract void visitTypeCastInstr(TypeCastInstr instr);
 
-    public abstract void visitInstruction(Instruction instr);
+    public abstract void visitInstruction(HirInstruction instr);
 
     public abstract void visitAccessArrayInstr(AccessArrayInstr instr);
 

@@ -4,7 +4,7 @@ import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaMethod;
 
-public class ParamInstr extends Instruction {
+public class ParamInstr extends HirInstruction {
     private boolean isReceiver;
     private int index;
     private JavaMethod method;
