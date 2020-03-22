@@ -11,6 +11,9 @@ public class ConstantInstr extends HirInstruction {
         super(value);
     }
 
+    public Value rawValue(){
+        return super.value;
+    }
 
     @Override
     public String toString() {

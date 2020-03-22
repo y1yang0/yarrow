@@ -15,8 +15,8 @@ import java.util.Optional;
 public abstract class HirInstruction implements Visitable {
     // High level IR
     protected int id;
-    private HirInstruction next;
-    private Value value;
+    protected HirInstruction next;
+    protected Value value;
 
     // Low level IR
     protected LirOperand operand;

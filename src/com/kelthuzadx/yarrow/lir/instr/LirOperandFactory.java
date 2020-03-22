@@ -4,6 +4,6 @@ import com.kelthuzadx.yarrow.hir.instr.ConstantInstr;
 
 public class LirOperandFactory {
     public static LirOperand createConstInt(ConstantInstr instr){
-        return new LirOperand(instr.value());
+        return new LirOperand(OperandType.Constant,instr.rawValue());
     }
 }

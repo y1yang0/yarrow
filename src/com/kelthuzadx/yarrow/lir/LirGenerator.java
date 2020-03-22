@@ -106,6 +106,8 @@ public class LirGenerator extends InstructionVisitor {
 
     @Override
     public void visitArithmeticInstr(ArithmeticInstr instr) {
+        HirInstruction left = instr.getLeft();
+        HirInstruction right = instr.getRight();
     }
 
     @Override
