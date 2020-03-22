@@ -1,7 +1,6 @@
 package com.kelthuzadx.yarrow.lir.instr;
 
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
-import com.kelthuzadx.yarrow.util.Logger;
 
 public class LirInstr {
     protected int id;
@@ -18,7 +17,7 @@ public class LirInstr {
      * Simple ID generator
      *
      * @for HIR
-    */
+     */
     private static class IdGenerator {
         private static int id;
 

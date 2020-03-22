@@ -146,8 +146,8 @@ public class LirGenerator extends InstructionVisitor {
         LirOperand ro = right.getOperand();
         LirOperand result = LirOperandFactory.createVirtualRegister(left.type());
         instr.setOperand(result);
-        if(lo!=result){
-            appendToList(new Operand1Instr(Opcode.MOV,result,lo));
+        if (lo != result) {
+            appendToList(new Operand1Instr(Opcode.MOV, result, lo));
         }
         switch (instr.getOpcode()) {
             case Bytecode.IADD:
@@ -266,7 +266,7 @@ public class LirGenerator extends InstructionVisitor {
 
     }
 
-    private void appendToList(LirInstr instr){
-        lir.appendLirInstr(currentBlockStartId,instr);
+    private void appendToList(LirInstr instr) {
+        lir.appendLirInstr(currentBlockStartId, instr);
     }
 }

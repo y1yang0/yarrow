@@ -41,44 +41,44 @@ public class LirOperand {
     @Override
     public String toString() {
         String k = "";
-        switch (kind){
+        switch (kind) {
             case Register:
-                k="R"+vregId.get();
+                k = "R" + vregId.get();
                 break;
             case Constant:
-                k+=constValue.get();
+                k += constValue.get();
                 break;
             case Stack:
-                k="S";
+                k = "S";
                 break;
             case Address:
-                k="&";
+                k = "&";
                 break;
         }
-        String t="";
-        switch (type){
+        String t = "";
+        switch (type) {
             case Int:
-                t="I";
+                t = "I";
                 break;
             case Long:
-                t="L";
+                t = "L";
                 break;
             case Object:
-                t="A";
+                t = "A";
                 break;
             case Address:
-                t= "*";
+                t = "*";
                 break;
             case Float:
-                t="F";
+                t = "F";
                 break;
             case Double:
-                t="D";
+                t = "D";
                 break;
             case Unknown:
-                t="Unknow";
+                t = "Unknow";
                 break;
         }
-        return "["+k+"|"+t+"]";
+        return "[" + k + "|" + t + "]";
     }
 }

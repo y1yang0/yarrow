@@ -27,12 +27,12 @@ public class Lir {
         }
     }
 
-    public void printLir(){
+    public void printLir() {
         Logger.logf("=====Low level IR=====>");
-        instructions.forEach((id,list)->{
-            Logger.logf("B#"+id);
-            for(LirInstr instr:list){
-                Logger.logf("{}",instr.toString());
+        instructions.forEach((id, list) -> {
+            Logger.logf("B#" + id);
+            for (LirInstr instr : list) {
+                Logger.logf("{}", instr.toString());
             }
         });
     }
