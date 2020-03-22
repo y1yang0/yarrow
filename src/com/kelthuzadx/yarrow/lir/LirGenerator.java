@@ -1,9 +1,10 @@
 package com.kelthuzadx.yarrow.lir;
 
 import com.kelthuzadx.yarrow.hir.instr.*;
+import com.kelthuzadx.yarrow.lir.instr.LirOperandFactory;
 import com.kelthuzadx.yarrow.optimize.InstructionVisitor;
 
-public class LirVisitor extends InstructionVisitor {
+public class LirGenerator extends InstructionVisitor {
     @Override
     public void visitMemBarrierInstr(MemBarrierInstr instr) {
 
@@ -75,7 +76,7 @@ public class LirVisitor extends InstructionVisitor {
 
     @Override
     public void visitConstantInstr(ConstantInstr instr) {
-
+        instr.setOperand(LirOperandFactory.createConstInt(instr));
     }
 
     @Override
@@ -105,7 +106,6 @@ public class LirVisitor extends InstructionVisitor {
 
     @Override
     public void visitArithmeticInstr(ArithmeticInstr instr) {
-
     }
 
     @Override

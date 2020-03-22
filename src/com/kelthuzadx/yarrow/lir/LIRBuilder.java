@@ -22,11 +22,11 @@ public class LIRBuilder implements Phase {
     private void transformBlock(BlockStartInstr block) {
         HirInstruction last = block;
         while (last != null && last != block.getBlockEnd()) {
-            last.visit(new LirVisitor());
+            last.visit(new LirGenerator());
             last = last.getNext();
         }
         if (last != null && last == block.getBlockEnd()) {
-            last.visit(new LirVisitor());
+            last.visit(new LirGenerator());
         }
     }
 

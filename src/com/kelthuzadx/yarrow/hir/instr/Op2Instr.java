@@ -9,6 +9,14 @@ public abstract class Op2Instr extends HirInstruction {
     protected HirInstruction left;
     protected HirInstruction right;
 
+    public HirInstruction getLeft() {
+        return left;
+    }
+
+    public HirInstruction getRight() {
+        return right;
+    }
+
     public Op2Instr(Value value, int opcode, HirInstruction left, HirInstruction right) {
         super(value);
         this.opcode = opcode;

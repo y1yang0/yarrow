@@ -1,6 +1,7 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.Value;
+import com.kelthuzadx.yarrow.lir.instr.LirOperand;
 import com.kelthuzadx.yarrow.optimize.Visitable;
 import jdk.vm.ci.meta.JavaKind;
 
@@ -12,9 +13,13 @@ import java.util.Optional;
  * @author kelthuzadx
  */
 public abstract class HirInstruction implements Visitable {
+    // High level IR
     protected int id;
     private HirInstruction next;
     private Value value;
+
+    // Low level IR
+    protected LirOperand operand;
 
     HirInstruction(Value value) {
         this.id = IdGenerator.next();
@@ -47,6 +52,10 @@ public abstract class HirInstruction implements Visitable {
         this.next = next;
     }
 
+    public void setOperand(LirOperand operand) {
+        this.operand = operand;
+    }
+
     /**
      * Each time HirBuilder appends new SSA instruction into basic block, Ideal would apply
      * applies many local optimizations on this newly created single instruction, it may or
@@ -55,13 +64,17 @@ public abstract class HirInstruction implements Visitable {
      * <p>
      * Note that NEVER RETURN NULL, if it can not transform to a optimized version, return this
      * directly.
-     *
+     * @for HIR
      * @return new instruction or `this`
      */
     public HirInstruction ideal() {
         return this;
     }
 
+    /**
+     * Simple ID generator
+     * @for HIR
+     */
     private static class IdGenerator {
         private static int id;
 
