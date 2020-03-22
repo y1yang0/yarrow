@@ -1,11 +1,10 @@
 package com.kelthuzadx.yarrow.lir.instr;
 
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
-import com.kelthuzadx.yarrow.lir.operand.OperandType;
 import com.kelthuzadx.yarrow.util.Logger;
 
 public class Operand1Instr extends LirInstr {
-    private LirOperand operand;
+    protected LirOperand operand;
 
     public Operand1Instr(Opcode opcode, LirOperand result, LirOperand operand) {
         super(opcode, result);

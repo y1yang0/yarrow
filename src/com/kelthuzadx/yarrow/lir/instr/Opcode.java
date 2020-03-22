@@ -6,6 +6,7 @@ public enum Opcode {
     // 1 operand opcode
     Label,
     MOV,
+    TypeCast,
 
     // 2 operands opcode
     ADD,

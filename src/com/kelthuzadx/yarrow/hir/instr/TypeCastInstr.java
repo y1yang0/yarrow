@@ -5,6 +5,7 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 
 public class TypeCastInstr extends HirInstr {
+    // TypeCastInstr is similar to C1's Convert instruciton
     private int opcode;
     private HirInstr from;
     private JavaKind toType;
@@ -14,6 +15,14 @@ public class TypeCastInstr extends HirInstr {
         this.opcode = opcode;
         this.from = from;
         this.toType = toType;
+    }
+
+    public int getOpcode() {
+        return opcode;
+    }
+
+    public HirInstr getFrom() {
+        return from;
     }
 
     @Override
