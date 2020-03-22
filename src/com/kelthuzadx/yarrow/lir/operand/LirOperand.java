@@ -37,4 +37,48 @@ public class LirOperand {
     public OperandKind kind() {
         return kind;
     }
+
+    @Override
+    public String toString() {
+        String k = "";
+        switch (kind){
+            case Register:
+                k="R"+vregId.get();
+                break;
+            case Constant:
+                k+=constValue.get();
+                break;
+            case Stack:
+                k="S";
+                break;
+            case Address:
+                k="&";
+                break;
+        }
+        String t="";
+        switch (type){
+            case Int:
+                t="I";
+                break;
+            case Long:
+                t="L";
+                break;
+            case Object:
+                t="A";
+                break;
+            case Address:
+                t= "*";
+                break;
+            case Float:
+                t="F";
+                break;
+            case Double:
+                t="D";
+                break;
+            case Unknown:
+                t="Unknow";
+                break;
+        }
+        return "["+k+"|"+t+"]";
+    }
 }

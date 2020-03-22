@@ -18,7 +18,8 @@ public class Operand2Instr extends LirInstr {
 
     @Override
     public String toString() {
-        return Logger.format("x{}: {}",super.id,opcode.name());
+        return Logger.format("{}: {} {},{}",result.toString(),opcode.name().toLowerCase(),
+                leftOperand.toString(),rightOperand.toString());
 
     }
 }

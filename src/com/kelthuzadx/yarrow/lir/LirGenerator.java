@@ -3,7 +3,9 @@ package com.kelthuzadx.yarrow.lir;
 import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.*;
+import com.kelthuzadx.yarrow.lir.instr.LirInstr;
 import com.kelthuzadx.yarrow.lir.instr.Opcode;
+import com.kelthuzadx.yarrow.lir.instr.Operand1Instr;
 import com.kelthuzadx.yarrow.lir.instr.Operand2Instr;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.lir.operand.LirOperandFactory;
@@ -144,38 +146,40 @@ public class LirGenerator extends InstructionVisitor {
         LirOperand ro = right.getOperand();
         LirOperand result = LirOperandFactory.createVirtualRegister(left.type());
         instr.setOperand(result);
-
+        if(lo!=result){
+            appendToList(new Operand1Instr(Opcode.MOV,result,lo));
+        }
         switch (instr.getOpcode()) {
             case Bytecode.IADD:
             case Bytecode.LADD:
             case Bytecode.FADD:
             case Bytecode.DADD:
-                lir.appendLirInstr(currentBlockStartId, new Operand2Instr(Opcode.ADD, result, lo, ro));
+                appendToList(new Operand2Instr(Opcode.ADD, result, lo, ro));
                 break;
             case Bytecode.ISUB:
             case Bytecode.LSUB:
             case Bytecode.FSUB:
             case Bytecode.DSUB:
-                lir.appendLirInstr(currentBlockStartId, new Operand2Instr(Opcode.SUB, result, lo, ro));
+                appendToList(new Operand2Instr(Opcode.SUB, result, lo, ro));
                 break;
             case Bytecode.IMUL:
             case Bytecode.LMUL:
             case Bytecode.FMUL:
             case Bytecode.DMUL:
-                lir.appendLirInstr(currentBlockStartId, new Operand2Instr(Opcode.MUL, result, lo, ro));
+                appendToList(new Operand2Instr(Opcode.MUL, result, lo, ro));
                 break;
             case Bytecode.IDIV:
             case Bytecode.LDIV:
                 CompilerErrors.bailOut();
             case Bytecode.FDIV:
             case Bytecode.DDIV:
-                lir.appendLirInstr(currentBlockStartId, new Operand2Instr(Opcode.DIV, result, lo, ro));
+                appendToList(new Operand2Instr(Opcode.DIV, result, lo, ro));
                 break;
             case Bytecode.IREM:
             case Bytecode.LREM:
             case Bytecode.FREM:
             case Bytecode.DREM:
-                lir.appendLirInstr(currentBlockStartId, new Operand2Instr(Opcode.REM, result, lo, ro));
+                appendToList(new Operand2Instr(Opcode.REM, result, lo, ro));
                 break;
             default:
                 YarrowError.shouldNotReachHere();
@@ -260,5 +264,9 @@ public class LirGenerator extends InstructionVisitor {
     @Override
     public void visitNewTypeArrayInstr(NewTypeArrayInstr instr) {
 
+    }
+
+    private void appendToList(LirInstr instr){
+        lir.appendLirInstr(currentBlockStartId,instr);
     }
 }
