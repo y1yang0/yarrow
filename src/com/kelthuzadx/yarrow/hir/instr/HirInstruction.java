@@ -60,6 +60,10 @@ public abstract class HirInstruction implements Visitable {
         return operand;
     }
 
+    public boolean isResolvedOperand(){
+        return operand!=null;
+    }
+
     /**
      * Each time HirBuilder appends new SSA instruction into basic block, Ideal would apply
      * applies many local optimizations on this newly created single instruction, it may or

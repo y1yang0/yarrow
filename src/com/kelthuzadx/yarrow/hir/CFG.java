@@ -4,7 +4,7 @@ import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.bytecode.BytecodeStream;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
-import com.kelthuzadx.yarrow.phase.Phase;
+import com.kelthuzadx.yarrow.optimize.Phase;
 import com.kelthuzadx.yarrow.util.Logger;
 import com.kelthuzadx.yarrow.util.Mode;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;

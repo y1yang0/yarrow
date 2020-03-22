@@ -3,7 +3,7 @@ package com.kelthuzadx.yarrow.lir;
 import com.kelthuzadx.yarrow.hir.Hir;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.hir.instr.HirInstruction;
-import com.kelthuzadx.yarrow.phase.Phase;
+import com.kelthuzadx.yarrow.optimize.Phase;
 
 import java.util.ArrayDeque;
 import java.util.HashSet;

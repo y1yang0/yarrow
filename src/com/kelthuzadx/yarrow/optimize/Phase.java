@@ -1,4 +1,4 @@
-package com.kelthuzadx.yarrow.phase;
+package com.kelthuzadx.yarrow.optimize;
 
 public interface Phase {
     Phase build();

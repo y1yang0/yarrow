@@ -7,7 +7,11 @@ public enum Opcode {
     Label,
 
     // 2 operands opcode
-    ADD
+    ADD,
+    SUB,
+    MUL,
+    DIV,
+    REM,
     // 3 operand opcode
 
 }

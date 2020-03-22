@@ -8,20 +8,21 @@ import com.kelthuzadx.yarrow.lir.instr.Operand2Instr;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.lir.operand.LirOperandFactory;
 import com.kelthuzadx.yarrow.optimize.InstructionVisitor;
+import com.kelthuzadx.yarrow.util.CompilerErrors;
+import com.kelthuzadx.yarrow.util.Logger;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class LirGenerator extends InstructionVisitor {
-    private Set<Integer> visitedSet;
     private int currentBlockStartId;
     private Lir lir;
 
     public LirGenerator(Lir lir){
-        this.visitedSet = new HashSet<>();
         this.currentBlockStartId = -1;
         this.lir = lir;
     }
+
 
     @Override
     public void visitMemBarrierInstr(MemBarrierInstr instr) {
@@ -44,7 +45,7 @@ public class LirGenerator extends InstructionVisitor {
 
     @Override
     public void visitParamInstr(ParamInstr instr) {
-        if(instr.getOperand()!=null){
+        if(instr.isResolvedOperand()){
             return;
         }
 
@@ -98,7 +99,7 @@ public class LirGenerator extends InstructionVisitor {
 
     @Override
     public void visitConstantInstr(ConstantInstr instr) {
-        if(instr.getOperand()!=null){
+        if(instr.isResolvedOperand()){
             return;
         }
 
@@ -134,12 +135,10 @@ public class LirGenerator extends InstructionVisitor {
     public void visitArithmeticInstr(ArithmeticInstr instr) {
         HirInstruction left = instr.getLeft();
         HirInstruction right = instr.getRight();
-        if(!visitedSet.contains(left.id())){
-            visitedSet.add(left.id());
+        if(!left.isResolvedOperand()){
             left.visit(this);
         }
-        if(!visitedSet.contains(right.id())){
-            visitedSet.add(right.id());
+        if(!right.isResolvedOperand()){
             right.visit(this);
         }
         LirOperand lo = left.getOperand();
@@ -158,21 +157,26 @@ public class LirGenerator extends InstructionVisitor {
             case Bytecode.LSUB:
             case Bytecode.FSUB:
             case Bytecode.DSUB:
+                lir.appendLirInstr(currentBlockStartId,new Operand2Instr(Opcode.SUB,result,lo,ro));
                 break;
             case Bytecode.IMUL:
             case Bytecode.LMUL:
             case Bytecode.FMUL:
             case Bytecode.DMUL:
+                lir.appendLirInstr(currentBlockStartId,new Operand2Instr(Opcode.MUL,result,lo,ro));
                 break;
             case Bytecode.IDIV:
             case Bytecode.LDIV:
+                CompilerErrors.bailOut();
             case Bytecode.FDIV:
             case Bytecode.DDIV:
+                lir.appendLirInstr(currentBlockStartId,new Operand2Instr(Opcode.DIV,result,lo,ro));
                 break;
             case Bytecode.IREM:
             case Bytecode.LREM:
             case Bytecode.FREM:
             case Bytecode.DREM:
+                lir.appendLirInstr(currentBlockStartId,new Operand2Instr(Opcode.REM,result,lo,ro));
                 break;
             default:
                 YarrowError.shouldNotReachHere();
