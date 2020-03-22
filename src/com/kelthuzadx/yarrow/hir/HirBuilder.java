@@ -26,9 +26,9 @@ import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.*;
  *
  * @author kelthuzadx
  */
-public class HIRBuilder implements Phase {
+public class HirBuilder implements Phase {
     // The final result:)
-    private HIR hir;
+    private Hir hir;
     // Target method to be compiled
     private HotSpotResolvedJavaMethod method;
     // Control flow graph for method
@@ -45,7 +45,7 @@ public class HIRBuilder implements Phase {
     private LVN lvn;
 
 
-    public HIRBuilder(CFG cfg) {
+    public HirBuilder(CFG cfg) {
         this.cfg = cfg;
         this.method = cfg.method;
     }
@@ -68,10 +68,10 @@ public class HIRBuilder implements Phase {
     }
 
     @Override
-    public HIRBuilder build() {
+    public HirBuilder build() {
         BlockStartInstr methodEntry = cfg.blockContain(0);
         methodEntry.mergeVmState(createEntryVmState());
-        hir = new HIR(method, methodEntry);
+        hir = new Hir(method, methodEntry);
 
         visit = new HashSet<>(cfg.getBlocks().length);
         workList = new ArrayDeque<>();
@@ -94,7 +94,7 @@ public class HIRBuilder implements Phase {
         return this;
     }
 
-    public HIR getHir() {
+    public Hir getHir() {
         return hir;
     }
 

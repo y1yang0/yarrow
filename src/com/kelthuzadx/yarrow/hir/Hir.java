@@ -11,13 +11,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public class HIR {
+public class Hir {
     private HotSpotResolvedJavaMethod method;
     private BlockStartInstr entry;
     private boolean writeFinal;
     private boolean writeVolatile;
 
-    public HIR(HotSpotResolvedJavaMethod method, BlockStartInstr entry) {
+    public Hir(HotSpotResolvedJavaMethod method, BlockStartInstr entry) {
         this.writeFinal = false;
         this.writeVolatile = false;
         this.entry = entry;

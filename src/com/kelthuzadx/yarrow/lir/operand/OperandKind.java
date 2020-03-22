@@ -4,5 +4,6 @@ public enum OperandKind {
     Register,
     Constant,
     Stack,
-    Address
+    Address,
+    Illegal
 }

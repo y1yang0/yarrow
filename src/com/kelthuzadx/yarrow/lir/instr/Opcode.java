@@ -7,6 +7,7 @@ public enum Opcode {
     Label,
 
     // 2 operands opcode
+    ADD
     // 3 operand opcode
 
 }

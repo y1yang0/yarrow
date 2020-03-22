@@ -2,6 +2,7 @@ package com.kelthuzadx.yarrow.lir.operand;
 
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.ConstantInstr;
+import com.kelthuzadx.yarrow.hir.instr.Op2Instr;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.lir.operand.OperandKind;
 import com.kelthuzadx.yarrow.lir.operand.OperandType;
@@ -10,6 +11,11 @@ import jdk.vm.ci.meta.JavaKind;
 
 public class LirOperandFactory {
     private static int vregisterId = 0;
+
+    public static LirOperand createIllegal(){
+        return new LirOperand(OperandKind.Illegal,OperandType.Unknown);
+    }
+
 
     public static LirOperand createConstInt(ConstantInstr instr){
         switch (instr.type()){
@@ -30,13 +36,13 @@ public class LirOperandFactory {
     public static LirOperand createVirtualRegister(JavaKind type){
         switch (type){
             case Int:
-                return new LirOperand(OperandKind.Register,OperandType.Int,vregisterId);
+                return new LirOperand(OperandKind.Register,OperandType.Int,vregisterId++);
             case Long:
-                return new LirOperand(OperandKind.Register,OperandType.Long,vregisterId);
+                return new LirOperand(OperandKind.Register,OperandType.Long,vregisterId++);
             case Float:
-                return new LirOperand(OperandKind.Register,OperandType.Float,vregisterId);
+                return new LirOperand(OperandKind.Register,OperandType.Float,vregisterId++);
             case Double:
-                return new LirOperand(OperandKind.Register,OperandType.Double,vregisterId);
+                return new LirOperand(OperandKind.Register,OperandType.Double,vregisterId++);
             default:
                 YarrowError.shouldNotReachHere();
         }

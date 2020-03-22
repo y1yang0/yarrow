@@ -2,8 +2,8 @@ package com.kelthuzadx.yarrow.core;
 
 
 import com.kelthuzadx.yarrow.hir.CFG;
-import com.kelthuzadx.yarrow.hir.HIRBuilder;
-import com.kelthuzadx.yarrow.lir.LIRBuilder;
+import com.kelthuzadx.yarrow.hir.HirBuilder;
+import com.kelthuzadx.yarrow.lir.LirBuilder;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.code.CompilationRequest;
 import jdk.vm.ci.code.CompilationRequestResult;
@@ -36,12 +36,12 @@ public class YarrowCompiler implements JVMCICompiler {
                 .map(CFG::new)
                 .map(CFG::build)
                 .peek(CFG::log)
-                .map(HIRBuilder::new)
-                .map(HIRBuilder::build)
-                .peek(HIRBuilder::log)
-                .map(HIRBuilder::getHir)
-                .map(LIRBuilder::new)
-                .map(LIRBuilder::build)
+                .map(HirBuilder::new)
+                .map(HirBuilder::build)
+                .peek(HirBuilder::log)
+                .map(HirBuilder::getHir)
+                .map(LirBuilder::new)
+                .map(LirBuilder::build)
                 .collect(Collectors.toList());
 
         System.exit(0);

@@ -1,15 +1,27 @@
 package com.kelthuzadx.yarrow.lir;
 
+import com.kelthuzadx.yarrow.bytecode.Bytecode;
+import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.*;
+import com.kelthuzadx.yarrow.lir.instr.Opcode;
+import com.kelthuzadx.yarrow.lir.instr.Operand2Instr;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.lir.operand.LirOperandFactory;
 import com.kelthuzadx.yarrow.optimize.InstructionVisitor;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 public class LirGenerator extends InstructionVisitor {
     private Set<Integer> visitedSet;
+    private int currentBlockStartId;
+    private Lir lir;
+
+    public LirGenerator(Lir lir){
+        this.visitedSet = new HashSet<>();
+        this.currentBlockStartId = -1;
+        this.lir = lir;
+    }
 
     @Override
     public void visitMemBarrierInstr(MemBarrierInstr instr) {
@@ -32,7 +44,11 @@ public class LirGenerator extends InstructionVisitor {
 
     @Override
     public void visitParamInstr(ParamInstr instr) {
+        if(instr.getOperand()!=null){
+            return;
+        }
 
+        instr.setOperand(LirOperandFactory.createVirtualRegister(instr.type()));
     }
 
     @Override
@@ -62,7 +78,7 @@ public class LirGenerator extends InstructionVisitor {
 
     @Override
     public void visitBlockStartInstr(BlockStartInstr instr) {
-
+        currentBlockStartId = instr.id();
     }
 
     @Override
@@ -82,6 +98,10 @@ public class LirGenerator extends InstructionVisitor {
 
     @Override
     public void visitConstantInstr(ConstantInstr instr) {
+        if(instr.getOperand()!=null){
+            return;
+        }
+
         instr.setOperand(LirOperandFactory.createConstInt(instr));
     }
 
@@ -124,8 +144,39 @@ public class LirGenerator extends InstructionVisitor {
         }
         LirOperand lo = left.getOperand();
         LirOperand ro = right.getOperand();
-        LirOperand vreg = LirOperandFactory.createVirtualRegister(left.type());
-        instr.setOperand(vreg);
+        LirOperand result = LirOperandFactory.createVirtualRegister(left.type());
+        instr.setOperand(result);
+
+        switch (instr.getOpcode()) {
+            case Bytecode.IADD:
+            case Bytecode.LADD:
+            case Bytecode.FADD:
+            case Bytecode.DADD:
+                lir.appendLirInstr(currentBlockStartId, new Operand2Instr(Opcode.ADD,result,lo,ro));
+                break;
+            case Bytecode.ISUB:
+            case Bytecode.LSUB:
+            case Bytecode.FSUB:
+            case Bytecode.DSUB:
+                break;
+            case Bytecode.IMUL:
+            case Bytecode.LMUL:
+            case Bytecode.FMUL:
+            case Bytecode.DMUL:
+                break;
+            case Bytecode.IDIV:
+            case Bytecode.LDIV:
+            case Bytecode.FDIV:
+            case Bytecode.DDIV:
+                break;
+            case Bytecode.IREM:
+            case Bytecode.LREM:
+            case Bytecode.FREM:
+            case Bytecode.DREM:
+                break;
+            default:
+                YarrowError.shouldNotReachHere();
+        }
     }
 
     @Override
@@ -195,6 +246,7 @@ public class LirGenerator extends InstructionVisitor {
 
     @Override
     public void visitOp2Instr(Op2Instr instr) {
+        YarrowError.shouldNotReachHere();
     }
 
     @Override
