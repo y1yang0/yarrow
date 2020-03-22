@@ -6,16 +6,16 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 
 public class NewTypeArrayInstr extends StateInstr {
-    private HirInstruction len;
+    private HirInstr len;
     private JavaKind elemType;
 
-    public NewTypeArrayInstr(VmState stateBefore, HirInstruction len, JavaKind elemType) {
+    public NewTypeArrayInstr(VmState stateBefore, HirInstr len, JavaKind elemType) {
         super(new Value(JavaKind.Object), stateBefore);
         this.len = len;
         this.elemType = elemType;
     }
 
-    public HirInstruction arrayLength() {
+    public HirInstr arrayLength() {
         return len;
     }
 

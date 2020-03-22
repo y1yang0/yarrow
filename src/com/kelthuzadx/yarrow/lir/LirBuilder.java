@@ -2,7 +2,7 @@ package com.kelthuzadx.yarrow.lir;
 
 import com.kelthuzadx.yarrow.hir.Hir;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
-import com.kelthuzadx.yarrow.hir.instr.HirInstruction;
+import com.kelthuzadx.yarrow.hir.instr.HirInstr;
 import com.kelthuzadx.yarrow.optimize.Phase;
 
 import java.util.ArrayDeque;
@@ -13,20 +13,22 @@ public class LirBuilder implements Phase {
     private Lir lir;
     private HashSet<Integer> visit;
     private ArrayDeque<BlockStartInstr> workList;
+    private LirGenerator generator;
 
     public LirBuilder(Hir hir) {
         this.hir = hir;
         this.lir = new Lir();
+        this.generator = new LirGenerator(lir);
     }
 
     private void transformBlock(BlockStartInstr block) {
-        HirInstruction last = block;
+        HirInstr last = block;
         while (last != null && last != block.getBlockEnd()) {
-            last.visit(new LirGenerator(lir));
+            last.visit(generator);
             last = last.getNext();
         }
         if (last != null && last == block.getBlockEnd()) {
-            last.visit(new LirGenerator(lir));
+            last.visit(generator);
         }
     }
 
@@ -43,7 +45,7 @@ public class LirBuilder implements Phase {
                 workList.addAll(blockStart.getBlockEnd().getSuccessor());
             }
         }
-
+        lir.printLir();
         return this;
     }
 

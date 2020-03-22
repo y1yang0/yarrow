@@ -8,7 +8,7 @@ public class CompilerErrors {
         throw new YarrowError("compilation bail out");
     }
 
-    public static void bailOut(String msg){
+    public static void bailOut(String msg) {
         throw new YarrowError(msg);
     }
 }

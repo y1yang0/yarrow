@@ -6,22 +6,22 @@ import jdk.vm.ci.meta.JavaKind;
 
 public class ArrayLenInstr extends AccessArrayInstr {
 
-    public ArrayLenInstr(HirInstruction array) {
+    public ArrayLenInstr(HirInstr array) {
         super(new Value(JavaKind.Int), array);
     }
 
     @Override
-    public HirInstruction ideal() {
+    public HirInstr ideal() {
         // Object[] arr = new Object[3];
         // int p = arr.length;
         if (array instanceof NewTypeArrayInstr) {
-            HirInstruction lenInstr = ((NewTypeArrayInstr) array).arrayLength();
+            HirInstr lenInstr = ((NewTypeArrayInstr) array).arrayLength();
             if (lenInstr instanceof ConstantInstr) {
                 int len = ((ConstantInstr) lenInstr).value();
                 return new ConstantInstr(new Value(JavaKind.Int, len));
             }
         } else if (array instanceof NewObjectArrayInstr) {
-            HirInstruction lenInstr = ((NewObjectArrayInstr) array).arrayLength();
+            HirInstr lenInstr = ((NewObjectArrayInstr) array).arrayLength();
             if (lenInstr instanceof ConstantInstr) {
                 int len = ((ConstantInstr) lenInstr).value();
                 return new ConstantInstr(new Value(JavaKind.Int, len));

@@ -4,12 +4,12 @@ import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 
-public class TypeCastInstr extends HirInstruction {
+public class TypeCastInstr extends HirInstr {
     private int opcode;
-    private HirInstruction from;
+    private HirInstr from;
     private JavaKind toType;
 
-    public TypeCastInstr(int opcode, HirInstruction from, JavaKind toType) {
+    public TypeCastInstr(int opcode, HirInstr from, JavaKind toType) {
         super(new Value(toType));
         this.opcode = opcode;
         this.from = from;

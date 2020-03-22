@@ -2,7 +2,6 @@ package com.kelthuzadx.yarrow.lir.instr;
 
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.lir.operand.OperandType;
-import jdk.vm.ci.meta.JavaKind;
 
 public class Operand1Instr extends LirInstr {
     private OperandType type;

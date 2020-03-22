@@ -148,7 +148,7 @@ public class BlockStartInstr extends StateInstr {
                 }
             } else {
                 for (int i = 0; i < getVmState().getStackSize(); i++) {
-                    HirInstruction val = newState.getStack().get(i);
+                    HirInstr val = newState.getStack().get(i);
                     if (val != getVmState().getStack().get(i)) {
                         if (val instanceof PhiInstr) {
                             if (((PhiInstr) val).getBlock() != this) {
@@ -160,7 +160,7 @@ public class BlockStartInstr extends StateInstr {
                     }
                 }
                 for (int i = 0; i < getVmState().getLocalSize(); i++) {
-                    HirInstruction val = newState.getLocal()[i];
+                    HirInstr val = newState.getLocal()[i];
                     if (getVmState().getLocal()[i] != null) {
                         // If val exists and two local variable types match
                         if (val != null && val.isType(getVmState().getLocal()[i].type())) {

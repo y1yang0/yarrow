@@ -8,9 +8,9 @@ import jdk.vm.ci.meta.JavaType;
 
 public class MultiNewArrayInstr extends StateInstr {
     private JavaType klass;
-    private HirInstruction[] dimenInstrs;
+    private HirInstr[] dimenInstrs;
 
-    public MultiNewArrayInstr(VmState stateBefore, JavaType klass, HirInstruction[] dimenInstrs) {
+    public MultiNewArrayInstr(VmState stateBefore, JavaType klass, HirInstr[] dimenInstrs) {
         super(new Value(JavaKind.Object), stateBefore);
         this.klass = klass;
         this.dimenInstrs = dimenInstrs;
@@ -19,7 +19,7 @@ public class MultiNewArrayInstr extends StateInstr {
     @Override
     public String toString() {
         String typeStr = klass.toJavaName();
-        for (HirInstruction dimen : dimenInstrs) {
+        for (HirInstr dimen : dimenInstrs) {
             typeStr = typeStr.replaceFirst("\\[\\]", "[i" + dimen.id + "]");
         }
         return Logger.format("i{}: new {}", super.id, typeStr);

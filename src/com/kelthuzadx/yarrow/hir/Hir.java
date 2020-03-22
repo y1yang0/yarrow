@@ -2,7 +2,7 @@ package com.kelthuzadx.yarrow.hir;
 
 import com.kelthuzadx.yarrow.hir.instr.BlockEndInstr;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
-import com.kelthuzadx.yarrow.hir.instr.HirInstruction;
+import com.kelthuzadx.yarrow.hir.instr.HirInstr;
 import com.kelthuzadx.yarrow.util.Logger;
 import com.kelthuzadx.yarrow.util.Mode;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
@@ -24,8 +24,8 @@ public class Hir {
         this.method = method;
     }
 
-    private static void iterateBytecodes(BlockStartInstr block, Consumer<HirInstruction> closure) {
-        HirInstruction last = block;
+    private static void iterateBytecodes(BlockStartInstr block, Consumer<HirInstr> closure) {
+        HirInstr last = block;
         while (last != null && last != block.getBlockEnd()) {
             closure.accept(last);
             last = last.getNext();
@@ -60,7 +60,7 @@ public class Hir {
         // Block itself
         content.append("\tB").append(block.id()).append("[shape=record,label=\"");
         content.append("{ i").append(block.id()).append(" | ");
-        HirInstruction start = block;
+        HirInstr start = block;
         String temp = "";
         while (start != end) {
             temp = start.toString();

@@ -2,7 +2,7 @@ package com.kelthuzadx.yarrow.hir;
 
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
-import com.kelthuzadx.yarrow.hir.instr.HirInstruction;
+import com.kelthuzadx.yarrow.hir.instr.HirInstr;
 import com.kelthuzadx.yarrow.hir.instr.ParamInstr;
 import com.kelthuzadx.yarrow.hir.instr.PhiInstr;
 import jdk.vm.ci.meta.JavaKind;
@@ -16,19 +16,19 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public class VmState {
     private final int maxStackSize;
-    private Stack<HirInstruction> stack;
-    private HirInstruction[] local;
-    private List<HirInstruction> lock;
+    private Stack<HirInstr> stack;
+    private HirInstr[] local;
+    private List<HirInstr> lock;
 
     public VmState(int maxStackSize, int localSize) {
         stack = new Stack<>();
         stack.ensureCapacity(maxStackSize);
-        local = new HirInstruction[localSize];
+        local = new HirInstr[localSize];
         lock = new ArrayList<>();
         this.maxStackSize = maxStackSize;
     }
 
-    public void push(JavaKind type, HirInstruction instr) {
+    public void push(JavaKind type, HirInstr instr) {
         YarrowError.guarantee(instr.isType(type), "type mismatch");
         switch (type) {
             case Int:
@@ -53,15 +53,15 @@ public class VmState {
 
     }
 
-    public void unsafePush(HirInstruction instr) {
+    public void unsafePush(HirInstr instr) {
         stack.push(instr);
     }
 
-    public HirInstruction unsafePop() {
+    public HirInstr unsafePop() {
         return stack.pop();
     }
 
-    public HirInstruction pop(JavaKind type) {
+    public HirInstr pop(JavaKind type) {
         switch (type) {
             case Int:
             case Float:
@@ -72,7 +72,7 @@ public class VmState {
             }
             case Long:
             case Double: {
-                HirInstruction placeholder = stack.pop();
+                HirInstr placeholder = stack.pop();
                 if (placeholder != null) {
                     throw new YarrowError("Must be null slot");
                 }
@@ -90,15 +90,15 @@ public class VmState {
         return stack.size();
     }
 
-    public Stack<HirInstruction> getStack() {
+    public Stack<HirInstr> getStack() {
         return stack;
     }
 
-    public void set(int index, HirInstruction instr) {
+    public void set(int index, HirInstr instr) {
         local[index] = instr;
     }
 
-    public HirInstruction get(int index) {
+    public HirInstr get(int index) {
         return local[index];
     }
 
@@ -106,13 +106,13 @@ public class VmState {
         return local.length;
     }
 
-    public HirInstruction lock(HirInstruction object) {
+    public HirInstr lock(HirInstr object) {
         lock.add(object);
         return lock.get(lock.size() - 1);
     }
 
-    public HirInstruction unlock() {
-        HirInstruction object = lock.get(lock.size() - 1);
+    public HirInstr unlock() {
+        HirInstr object = lock.get(lock.size() - 1);
         lock.remove(lock.size() - 1);
         return object;
     }
@@ -121,11 +121,11 @@ public class VmState {
         return lock.size();
     }
 
-    public List<HirInstruction> getLock() {
+    public List<HirInstr> getLock() {
         return lock;
     }
 
-    public HirInstruction[] getLocal() {
+    public HirInstr[] getLocal() {
         return local;
     }
 

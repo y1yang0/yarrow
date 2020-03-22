@@ -6,9 +6,9 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 
 public class MonitorEnterInstr extends StateInstr {
-    private HirInstruction lock;
+    private HirInstr lock;
 
-    public MonitorEnterInstr(HirInstruction lock, VmState stateBefore) {
+    public MonitorEnterInstr(HirInstr lock, VmState stateBefore) {
         super(new Value(JavaKind.Illegal), stateBefore);
         this.lock = lock;
     }

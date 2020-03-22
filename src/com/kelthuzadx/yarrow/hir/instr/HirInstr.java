@@ -12,16 +12,16 @@ import java.util.Optional;
  *
  * @author kelthuzadx
  */
-public abstract class HirInstruction implements Visitable {
+public abstract class HirInstr implements Visitable {
     // High level IR
     protected int id;
-    protected HirInstruction next;
+    protected HirInstr next;
     protected Value value;
 
     // Low level IR
     protected LirOperand operand;
 
-    HirInstruction(Value value) {
+    HirInstr(Value value) {
         this.id = IdGenerator.next();
         this.value = value;
         this.next = null;
@@ -44,24 +44,24 @@ public abstract class HirInstruction implements Visitable {
         return value.getType();
     }
 
-    public HirInstruction getNext() {
+    public HirInstr getNext() {
         return next;
     }
 
-    public void setNext(HirInstruction next) {
+    public void setNext(HirInstr next) {
         this.next = next;
-    }
-
-    public void setOperand(LirOperand operand) {
-        this.operand = operand;
     }
 
     public LirOperand getOperand() {
         return operand;
     }
 
-    public boolean isResolvedOperand(){
-        return operand!=null;
+    public void setOperand(LirOperand operand) {
+        this.operand = operand;
+    }
+
+    public boolean isResolvedOperand() {
+        return operand != null;
     }
 
     /**
@@ -72,15 +72,17 @@ public abstract class HirInstruction implements Visitable {
      * <p>
      * Note that NEVER RETURN NULL, if it can not transform to a optimized version, return this
      * directly.
-     * @for HIR
+     *
      * @return new instruction or `this`
+     * @for HIR
      */
-    public HirInstruction ideal() {
+    public HirInstr ideal() {
         return this;
     }
 
     /**
      * Simple ID generator
+     *
      * @for HIR
      */
     private static class IdGenerator {

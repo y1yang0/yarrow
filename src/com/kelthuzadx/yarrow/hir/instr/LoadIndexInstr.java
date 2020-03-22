@@ -7,18 +7,18 @@ import jdk.vm.ci.meta.JavaKind;
 import java.util.Objects;
 
 public class LoadIndexInstr extends AccessArrayInstr {
-    private HirInstruction index;
-    private HirInstruction length;
+    private HirInstr index;
+    private HirInstr length;
     private JavaKind elementType;
 
-    public LoadIndexInstr(HirInstruction array, HirInstruction index, HirInstruction length, JavaKind elementType) {
+    public LoadIndexInstr(HirInstr array, HirInstr index, HirInstr length, JavaKind elementType) {
         super(new Value(elementType), array);
         this.index = index;
         this.length = length;
         this.elementType = elementType;
     }
 
-    public HirInstruction getIndex() {
+    public HirInstr getIndex() {
         return index;
     }
 

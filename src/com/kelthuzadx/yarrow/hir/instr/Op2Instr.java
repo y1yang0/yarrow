@@ -4,28 +4,28 @@ import com.kelthuzadx.yarrow.hir.Value;
 
 import java.util.Objects;
 
-public abstract class Op2Instr extends HirInstruction {
+public abstract class Op2Instr extends HirInstr {
     protected int opcode;
-    protected HirInstruction left;
-    protected HirInstruction right;
+    protected HirInstr left;
+    protected HirInstr right;
 
-    public HirInstruction getLeft() {
+    public Op2Instr(Value value, int opcode, HirInstr left, HirInstr right) {
+        super(value);
+        this.opcode = opcode;
+        this.left = left;
+        this.right = right;
+    }
+
+    public HirInstr getLeft() {
         return left;
     }
 
-    public HirInstruction getRight() {
+    public HirInstr getRight() {
         return right;
     }
 
     public int getOpcode() {
         return opcode;
-    }
-
-    public Op2Instr(Value value, int opcode, HirInstruction left, HirInstruction right) {
-        super(value);
-        this.opcode = opcode;
-        this.left = left;
-        this.right = right;
     }
 
     @Override

@@ -2,15 +2,15 @@ package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.Value;
 
-public abstract class AccessArrayInstr extends HirInstruction {
-    protected HirInstruction array;
+public abstract class AccessArrayInstr extends HirInstr {
+    protected HirInstr array;
 
-    public AccessArrayInstr(Value value, HirInstruction array) {
+    public AccessArrayInstr(Value value, HirInstr array) {
         super(value);
         this.array = array;
     }
 
-    public HirInstruction getArray() {
+    public HirInstr getArray() {
         return array;
     }
 }

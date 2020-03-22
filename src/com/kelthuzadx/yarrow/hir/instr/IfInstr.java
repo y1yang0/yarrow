@@ -10,11 +10,11 @@ import jdk.vm.ci.meta.JavaKind;
 import java.util.ArrayList;
 
 public class IfInstr extends BlockEndInstr {
-    private HirInstruction left;
-    private HirInstruction right;
+    private HirInstr left;
+    private HirInstr right;
     private Cond cond;
 
-    public IfInstr(VmState stateBefore, BlockStartInstr trueBlock, BlockStartInstr falseBlock, HirInstruction left, HirInstruction right, Cond cond) {
+    public IfInstr(VmState stateBefore, BlockStartInstr trueBlock, BlockStartInstr falseBlock, HirInstr left, HirInstr right, Cond cond) {
         super(new Value(JavaKind.Illegal), stateBefore, new ArrayList<>() {{
             add(trueBlock);
             add(falseBlock);
@@ -25,7 +25,7 @@ public class IfInstr extends BlockEndInstr {
     }
 
     @Override
-    public HirInstruction ideal() {
+    public HirInstr ideal() {
         if (left instanceof ConstantInstr && right instanceof ConstantInstr) {
             var ifState = getVmState();
             // if i1 == i1 then i2 else i3

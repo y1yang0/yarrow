@@ -8,16 +8,16 @@ import jdk.vm.ci.meta.JavaType;
 
 public class InstanceOfInstr extends StateInstr {
     private JavaType klass;
-    private HirInstruction object;
+    private HirInstr object;
 
-    public InstanceOfInstr(VmState stateBefore, JavaType klass, HirInstruction object) {
+    public InstanceOfInstr(VmState stateBefore, JavaType klass, HirInstr object) {
         super(new Value(JavaKind.Int), stateBefore);
         this.klass = klass;
         this.object = object;
     }
 
     @Override
-    public HirInstruction ideal() {
+    public HirInstr ideal() {
         if (object instanceof ConstantInstr && object.isType(JavaKind.Object) && object.value() == null) {
             return new ConstantInstr(new Value(JavaKind.Int, 0));
         }

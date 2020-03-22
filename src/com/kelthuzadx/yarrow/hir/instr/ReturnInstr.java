@@ -7,9 +7,9 @@ import jdk.vm.ci.meta.JavaKind;
 import java.util.ArrayList;
 
 public class ReturnInstr extends BlockEndInstr {
-    private HirInstruction returnValue;
+    private HirInstr returnValue;
 
-    public ReturnInstr(HirInstruction returnValue) {
+    public ReturnInstr(HirInstr returnValue) {
         super(new Value(returnValue == null ? JavaKind.Void : returnValue.type()),
                 null,
                 new ArrayList<>());

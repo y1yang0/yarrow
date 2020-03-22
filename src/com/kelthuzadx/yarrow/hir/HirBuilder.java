@@ -34,7 +34,7 @@ public class HirBuilder implements Phase {
     // Control flow graph for method
     private CFG cfg;
     // Last visited instruction
-    private HirInstruction lastInstr;
+    private HirInstr lastInstr;
     // Work list to support BFS on CFG
     private Queue<BlockStartInstr> workList;
     // BFS support
@@ -674,8 +674,8 @@ public class HirBuilder implements Phase {
 
     }
 
-    private HirInstruction appendToBlock(HirInstruction curInstr) {
-        HirInstruction better;
+    private HirInstr appendToBlock(HirInstr curInstr) {
+        HirInstr better;
         // Try to idealize instruction
         better = curInstr.ideal();
         if (PrintIdeal && better != curInstr) {
@@ -739,26 +739,26 @@ public class HirBuilder implements Phase {
     }
 
     private void load(JavaKind type, int index) {
-        HirInstruction temp = state.get(index);
+        HirInstr temp = state.get(index);
         state.push(type, temp);
     }
 
     private void loadArray(JavaKind type) {
-        HirInstruction index = state.pop(JavaKind.Int);
-        HirInstruction array = state.pop(JavaKind.Object);
+        HirInstr index = state.pop(JavaKind.Int);
+        HirInstr array = state.pop(JavaKind.Object);
         LoadIndexInstr instr = new LoadIndexInstr(array, index, null, type);
         state.push(type, appendToBlock(instr));
     }
 
     private void store(JavaKind type, int index) {
-        HirInstruction temp = state.pop(type);
+        HirInstr temp = state.pop(type);
         state.set(index, temp);
     }
 
     private void storeArray(JavaKind type) {
-        HirInstruction value = state.pop(type);
-        HirInstruction index = state.pop(JavaKind.Int);
-        HirInstruction array = state.pop(JavaKind.Object);
+        HirInstr value = state.pop(type);
+        HirInstr index = state.pop(JavaKind.Int);
+        HirInstr array = state.pop(JavaKind.Object);
         StoreIndexInstr instr = new StoreIndexInstr(array, index, null, type, value);
         appendToBlock(instr);
     }
@@ -766,23 +766,23 @@ public class HirBuilder implements Phase {
     private void duplicate(int opcode) {
         switch (opcode) {
             case Bytecode.DUP: {
-                HirInstruction temp = state.unsafePop();
+                HirInstr temp = state.unsafePop();
                 state.unsafePush(temp);
                 state.unsafePush(temp);
                 break;
             }
             case Bytecode.DUP_X1: {
-                HirInstruction temp = state.unsafePop();
-                HirInstruction temp2 = state.unsafePop();
+                HirInstr temp = state.unsafePop();
+                HirInstr temp2 = state.unsafePop();
                 state.unsafePush(temp);
                 state.unsafePush(temp2);
                 state.unsafePush(temp);
                 break;
             }
             case Bytecode.DUP_X2: {
-                HirInstruction temp = state.unsafePop();
-                HirInstruction temp2 = state.unsafePop();
-                HirInstruction temp3 = state.unsafePop();
+                HirInstr temp = state.unsafePop();
+                HirInstr temp2 = state.unsafePop();
+                HirInstr temp3 = state.unsafePop();
                 state.unsafePush(temp);
                 state.unsafePush(temp3);
                 state.unsafePush(temp2);
@@ -790,8 +790,8 @@ public class HirBuilder implements Phase {
                 break;
             }
             case Bytecode.DUP2: {
-                HirInstruction temp = state.unsafePop();
-                HirInstruction temp2 = state.unsafePop();
+                HirInstr temp = state.unsafePop();
+                HirInstr temp2 = state.unsafePop();
                 state.unsafePush(temp2);
                 state.unsafePush(temp);
                 state.unsafePush(temp2);
@@ -799,9 +799,9 @@ public class HirBuilder implements Phase {
                 break;
             }
             case Bytecode.DUP2_X1: {
-                HirInstruction temp = state.unsafePop();
-                HirInstruction temp2 = state.unsafePop();
-                HirInstruction temp3 = state.unsafePop();
+                HirInstr temp = state.unsafePop();
+                HirInstr temp2 = state.unsafePop();
+                HirInstr temp3 = state.unsafePop();
                 state.unsafePush(temp2);
                 state.unsafePush(temp);
                 state.unsafePush(temp3);
@@ -810,10 +810,10 @@ public class HirBuilder implements Phase {
                 break;
             }
             case Bytecode.DUP2_X2: {
-                HirInstruction temp = state.unsafePop();
-                HirInstruction temp2 = state.unsafePop();
-                HirInstruction temp3 = state.unsafePop();
-                HirInstruction temp4 = state.unsafePop();
+                HirInstr temp = state.unsafePop();
+                HirInstr temp2 = state.unsafePop();
+                HirInstr temp3 = state.unsafePop();
+                HirInstr temp4 = state.unsafePop();
                 state.unsafePush(temp2);
                 state.unsafePush(temp);
                 state.unsafePush(temp4);
@@ -828,35 +828,35 @@ public class HirBuilder implements Phase {
     }
 
     private void swap() {
-        HirInstruction temp = state.unsafePop();
-        HirInstruction temp1 = state.unsafePop();
+        HirInstr temp = state.unsafePop();
+        HirInstr temp1 = state.unsafePop();
         state.unsafePush(temp);
         state.unsafePush(temp1);
     }
 
     private void arithmetic(JavaKind type, int opcode) {
-        HirInstruction right = state.pop(type);
-        HirInstruction left = state.pop(type);
+        HirInstr right = state.pop(type);
+        HirInstr left = state.pop(type);
         ArithmeticInstr instr = new ArithmeticInstr(opcode, left, right);
         state.push(type, appendToBlock(instr));
     }
 
     private void negate(JavaKind type) {
-        HirInstruction temp = state.pop(type);
+        HirInstr temp = state.pop(type);
         NegateInstr instr = new NegateInstr(temp);
         state.push(type, appendToBlock(instr));
     }
 
     private void shift(JavaKind type, int opcode) {
-        HirInstruction right = state.pop(JavaKind.Int);
-        HirInstruction left = state.pop(type);
+        HirInstr right = state.pop(JavaKind.Int);
+        HirInstr left = state.pop(type);
         ShiftInstr instr = new ShiftInstr(opcode, left, right);
         state.push(type, appendToBlock(instr));
     }
 
     private void logic(JavaKind type, int opcode) {
-        HirInstruction right = state.pop(type);
-        HirInstruction left = state.pop(type);
+        HirInstr right = state.pop(type);
+        HirInstr left = state.pop(type);
         LogicInstr instr = new LogicInstr(opcode, left, right);
         state.push(type, appendToBlock(instr));
     }
@@ -877,7 +877,7 @@ public class HirBuilder implements Phase {
     }
 
     private void typeCast(JavaKind fromType, JavaKind toType, int opcode) {
-        HirInstruction from = state.pop(fromType);
+        HirInstr from = state.pop(fromType);
         JavaKind t = toType;
         if (t == JavaKind.Byte || t == JavaKind.Char || t == JavaKind.Short) {
             t = JavaKind.Int;
@@ -887,8 +887,8 @@ public class HirBuilder implements Phase {
     }
 
     private void compare(JavaKind type, int opcode) {
-        HirInstruction right = state.pop(type);
-        HirInstruction left = state.pop(type);
+        HirInstr right = state.pop(type);
+        HirInstr left = state.pop(type);
         CompareInstr instr = new CompareInstr(opcode, left, right);
         // left > right => push 1
         // left == right => push 0
@@ -898,26 +898,26 @@ public class HirBuilder implements Phase {
 
     private void branchIfZero(Cond cond, int trueBci, int falseBci) {
         VmState stateBefore = state.copy();
-        HirInstruction left = state.pop(JavaKind.Int);
+        HirInstr left = state.pop(JavaKind.Int);
         ConstantInstr right = new ConstantInstr(new Value(JavaKind.Int, 0));
         branchIf(stateBefore, left, right, cond, trueBci, falseBci);
     }
 
     private void branchIfNull(Cond cond, int trueBci, int falseBci) {
         VmState stateBefore = state.copy();
-        HirInstruction left = state.pop(JavaKind.Object);
+        HirInstr left = state.pop(JavaKind.Object);
         ConstantInstr right = new ConstantInstr(new Value(JavaKind.Object, null));
         branchIf(stateBefore, left, right, cond, trueBci, falseBci);
     }
 
     private void branchIfSame(JavaKind type, Cond cond, int trueBci, int falseBci) {
         VmState stateBefore = state.copy();
-        HirInstruction right = state.pop(type);
-        HirInstruction left = state.pop(type);
+        HirInstr right = state.pop(type);
+        HirInstr left = state.pop(type);
         branchIf(stateBefore, left, right, cond, trueBci, falseBci);
     }
 
-    private void branchIf(VmState stateBefore, HirInstruction left, HirInstruction right, Cond cond, int trueBci, int falseBci) {
+    private void branchIf(VmState stateBefore, HirInstr left, HirInstr right, Cond cond, int trueBci, int falseBci) {
         IfInstr instr = new IfInstr(stateBefore, cfg.blockContain(trueBci), cfg.blockContain(falseBci), left, right, cond);
         appendToBlock(instr);
     }
@@ -938,7 +938,7 @@ public class HirBuilder implements Phase {
         succ[i] = cfg.blockContain(sw.getDefaultDest() + curBci);
 
         VmState stateBefore = state.copy();
-        HirInstruction index = state.pop(JavaKind.Int);
+        HirInstr index = state.pop(JavaKind.Int);
         TableSwitchInstr instr = new TableSwitchInstr(stateBefore, Arrays.asList(succ), index, sw.getLowKey());
         appendToBlock(instr);
     }
@@ -956,13 +956,13 @@ public class HirBuilder implements Phase {
         succ[i] = cfg.blockContain(sw.getDefaultDest() + curBci);
 
         VmState stateBefore = state.copy();
-        HirInstruction index = state.pop(JavaKind.Int);
+        HirInstr index = state.pop(JavaKind.Int);
         LookupSwitchInstr instr = new LookupSwitchInstr(stateBefore, Arrays.asList(succ), index, key);
         appendToBlock(instr);
     }
 
     private void returnOp(JavaKind type, boolean justReturn) {
-        HirInstruction val = null;
+        HirInstr val = null;
         if (!justReturn) {
             val = state.pop(type);
         }
@@ -970,7 +970,7 @@ public class HirBuilder implements Phase {
         JavaKind returnKind = method.getSignature().getReturnKind();
         switch (returnKind) {
             case Byte: {
-                HirInstruction mask = new ConstantInstr(new Value(JavaKind.Int, 0xFF));
+                HirInstr mask = new ConstantInstr(new Value(JavaKind.Int, 0xFF));
                 mask = appendToBlock(mask);
                 LogicInstr t = new LogicInstr(Bytecode.IAND, mask, val);
                 val = appendToBlock(t);
@@ -978,14 +978,14 @@ public class HirBuilder implements Phase {
             }
             case Short:
             case Char: {
-                HirInstruction mask = new ConstantInstr(new Value(JavaKind.Int, 0xFFFF));
+                HirInstr mask = new ConstantInstr(new Value(JavaKind.Int, 0xFFFF));
                 mask = appendToBlock(mask);
                 LogicInstr t = new LogicInstr(Bytecode.IAND, mask, val);
                 val = appendToBlock(t);
                 break;
             }
             case Boolean: {
-                HirInstruction mask = new ConstantInstr(new Value(JavaKind.Int, 1));
+                HirInstr mask = new ConstantInstr(new Value(JavaKind.Int, 1));
                 mask = appendToBlock(mask);
                 LogicInstr t = new LogicInstr(Bytecode.IAND, mask, val);
                 val = appendToBlock(t);
@@ -1021,13 +1021,13 @@ public class HirBuilder implements Phase {
                 break;
             }
             case Bytecode.PUTSTATIC: {
-                HirInstruction val = state.pop(field.getJavaKind());
+                HirInstr val = state.pop(field.getJavaKind());
                 StoreFieldInstr instr = new StoreFieldInstr(holder, field.getOffset(), field, val);
                 appendToBlock(instr);
                 break;
             }
             case Bytecode.GETFIELD: {
-                HirInstruction object = state.pop(JavaKind.Object);
+                HirInstr object = state.pop(JavaKind.Object);
                 LoadFieldInstr instr = new LoadFieldInstr(object, field.getOffset(), field);
                 state.push(field.getJavaKind(), appendToBlock(instr));
                 break;
@@ -1039,8 +1039,8 @@ public class HirBuilder implements Phase {
                 if (field.isVolatile()) {
                     hir.setWriteVolatile();
                 }
-                HirInstruction val = state.pop(field.getJavaKind());
-                HirInstruction object = state.pop(JavaKind.Object);
+                HirInstr val = state.pop(field.getJavaKind());
+                HirInstr object = state.pop(JavaKind.Object);
                 StoreFieldInstr instr = new StoreFieldInstr(object, field.getOffset(), field, val);
                 appendToBlock(instr);
                 break;
@@ -1089,15 +1089,15 @@ public class HirBuilder implements Phase {
 
         Signature sig = target.getSignature();
         int argc = sig.getParameterCount(false);
-        HirInstruction[] arguments = new HirInstruction[argc];
-        HirInstruction receiver = null;
+        HirInstr[] arguments = new HirInstr[argc];
+        HirInstr receiver = null;
         for (int i = argc - 1; i >= 0; i--) {
             arguments[i] = state.pop(sig.getParameterKind(i));
         }
         if (hasReceiver) {
             receiver = state.pop(JavaKind.Object);
         }
-        HirInstruction instr = new CallInstr(new Value(sig.getReturnKind()), stateBefore, receiver, arguments, target, sig, opcode);
+        HirInstr instr = new CallInstr(new Value(sig.getReturnKind()), stateBefore, receiver, arguments, target, sig, opcode);
         instr = appendToBlock(instr);
 
         if (sig.getReturnKind() != JavaKind.Void) {
@@ -1114,7 +1114,7 @@ public class HirBuilder implements Phase {
 
     private void newTypeArray(int elementType) {
         VmState stateBefore = state.copy();
-        HirInstruction len = state.pop(JavaKind.Int);
+        HirInstr len = state.pop(JavaKind.Int);
         JavaKind type = Converter.fromBasicType(elementType);
         NewTypeArrayInstr instr = new NewTypeArrayInstr(stateBefore, len, type);
         state.push(JavaKind.Object, appendToBlock(instr));
@@ -1122,7 +1122,7 @@ public class HirBuilder implements Phase {
 
     private void newObjectArray(int index) {
         VmState stateBefore = state.copy();
-        HirInstruction len = state.pop(JavaKind.Int);
+        HirInstr len = state.pop(JavaKind.Int);
         JavaType klass = method.getConstantPool().lookupType(index, -1);
 
         NewObjectArrayInstr instr = new NewObjectArrayInstr(stateBefore, len, klass);
@@ -1130,14 +1130,14 @@ public class HirBuilder implements Phase {
     }
 
     private void arrayLength() {
-        HirInstruction array = state.pop(JavaKind.Object);
+        HirInstr array = state.pop(JavaKind.Object);
         ArrayLenInstr instr = new ArrayLenInstr(array);
         state.push(JavaKind.Int, appendToBlock(instr));
     }
 
     private void athrow() {
         VmState stateBefore = state.copy();
-        HirInstruction exception = state.pop(JavaKind.Object);
+        HirInstr exception = state.pop(JavaKind.Object);
         ThrowInstr instr = new ThrowInstr(stateBefore, new ArrayList<>(), exception);
         appendToBlock(instr);
     }
@@ -1145,7 +1145,7 @@ public class HirBuilder implements Phase {
     private void checkCast(int index) {
         VmState stateBefore = state.copy();
         JavaType klass = method.getConstantPool().lookupType(index, -1);
-        HirInstruction object = state.pop(JavaKind.Object);
+        HirInstr object = state.pop(JavaKind.Object);
         CheckCastInstr instr = new CheckCastInstr(stateBefore, klass, object);
         state.push(JavaKind.Object, appendToBlock(instr));
     }
@@ -1153,21 +1153,21 @@ public class HirBuilder implements Phase {
     private void instanceOf(int index) {
         VmState stateBefore = state.copy();
         JavaType klass = method.getConstantPool().lookupType(index, -1);
-        HirInstruction object = state.pop(JavaKind.Object);
+        HirInstr object = state.pop(JavaKind.Object);
         InstanceOfInstr instr = new InstanceOfInstr(stateBefore, klass, object);
         state.push(JavaKind.Int, appendToBlock(instr));
     }
 
     private void monitorEnter() {
-        HirInstruction lockObj = state.pop(JavaKind.Object);
+        HirInstr lockObj = state.pop(JavaKind.Object);
         VmState stateBefore = state.copy(); // save state before locking(but after pop element) in case of deopt after a nullptr exception
-        HirInstruction lock = state.lock(lockObj);
+        HirInstr lock = state.lock(lockObj);
         MonitorEnterInstr instr = new MonitorEnterInstr(lock, stateBefore);
         appendToBlock(instr);
     }
 
     private void monitorExit() {
-        HirInstruction lock = state.unlock();
+        HirInstr lock = state.unlock();
         MonitorExitInstr instr = new MonitorExitInstr(lock);
         appendToBlock(instr);
     }
@@ -1176,9 +1176,9 @@ public class HirBuilder implements Phase {
         VmState stateBefore = state.copy();
         JavaType klass = method.getConstantPool().lookupType(mna.getConstPoolIndex(), -1);
         int dimension = mna.getDimension();
-        HirInstruction[] dimenInstr = new HirInstruction[dimension];
+        HirInstr[] dimenInstr = new HirInstr[dimension];
         for (int i = dimension - 1; i >= 0; i--) {
-            HirInstruction di = state.pop(JavaKind.Int);
+            HirInstr di = state.pop(JavaKind.Int);
             dimenInstr[i] = di;
         }
 

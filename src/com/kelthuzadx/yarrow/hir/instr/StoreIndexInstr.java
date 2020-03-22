@@ -5,12 +5,12 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 
 public class StoreIndexInstr extends AccessArrayInstr {
-    private HirInstruction index;
-    private HirInstruction length;
+    private HirInstr index;
+    private HirInstr length;
     private JavaKind elementType;
-    private HirInstruction value;
+    private HirInstr value;
 
-    public StoreIndexInstr(HirInstruction array, HirInstruction index, HirInstruction length, JavaKind elementType, HirInstruction value) {
+    public StoreIndexInstr(HirInstr array, HirInstr index, HirInstr length, JavaKind elementType, HirInstr value) {
         super(new Value(elementType), array);
         this.index = index;
         this.length = length;
@@ -18,7 +18,7 @@ public class StoreIndexInstr extends AccessArrayInstr {
         this.value = value;
     }
 
-    public HirInstruction getIndex() {
+    public HirInstr getIndex() {
         return index;
     }
 

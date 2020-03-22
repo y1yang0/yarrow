@@ -7,7 +7,7 @@ import com.kelthuzadx.yarrow.util.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class PhiInstr extends HirInstruction {
+public class PhiInstr extends HirInstr {
     private int index; // negate number for stack, and positive number for local
     private BlockStartInstr block;
 
@@ -21,7 +21,7 @@ public class PhiInstr extends HirInstruction {
         return block;
     }
 
-    public HirInstruction operand(int i) {
+    public HirInstr operand(int i) {
         VmState state = block.getPredecessor().get(i).getBlockEnd().getVmState();
         if (state != null) {
             if (index >= 0) {

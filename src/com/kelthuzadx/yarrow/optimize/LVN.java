@@ -7,8 +7,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class LVN {
-    private Set<HirInstruction> valueSet;
-    private HirInstruction replacement;
+    private Set<HirInstr> valueSet;
+    private HirInstr replacement;
 
     public LVN() {
         valueSet = new HashSet<>();
@@ -20,7 +20,7 @@ public class LVN {
      *
      * @param instr instruction may kill other instructions in the value setz
      */
-    private void killValue(HirInstruction instr) {
+    private void killValue(HirInstr instr) {
         // long a = obj.field;
         // obj.field = ...
         // long b = obj.field;  prevent from LVN
@@ -66,8 +66,8 @@ public class LVN {
         }
     }
 
-    public boolean hasReplacement(HirInstruction instr) {
-        for (HirInstruction i : valueSet) {
+    public boolean hasReplacement(HirInstr instr) {
+        for (HirInstr i : valueSet) {
             if (i.hashCode() == instr.hashCode() && i.equals(instr)) {
                 YarrowError.guarantee(!(instr instanceof BlockEndInstr), "should never value numbering BlockEndInstr and its subclasses");
                 replacement = i;
@@ -80,7 +80,7 @@ public class LVN {
         return false;
     }
 
-    public HirInstruction getReplacement() {
+    public HirInstr getReplacement() {
         return replacement;
     }
 }

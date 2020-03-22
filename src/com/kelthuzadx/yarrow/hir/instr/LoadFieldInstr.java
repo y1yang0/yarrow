@@ -6,7 +6,7 @@ import jdk.vm.ci.meta.JavaField;
 import java.util.Objects;
 
 public class LoadFieldInstr extends AccessFieldInstr {
-    public LoadFieldInstr(HirInstruction object, int offset, JavaField field) {
+    public LoadFieldInstr(HirInstr object, int offset, JavaField field) {
         super(object, offset, field);
     }
 

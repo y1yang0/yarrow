@@ -9,16 +9,15 @@ import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.lir.operand.LirOperandFactory;
 import com.kelthuzadx.yarrow.optimize.InstructionVisitor;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
-import com.kelthuzadx.yarrow.util.Logger;
 
-import java.util.HashSet;
-import java.util.Set;
-
+/**
+ * Stateful low level IR generator
+ */
 public class LirGenerator extends InstructionVisitor {
     private int currentBlockStartId;
     private Lir lir;
 
-    public LirGenerator(Lir lir){
+    public LirGenerator(Lir lir) {
         this.currentBlockStartId = -1;
         this.lir = lir;
     }
@@ -45,7 +44,7 @@ public class LirGenerator extends InstructionVisitor {
 
     @Override
     public void visitParamInstr(ParamInstr instr) {
-        if(instr.isResolvedOperand()){
+        if (instr.isResolvedOperand()) {
             return;
         }
 
@@ -99,7 +98,7 @@ public class LirGenerator extends InstructionVisitor {
 
     @Override
     public void visitConstantInstr(ConstantInstr instr) {
-        if(instr.isResolvedOperand()){
+        if (instr.isResolvedOperand()) {
             return;
         }
 
@@ -133,12 +132,12 @@ public class LirGenerator extends InstructionVisitor {
 
     @Override
     public void visitArithmeticInstr(ArithmeticInstr instr) {
-        HirInstruction left = instr.getLeft();
-        HirInstruction right = instr.getRight();
-        if(!left.isResolvedOperand()){
+        HirInstr left = instr.getLeft();
+        HirInstr right = instr.getRight();
+        if (!left.isResolvedOperand()) {
             left.visit(this);
         }
-        if(!right.isResolvedOperand()){
+        if (!right.isResolvedOperand()) {
             right.visit(this);
         }
         LirOperand lo = left.getOperand();
@@ -151,32 +150,32 @@ public class LirGenerator extends InstructionVisitor {
             case Bytecode.LADD:
             case Bytecode.FADD:
             case Bytecode.DADD:
-                lir.appendLirInstr(currentBlockStartId, new Operand2Instr(Opcode.ADD,result,lo,ro));
+                lir.appendLirInstr(currentBlockStartId, new Operand2Instr(Opcode.ADD, result, lo, ro));
                 break;
             case Bytecode.ISUB:
             case Bytecode.LSUB:
             case Bytecode.FSUB:
             case Bytecode.DSUB:
-                lir.appendLirInstr(currentBlockStartId,new Operand2Instr(Opcode.SUB,result,lo,ro));
+                lir.appendLirInstr(currentBlockStartId, new Operand2Instr(Opcode.SUB, result, lo, ro));
                 break;
             case Bytecode.IMUL:
             case Bytecode.LMUL:
             case Bytecode.FMUL:
             case Bytecode.DMUL:
-                lir.appendLirInstr(currentBlockStartId,new Operand2Instr(Opcode.MUL,result,lo,ro));
+                lir.appendLirInstr(currentBlockStartId, new Operand2Instr(Opcode.MUL, result, lo, ro));
                 break;
             case Bytecode.IDIV:
             case Bytecode.LDIV:
                 CompilerErrors.bailOut();
             case Bytecode.FDIV:
             case Bytecode.DDIV:
-                lir.appendLirInstr(currentBlockStartId,new Operand2Instr(Opcode.DIV,result,lo,ro));
+                lir.appendLirInstr(currentBlockStartId, new Operand2Instr(Opcode.DIV, result, lo, ro));
                 break;
             case Bytecode.IREM:
             case Bytecode.LREM:
             case Bytecode.FREM:
             case Bytecode.DREM:
-                lir.appendLirInstr(currentBlockStartId,new Operand2Instr(Opcode.REM,result,lo,ro));
+                lir.appendLirInstr(currentBlockStartId, new Operand2Instr(Opcode.REM, result, lo, ro));
                 break;
             default:
                 YarrowError.shouldNotReachHere();
@@ -219,7 +218,7 @@ public class LirGenerator extends InstructionVisitor {
     }
 
     @Override
-    public void visitInstruction(HirInstruction instr) {
+    public void visitInstruction(HirInstr instr) {
 
     }
 

@@ -13,5 +13,4 @@ public enum Opcode {
     DIV,
     REM,
     // 3 operand opcode
-
 }

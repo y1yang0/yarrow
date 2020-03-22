@@ -8,9 +8,9 @@ import jdk.vm.ci.meta.JavaType;
 
 public class CheckCastInstr extends StateInstr {
     private JavaType klass;
-    private HirInstruction object;
+    private HirInstr object;
 
-    public CheckCastInstr(VmState stateBefore, JavaType klass, HirInstruction object) {
+    public CheckCastInstr(VmState stateBefore, JavaType klass, HirInstr object) {
         super(new Value(JavaKind.Object), stateBefore);
         this.klass = klass;
         this.object = object;

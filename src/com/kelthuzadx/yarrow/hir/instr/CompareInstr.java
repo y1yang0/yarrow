@@ -7,12 +7,12 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 
 public class CompareInstr extends Op2Instr {
-    public CompareInstr(int opcode, HirInstruction left, HirInstruction right) {
+    public CompareInstr(int opcode, HirInstr left, HirInstr right) {
         super(new Value(JavaKind.Int), opcode, left, right);
     }
 
     @Override
-    public HirInstruction ideal() {
+    public HirInstr ideal() {
         if (left instanceof ConstantInstr && right instanceof ConstantInstr) {
             if (left.isType(JavaKind.Long) && right.isType(JavaKind.Long)) {
                 long x = left.value();
