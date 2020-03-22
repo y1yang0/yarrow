@@ -13,14 +13,14 @@ public class Lir {
         this.instructions = new HashMap<>();
     }
 
-    public void appendLirInstr(int blockStartId, LirInstr lirInstr){
+    public void appendLirInstr(int blockStartId, LirInstr instr){
         var lirInstrs = instructions.get(blockStartId);
-        if(lirInstr==null){
+        if(lirInstrs==null){
             instructions.put(blockStartId,new ArrayList<>(){
-                {add(lirInstr);}
+                {add(instr);}
             });
         }else{
-            lirInstrs.add(lirInstr);
+            lirInstrs.add(instr);
         }
     }
 }

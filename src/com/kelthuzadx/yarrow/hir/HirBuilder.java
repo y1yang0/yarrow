@@ -126,7 +126,6 @@ public class HirBuilder implements Phase {
         while (bs.hasNext()) {
             int curBci = bs.next();
             int opcode = bs.currentBytecode();
-            System.out.println(bs.getCurrentBytecodeString());
             switch (opcode) {
                 case Bytecode.NOP:
                     break;
