@@ -1,7 +1,7 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.Value;
-import com.kelthuzadx.yarrow.lir.instr.LirOperand;
+import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.optimize.Visitable;
 import jdk.vm.ci.meta.JavaKind;
 

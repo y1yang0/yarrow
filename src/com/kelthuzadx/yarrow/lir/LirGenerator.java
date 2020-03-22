@@ -1,7 +1,7 @@
 package com.kelthuzadx.yarrow.lir;
 
 import com.kelthuzadx.yarrow.hir.instr.*;
-import com.kelthuzadx.yarrow.lir.instr.LirOperandFactory;
+import com.kelthuzadx.yarrow.lir.operand.LirOperandFactory;
 import com.kelthuzadx.yarrow.optimize.InstructionVisitor;
 
 public class LirGenerator extends InstructionVisitor {
@@ -108,6 +108,7 @@ public class LirGenerator extends InstructionVisitor {
     public void visitArithmeticInstr(ArithmeticInstr instr) {
         HirInstruction left = instr.getLeft();
         HirInstruction right = instr.getRight();
+
     }
 
     @Override
