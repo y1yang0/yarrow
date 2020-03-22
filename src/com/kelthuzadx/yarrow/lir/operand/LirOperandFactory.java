@@ -5,21 +5,22 @@ import com.kelthuzadx.yarrow.hir.instr.ConstantInstr;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.lir.operand.OperandKind;
 import com.kelthuzadx.yarrow.lir.operand.OperandType;
+import com.kelthuzadx.yarrow.util.CompilerErrors;
 import jdk.vm.ci.meta.JavaKind;
 
 public class LirOperandFactory {
     private static int vregisterId = 0;
 
-    public static ConstOperand createConstInt(ConstantInstr instr){
+    public static LirOperand createConstInt(ConstantInstr instr){
         switch (instr.type()){
             case Int:
-                return new ConstOperand(OperandType.Int,(int)instr.value());
+                return new LirOperand(OperandKind.Constant,OperandType.Int,instr.value());
             case Long:
-                return new ConstOperand(OperandType.Long,(long)instr.value());
+                return new  LirOperand(OperandKind.Constant,OperandType.Long,instr.value());
             case Float:
-                return new ConstOperand(OperandType.Float,(float)instr.value());
+                return new  LirOperand(OperandKind.Constant,OperandType.Float,instr.value());
             case Double:
-                return new ConstOperand(OperandType.Double,(double)instr.value());
+                return new  LirOperand(OperandKind.Constant,OperandType.Double,instr.value());
             default:
                 YarrowError.shouldNotReachHere();
         }
@@ -29,13 +30,13 @@ public class LirOperandFactory {
     public static LirOperand createVirtualRegister(JavaKind type){
         switch (type){
             case Int:
-                return new LirOperand(OperandKind.Register,OperandType.Int);
+                return new LirOperand(OperandKind.Register,OperandType.Int,vregisterId);
             case Long:
-                return new LirOperand(OperandKind.Register,OperandType.Long);
+                return new LirOperand(OperandKind.Register,OperandType.Long,vregisterId);
             case Float:
-                return new LirOperand(OperandKind.Register,OperandType.Float);
+                return new LirOperand(OperandKind.Register,OperandType.Float,vregisterId);
             case Double:
-                return new LirOperand(OperandKind.Register,OperandType.Double);
+                return new LirOperand(OperandKind.Register,OperandType.Double,vregisterId);
             default:
                 YarrowError.shouldNotReachHere();
         }

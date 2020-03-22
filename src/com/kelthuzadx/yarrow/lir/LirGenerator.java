@@ -1,10 +1,16 @@
 package com.kelthuzadx.yarrow.lir;
 
 import com.kelthuzadx.yarrow.hir.instr.*;
+import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.lir.operand.LirOperandFactory;
 import com.kelthuzadx.yarrow.optimize.InstructionVisitor;
 
+import java.util.HashMap;
+import java.util.Set;
+
 public class LirGenerator extends InstructionVisitor {
+    private Set<Integer> visitedSet;
+
     @Override
     public void visitMemBarrierInstr(MemBarrierInstr instr) {
 
@@ -108,7 +114,18 @@ public class LirGenerator extends InstructionVisitor {
     public void visitArithmeticInstr(ArithmeticInstr instr) {
         HirInstruction left = instr.getLeft();
         HirInstruction right = instr.getRight();
-
+        if(!visitedSet.contains(left.id())){
+            visitedSet.add(left.id());
+            left.visit(this);
+        }
+        if(!visitedSet.contains(right.id())){
+            visitedSet.add(right.id());
+            right.visit(this);
+        }
+        LirOperand lo = left.getOperand();
+        LirOperand ro = right.getOperand();
+        LirOperand vreg = LirOperandFactory.createVirtualRegister(left.type());
+        instr.setOperand(vreg);
     }
 
     @Override

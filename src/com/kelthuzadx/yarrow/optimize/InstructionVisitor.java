@@ -3,6 +3,7 @@ package com.kelthuzadx.yarrow.optimize;
 import com.kelthuzadx.yarrow.hir.instr.*;
 
 public abstract class InstructionVisitor {
+
     public abstract void visitMemBarrierInstr(MemBarrierInstr instr);
 
     public abstract void visitInstanceOfInstr(InstanceOfInstr instr);
