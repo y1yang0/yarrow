@@ -1,21 +1,21 @@
-package com.kelthuzadx.yarrow.lir.instr;
+package com.kelthuzadx.yarrow.lir.opcode;
 
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.util.Logger;
 
-public class Operand2Instr extends LirInstr {
+public class Op2Opcode extends LirOpcode {
     private LirOperand leftOperand;
     private LirOperand rightOperand;
 
-    public Operand2Instr(Opcode opcode, LirOperand result, LirOperand leftOperand, LirOperand rightOperand) {
-        super(opcode, result);
+    public Op2Opcode(Mnemonic mnemonic, LirOperand result, LirOperand leftOperand, LirOperand rightOperand) {
+        super(mnemonic, result);
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
     }
 
     @Override
     public String toString() {
-        return Logger.format("r{}: {} {} {},{}", super.id, opcode.name().toLowerCase(), result.toString(),
+        return Logger.format("r{}: {} {} {},{}", super.id, mnemonic.name().toLowerCase(), result.toString(),
                 leftOperand.toString(), rightOperand.toString());
 
     }

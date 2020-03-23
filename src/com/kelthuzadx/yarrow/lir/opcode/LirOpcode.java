@@ -1,15 +1,15 @@
-package com.kelthuzadx.yarrow.lir.instr;
+package com.kelthuzadx.yarrow.lir.opcode;
 
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 
-public class LirInstr {
+public class LirOpcode {
     protected int id;
-    protected Opcode opcode;
+    protected Mnemonic mnemonic;
     protected LirOperand result;
 
-    public LirInstr(Opcode opcode, LirOperand result) {
+    public LirOpcode(Mnemonic mnemonic, LirOperand result) {
         this.id = IdGenerator.next();
-        this.opcode = opcode;
+        this.mnemonic = mnemonic;
         this.result = result;
     }
 

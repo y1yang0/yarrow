@@ -1,6 +1,6 @@
-package com.kelthuzadx.yarrow.lir.instr;
+package com.kelthuzadx.yarrow.lir.opcode;
 
-public enum Opcode {
+public enum Mnemonic {
     Illegal,
     // 0 operand opcode
     NormalEntry,

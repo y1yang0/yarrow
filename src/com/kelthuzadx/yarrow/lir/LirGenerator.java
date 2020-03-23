@@ -4,7 +4,7 @@ import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.BlockFlag;
 import com.kelthuzadx.yarrow.hir.instr.*;
-import com.kelthuzadx.yarrow.lir.instr.*;
+import com.kelthuzadx.yarrow.lir.opcode.*;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.lir.operand.LirOperandFactory;
 import com.kelthuzadx.yarrow.optimize.InstructionVisitor;
@@ -212,7 +212,7 @@ public class LirGenerator extends InstructionVisitor {
         LirOperand toOperand = fromOperand;
         LirOperand toResult = fromResult;
 
-        appendToList(new Op1TypeCastInstr(toResult, toOperand, instr.getOpcode()));
+        appendToList(new TypeCastOpcode(toResult, toOperand, instr.getOpcode()));
 
         if (fromResult != toResult) {
             mov(toResult, fromResult);
@@ -266,38 +266,41 @@ public class LirGenerator extends InstructionVisitor {
     }
 
     private void add(LirOperand result, LirOperand left, LirOperand right) {
-        appendToList(new Operand2Instr(Opcode.ADD, result, left, right));
+        appendToList(new Op2Opcode(Mnemonic.ADD, result, left, right));
     }
 
     private void sub(LirOperand result, LirOperand left, LirOperand right) {
-        appendToList(new Operand2Instr(Opcode.SUB, result, left, right));
+        appendToList(new Op2Opcode(Mnemonic.SUB, result, left, right));
     }
 
     private void mul(LirOperand result, LirOperand left, LirOperand right) {
-        appendToList(new Operand2Instr(Opcode.MUL, result, left, right));
+        appendToList(new Op2Opcode(Mnemonic.MUL, result, left, right));
     }
 
     private void div(LirOperand result, LirOperand left, LirOperand right) {
-        appendToList(new Operand2Instr(Opcode.DIV, result, left, right));
+        appendToList(new Op2Opcode(Mnemonic.DIV, result, left, right));
     }
 
     private void rem(LirOperand result, LirOperand left, LirOperand right) {
-        appendToList(new Operand2Instr(Opcode.REM, result, left, right));
+        appendToList(new Op2Opcode(Mnemonic.REM, result, left, right));
     }
 
     private void mov(LirOperand dest, LirOperand src) {
-        appendToList(new Operand1Instr(Opcode.MOV, dest, src));
+        appendToList(new Op1Opcode(Mnemonic.MOV, dest, src));
+    }
+
+    private void jmp(BlockStartInstr block){
     }
 
     private void normalEntry() {
-        appendToList(new Operand0Instr(Opcode.NormalEntry, LirOperandFactory.createIllegal()));
+        appendToList(new Op0Opcode(Mnemonic.NormalEntry, LirOperandFactory.createIllegal()));
     }
 
     private void osrEntry() {
-        appendToList(new Operand0Instr(Opcode.OsrEntry, LirOperandFactory.createIllegal()));
+        appendToList(new Op0Opcode(Mnemonic.OsrEntry, LirOperandFactory.createIllegal()));
     }
 
-    private void appendToList(LirInstr instr) {
+    private void appendToList(LirOpcode instr) {
         lir.appendLirInstr(currentBlockStartId, instr);
     }
 }

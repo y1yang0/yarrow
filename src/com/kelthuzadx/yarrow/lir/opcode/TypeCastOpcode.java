@@ -1,14 +1,14 @@
-package com.kelthuzadx.yarrow.lir.instr;
+package com.kelthuzadx.yarrow.lir.opcode;
 
 import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.util.Logger;
 
-public class Op1TypeCastInstr extends Operand1Instr {
+public class TypeCastOpcode extends Op1Opcode {
     private int bytecode;
 
-    public Op1TypeCastInstr(LirOperand result, LirOperand operand, int bytecode) {
-        super(Opcode.TypeCast, result, operand);
+    public TypeCastOpcode(LirOperand result, LirOperand operand, int bytecode) {
+        super(Mnemonic.TypeCast, result, operand);
         this.bytecode = bytecode;
     }
 
