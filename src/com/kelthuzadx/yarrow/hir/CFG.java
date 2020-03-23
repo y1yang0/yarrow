@@ -22,8 +22,8 @@ import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.*;
  */
 public class CFG implements Phase {
     public final HotSpotResolvedJavaMethod method;
+    private BlockStartInstr entryBlock;
     private int nextBlockId;
-    private int codeSize;
     private byte[] code;
     private ExHandler[] exHandler;
     private BlockStartInstr[] bciToBlockMapping;
@@ -35,10 +35,10 @@ public class CFG implements Phase {
     public CFG(HotSpotResolvedJavaMethod method) {
         this.method = method;
         this.nextBlockId = 1; // reserve 0 for entry block
-        this.codeSize = method.getCodeSize();
+        int codeSize = method.getCodeSize();
         this.code = method.getCode();
         this.exHandler = new ExHandler[method.getExceptionHandlers().length];
-        this.bciToBlockMapping = null;
+        this.bciToBlockMapping = new BlockStartInstr[codeSize];
         this.blocks = null;
         this.loopMap = new HashMap<>();
         this.nextLoopIndex = 0;
@@ -59,12 +59,26 @@ public class CFG implements Phase {
         return bciToBlockMapping[bci];
     }
 
+    public BlockStartInstr getEntryBlock() {
+        return entryBlock;
+    }
+
     public BlockStartInstr[] getBlocks() {
         return blocks;
     }
 
+    private void createEntryBlock() {
+        BlockStartInstr entry = new BlockStartInstr(0, -1);
+        entry.setFlag(BlockFlag.NormalEntry);
+        this.entryBlock = entry;
+    }
+
+    private void fixupEntryBlock() {
+        this.entryBlock.addSuccessor(blockContain(0));
+    }
+
     private void mapBciToBlocks() {
-        this.bciToBlockMapping = new BlockStartInstr[this.codeSize];
+        createEntryBlock();
         createExceptionBlock();
 
         BlockStartInstr currentBlock = null;
@@ -164,6 +178,8 @@ public class CFG implements Phase {
                 }
             }
         }
+
+        fixupEntryBlock();
     }
 
     private void uniqueBlocks() {

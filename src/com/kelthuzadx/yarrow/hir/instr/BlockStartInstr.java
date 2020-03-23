@@ -91,6 +91,10 @@ public class BlockStartInstr extends StateInstr {
         this.exHandler = exHandler;
     }
 
+    public BlockFlag getFlag() {
+        return flag;
+    }
+
     public void setFlag(BlockFlag flag) {
         this.flag = flag;
     }

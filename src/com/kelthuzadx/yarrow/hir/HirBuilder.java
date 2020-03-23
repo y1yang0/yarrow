@@ -69,7 +69,9 @@ public class HirBuilder implements Phase {
 
     @Override
     public HirBuilder build() {
-        BlockStartInstr methodEntry = createEntryBlock();
+        BlockStartInstr methodEntry = cfg.getEntryBlock();
+        methodEntry.mergeVmState(createEntryVmState());
+
         hir = new Hir(method, methodEntry);
 
         visit = new HashSet<>(cfg.getBlocks().length);
@@ -95,14 +97,6 @@ public class HirBuilder implements Phase {
 
     public Hir getHir() {
         return hir;
-    }
-
-    private BlockStartInstr createEntryBlock() {
-        BlockStartInstr entry = new BlockStartInstr(0, -1);
-        entry.setFlag(BlockFlag.NormalEntry);
-        entry.addSuccessor(cfg.blockContain(0));
-        entry.mergeVmState(createEntryVmState());
-        return entry;
     }
 
     private VmState createEntryVmState() {

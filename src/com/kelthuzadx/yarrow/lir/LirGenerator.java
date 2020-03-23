@@ -2,6 +2,7 @@ package com.kelthuzadx.yarrow.lir;
 
 import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.core.YarrowError;
+import com.kelthuzadx.yarrow.hir.BlockFlag;
 import com.kelthuzadx.yarrow.hir.instr.*;
 import com.kelthuzadx.yarrow.lir.instr.*;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
@@ -74,6 +75,11 @@ public class LirGenerator extends InstructionVisitor {
     @Override
     public void visitBlockStartInstr(BlockStartInstr instr) {
         currentBlockStartId = instr.id();
+        if (instr.getFlag() == BlockFlag.NormalEntry) {
+            normalEntry();
+        } else if (instr.getFlag() == BlockFlag.OsrEntry) {
+            osrEntry();
+        }
     }
 
     @Override
@@ -281,6 +287,14 @@ public class LirGenerator extends InstructionVisitor {
 
     private void mov(LirOperand dest, LirOperand src) {
         appendToList(new Operand1Instr(Opcode.MOV, dest, src));
+    }
+
+    private void normalEntry() {
+        appendToList(new Operand0Instr(Opcode.NormalEntry, LirOperandFactory.createIllegal()));
+    }
+
+    private void osrEntry() {
+        appendToList(new Operand0Instr(Opcode.OsrEntry, LirOperandFactory.createIllegal()));
     }
 
     private void appendToList(LirInstr instr) {
