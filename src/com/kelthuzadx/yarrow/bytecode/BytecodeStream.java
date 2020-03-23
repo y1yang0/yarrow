@@ -28,7 +28,7 @@ public class BytecodeStream implements Iterator<Integer> {
 
     @Override
     public boolean hasNext() {
-        return nextBci <= endBci;
+        return nextBci <= endBci && nextBci >= 0;
     }
 
     // consume current bytecode and return next byte code index

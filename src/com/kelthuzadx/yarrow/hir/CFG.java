@@ -22,7 +22,7 @@ import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.*;
  */
 public class CFG implements Phase {
     public final HotSpotResolvedJavaMethod method;
-    private int globalBlockId;
+    private int nextBlockId;
     private int codeSize;
     private byte[] code;
     private ExHandler[] exHandler;
@@ -34,7 +34,7 @@ public class CFG implements Phase {
 
     public CFG(HotSpotResolvedJavaMethod method) {
         this.method = method;
-        this.globalBlockId = 0;
+        this.nextBlockId = 1; // reserve 0 for entry block
         this.codeSize = method.getCodeSize();
         this.code = method.getCode();
         this.exHandler = new ExHandler[method.getExceptionHandlers().length];
@@ -190,13 +190,13 @@ public class CFG implements Phase {
     private BlockStartInstr createBlockAt(int bci) {
         BlockStartInstr formerBlock = bciToBlockMapping[bci];
         if (formerBlock == null) {
-            bciToBlockMapping[bci] = new BlockStartInstr(globalBlockId++, bci);
+            bciToBlockMapping[bci] = new BlockStartInstr(nextBlockId++, bci);
             return bciToBlockMapping[bci];
         }
 
         if (bci != formerBlock.getStartBci()) {
             // Create new block after splitting former block
-            BlockStartInstr newBlock = new BlockStartInstr(globalBlockId++, bci);
+            BlockStartInstr newBlock = new BlockStartInstr(nextBlockId++, bci);
             newBlock.setStartBci(bci);
             newBlock.setEndBci(formerBlock.getEndBci());
             formerBlock.setEndBci(bci - 1);

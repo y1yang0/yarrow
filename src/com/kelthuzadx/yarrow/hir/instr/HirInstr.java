@@ -55,9 +55,9 @@ public abstract class HirInstr implements Visitable {
     }
 
     public LirOperand getOperand(InstructionVisitor visitor) {
-        if(operand==null){
+        if (operand == null) {
             this.visit(visitor);
-            YarrowError.guarantee(operand!=null,"Must be not null");
+            YarrowError.guarantee(operand != null, "Must be not null");
         }
         return operand;
     }

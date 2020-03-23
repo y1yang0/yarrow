@@ -69,8 +69,7 @@ public class HirBuilder implements Phase {
 
     @Override
     public HirBuilder build() {
-        BlockStartInstr methodEntry = cfg.blockContain(0);
-        methodEntry.mergeVmState(createEntryVmState());
+        BlockStartInstr methodEntry = createEntryBlock();
         hir = new Hir(method, methodEntry);
 
         visit = new HashSet<>(cfg.getBlocks().length);
@@ -96,6 +95,14 @@ public class HirBuilder implements Phase {
 
     public Hir getHir() {
         return hir;
+    }
+
+    private BlockStartInstr createEntryBlock() {
+        BlockStartInstr entry = new BlockStartInstr(0, -1);
+        entry.setFlag(BlockFlag.NormalEntry);
+        entry.addSuccessor(cfg.blockContain(0));
+        entry.mergeVmState(createEntryVmState());
+        return entry;
     }
 
     private VmState createEntryVmState() {
@@ -662,7 +669,12 @@ public class HirBuilder implements Phase {
 
         // This could happen when back edge splits one consist block
         if (!(lastInstr instanceof BlockEndInstr)) {
-            BlockEndInstr endInstr = new GotoInstr(null, cfg.blockContain(bs.peekNextBci()));
+            BlockEndInstr endInstr;
+            if (bs.peekNextBci() == -1) {
+                endInstr = new GotoInstr(null, cfg.blockContain(0));
+            } else {
+                endInstr = new GotoInstr(null, cfg.blockContain(bs.peekNextBci()));
+            }
             appendToBlock(endInstr);
         }
         block.setBlockEnd((BlockEndInstr) lastInstr);

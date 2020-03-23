@@ -128,8 +128,8 @@ public class LirGenerator extends InstructionVisitor {
         LirOperand result = LirOperandFactory.createVirtualRegister(instr.getLeft().type());
         instr.setOperand(result);
         if (left != result) {
-            mov(result,left);
-            left=result;
+            mov(result, left);
+            left = result;
         }
         switch (instr.getOpcode()) {
             case Bytecode.IADD:

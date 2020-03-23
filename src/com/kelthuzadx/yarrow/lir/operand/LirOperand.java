@@ -79,6 +79,6 @@ public class LirOperand {
                 t = "?";
                 break;
         }
-        return  k + ":" + t ;
+        return k + ":" + t;
     }
 }

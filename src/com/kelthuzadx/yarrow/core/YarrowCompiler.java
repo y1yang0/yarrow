@@ -3,7 +3,6 @@ package com.kelthuzadx.yarrow.core;
 
 import com.kelthuzadx.yarrow.hir.CFG;
 import com.kelthuzadx.yarrow.hir.HirBuilder;
-import com.kelthuzadx.yarrow.lir.LirBuilder;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.code.CompilationRequest;
 import jdk.vm.ci.code.CompilationRequestResult;
@@ -29,7 +28,6 @@ public class YarrowCompiler implements JVMCICompiler {
         if (method.hasCompiledCodeAtLevel(YarrowConfigAccess.CompLevel_full_optimization)) {
             return HotSpotCompilationRequestResult.success(0);
         }
-
         Logger.logf("=====Compiling {}.{}=====", method.getDeclaringClass().getUnqualifiedName(), method.getName());
 
         Stream.of(method)
@@ -40,8 +38,8 @@ public class YarrowCompiler implements JVMCICompiler {
                 .map(HirBuilder::build)
                 .peek(HirBuilder::log)
                 .map(HirBuilder::getHir)
-                .map(LirBuilder::new)
-                .map(LirBuilder::build)
+                // .map(LirBuilder::new)
+                //.map(LirBuilder::build)
                 .collect(Collectors.toList());
 
         System.exit(0);
