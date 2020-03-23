@@ -76,9 +76,9 @@ public class LirOperand {
                 t = "D";
                 break;
             case Unknown:
-                t = "Unknow";
+                t = "?";
                 break;
         }
-        return "[" + k + "|" + t + "]";
+        return  k + ":" + t ;
     }
 }

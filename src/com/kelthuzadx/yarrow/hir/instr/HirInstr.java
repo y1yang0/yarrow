@@ -1,7 +1,9 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
+import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
+import com.kelthuzadx.yarrow.optimize.InstructionVisitor;
 import com.kelthuzadx.yarrow.optimize.Visitable;
 import jdk.vm.ci.meta.JavaKind;
 
@@ -52,16 +54,16 @@ public abstract class HirInstr implements Visitable {
         this.next = next;
     }
 
-    public LirOperand getOperand() {
+    public LirOperand getOperand(InstructionVisitor visitor) {
+        if(operand==null){
+            this.visit(visitor);
+            YarrowError.guarantee(operand!=null,"Must be not null");
+        }
         return operand;
     }
 
     public void setOperand(LirOperand operand) {
         this.operand = operand;
-    }
-
-    public boolean isResolvedOperand() {
-        return operand != null;
     }
 
     /**

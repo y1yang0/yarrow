@@ -43,10 +43,6 @@ public class LirGenerator extends InstructionVisitor {
 
     @Override
     public void visitParamInstr(ParamInstr instr) {
-        if (instr.isResolvedOperand()) {
-            return;
-        }
-
         instr.setOperand(LirOperandFactory.createVirtualRegister(instr.type()));
     }
 
@@ -97,10 +93,6 @@ public class LirGenerator extends InstructionVisitor {
 
     @Override
     public void visitConstantInstr(ConstantInstr instr) {
-        if (instr.isResolvedOperand()) {
-            return;
-        }
-
         instr.setOperand(LirOperandFactory.createConstInt(instr));
     }
 
@@ -131,52 +123,45 @@ public class LirGenerator extends InstructionVisitor {
 
     @Override
     public void visitArithmeticInstr(ArithmeticInstr instr) {
-        HirInstr left = instr.getLeft();
-        HirInstr right = instr.getRight();
-        if (!left.isResolvedOperand()) {
-            left.visit(this);
-        }
-        if (!right.isResolvedOperand()) {
-            right.visit(this);
-        }
-        LirOperand lo = left.getOperand();
-        LirOperand ro = right.getOperand();
-        LirOperand result = LirOperandFactory.createVirtualRegister(left.type());
+        LirOperand left = instr.getLeft().getOperand(this);
+        LirOperand right = instr.getRight().getOperand(this);
+        LirOperand result = LirOperandFactory.createVirtualRegister(instr.getLeft().type());
         instr.setOperand(result);
-        if (lo != result) {
-            mov(result, lo);
+        if (left != result) {
+            mov(result,left);
+            left=result;
         }
         switch (instr.getOpcode()) {
             case Bytecode.IADD:
             case Bytecode.LADD:
             case Bytecode.FADD:
             case Bytecode.DADD:
-                add(result, lo, ro);
+                add(result, left, right);
                 break;
             case Bytecode.ISUB:
             case Bytecode.LSUB:
             case Bytecode.FSUB:
             case Bytecode.DSUB:
-                sub(result, lo, ro);
+                sub(result, left, right);
                 break;
             case Bytecode.IMUL:
             case Bytecode.LMUL:
             case Bytecode.FMUL:
             case Bytecode.DMUL:
-                mul(result, lo, ro);
+                mul(result, left, right);
                 break;
             case Bytecode.IDIV:
             case Bytecode.LDIV:
                 CompilerErrors.bailOut();
             case Bytecode.FDIV:
             case Bytecode.DDIV:
-                div(result, lo, ro);
+                div(result, left, right);
                 break;
             case Bytecode.IREM:
             case Bytecode.LREM:
             case Bytecode.FREM:
             case Bytecode.DREM:
-                rem(result, lo, ro);
+                rem(result, left, right);
                 break;
             default:
                 YarrowError.shouldNotReachHere();
@@ -215,10 +200,7 @@ public class LirGenerator extends InstructionVisitor {
 
     @Override
     public void visitTypeCastInstr(TypeCastInstr instr) {
-        if (!instr.getFrom().isResolvedOperand()) {
-            instr.getFrom().visit(this);
-        }
-        LirOperand fromOperand = instr.getFrom().getOperand();
+        LirOperand fromOperand = instr.getFrom().getOperand(this);
         LirOperand fromResult = LirOperandFactory.createVirtualRegister(instr.type());
 
         LirOperand toOperand = fromOperand;
