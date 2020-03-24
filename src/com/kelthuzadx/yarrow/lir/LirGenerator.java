@@ -289,7 +289,36 @@ public class LirGenerator extends InstructionVisitor {
         appendToList(new Op1Opcode(Mnemonic.MOV, dest, src));
     }
 
-    private void jmp(BlockStartInstr block){
+    private void membar() {
+        appendToList(new Op0Opcode(Mnemonic.Membar, LirOperandFactory.createIllegal()));
+    }
+
+    private void membarLoadLoad() {
+        appendToList(new Op0Opcode(Mnemonic.MembarLoadLoad, LirOperandFactory.createIllegal()));
+    }
+
+    private void membarLoadStore() {
+        appendToList(new Op0Opcode(Mnemonic.MembarLoadStore, LirOperandFactory.createIllegal()));
+    }
+
+    private void membarStoreStore() {
+        appendToList(new Op0Opcode(Mnemonic.MembarStoreStore, LirOperandFactory.createIllegal()));
+    }
+
+    private void membarStoreLoad() {
+        appendToList(new Op0Opcode(Mnemonic.MembarStoreLoad, LirOperandFactory.createIllegal()));
+    }
+
+    private void membarAcquire() {
+        appendToList(new Op0Opcode(Mnemonic.MembarAcquire, LirOperandFactory.createIllegal()));
+    }
+
+    private void membarRelease() {
+        appendToList(new Op0Opcode(Mnemonic.MembarRelease, LirOperandFactory.createIllegal()));
+    }
+
+    private void jmp(BlockStartInstr block) {
+        //new JmpOpcode(Mnemonic.JMP,LirOperandFactory.createIllegal(),)
     }
 
     private void normalEntry() {

@@ -130,7 +130,9 @@ instruction
 ![](doc/LVNTest_lvn_phase1.png)
 
 This could eliminate many redundant field access operations and computations. 
-After that, yarrow lowers HIR, it transforms machine-independent HIR instructions
+Typically, the next step is code generation,
+it is the most tough and sophisticated phase in an optimizing compiler.
+yarrow lowers HIR, it transforms machine-independent HIR instructions
 to machine instructions and eliminates dead code and PHI instruction, newly created LIR plays the main 
 role of code generation, instruction selection based on BURS, I'm not sure which register allocation
 algorithm would be implemented. If I have enough time, I will examine a peephole optimization phase
