@@ -16,16 +16,92 @@ instructions(tier 2) HIR.
 The whole compilation is divided into two parts. yarrow parses Java bytecode to HIR as soon as yarrow
 polls a compilation task from compile queue. In order to achieve transformation, compiler finds leader
 instructions and creates a control flow graph within bytecode, the minimal component of control flow grpah
-is basic block, it connects to other blocks by `successors` field. Control flow graph becomes 1-Tier of HIR, you can dump the final graph by switching `-Dyarrow.Debug.PrintIRToFile=true`:
+is basic block, it connects to other blocks by `successors` field. 
+ontrol flow graph becomes 1-Tier of HIR, you can dump the final graph by switching `-Dyarrow.Debug.PrintIRToFile=true`,
+You can understand what compiler's internal does by the following demo:
+
+**Example 1: Source Code**
+```java
+static void yarrow_complex(int k) {
+        int val = 12;
+        if (k >= 100) {
+            if (k >= 200) {
+                if (k >= 400) {
+                    val += (val ^ 32);
+                    int res = val + 1;
+                    double d = res;
+                }
+            }
+        }
+        for (int i = val; i >= 0; i--) {
+            if (i % 2 == 0) {
+                continue;
+            }
+            if (i + val >= 100) {
+                val -= 100;
+            } else {
+                for (int t = i; t < i + 10; t++) {
+                    val += t;
+                    switch (t) {
+                        case 23:
+                            val += 32;
+                            break;
+                        case 323:
+                            val += 23;
+                        case 32:
+                            val += 3233;
+                            break;
+                        default:
+                            val = 44;
+                    }
+                }
+                break;
+            }
+        }
+    }
+```
+
+**Example 1: Control Flow Graph**
 
 ![](doc/ControlTest_yarrow_complex_phase0.png)
+
+**Example 2: Source Code**
+
+```java
+ublic static int[][] fillMatrix(int[][] M) {
+        for (int xx = 0; xx < 100000; xx++) {
+            int ml = 0;
+            for (int i = 0; i < M.length; i++) {
+                ml = ml < M[i].length ? M[i].length : ml;
+            }
+            int[][] Nm = new int[M.length][ml];
+            for (int i = 0; i < M.length; i++) {
+                for (int j = 0; j < M[i].length; j++) {
+                    Nm[i][j] = M[i][j];
+                }
+            }
+            return Nm;
+        }
+        return null;
+    }
+```
+
+**Example 2: Control Flow Graph**
+
+![](doc/MatrixTest_fillMatrix_phase0.png)
 
 Later, a so-called [abstract interpretation](https://en.wikipedia.org/wiki/Abstract_interpretation) phase
 interprets bytecode and generates corresponding SSA instructions, SSA form needs to merge different 
 values of same variable. Therefore, if a basic block has more than one predecessor, PhiInstr might
 be needed at the start of block. Again, you can dump graph using mentioned option:
 
+**Example 1: SSA Form**
+
 ![](doc/ControlTest_yarrow_complex_phase1.png)
+
+**Example 2: SSA Form**
+
+![](doc/MatrixTest_fillMatrix_phase1.png)
 
 The simple structure of the HIR allows the easy implementation of global optimizations, which are applied
 both during and after the construction of HIR. Theoretically, all optimizations developed for traditional
@@ -33,89 +109,13 @@ compilers could be applied, but most of them require the analysis of the data fl
 JIT compiler, so yarrow implements only simple and fast optimizations, that's why it is called optimizing
 compiler. The most classic optimizations such as constant folding,algebraic simplification and simple constant
 propagation will be applied as soon as instruction tries to insert it into a basic block
-```java
-VmState{lock=[],stack=[],local=[i9,i61,i16,i23,i19,null,i22,null,i45,i38,i41,i42,i58]}
-i2: block_start
-i16: 23
-i17: i16 + i16
-i19: 100
-i20: i19 + i19
-i22: -i20
-i23: -i17
-i24: 23.0
-i25: 3.14
-i26: -i24
-i28: -i25
-i30: i16 & i16
-i32: i16 | i16
-i34: i16 ^ i16
-i36: 3
-i37: new int[i36]
-i38: arraylen i37
-i40: 56
-i41: new Object[i40]
-i42: arraylen i41
-i44: 4
-i45: new int[i44]
-i46: 0
-i47: 2
-i48: i45[i46] = i47 [int]
-i49: 1
-i50: 4
-i51: i45[i49] = i50 [int]
-i52: 2
-i53: 5
-i54: i45[i52] = i53 [int]
-i55: 3
-i56: 6
-i57: i45[i55] = i56 [int]
-i58: arraylen i45
-i60: 1
-i61: i10 + i60
-i62: goto i3
-```
+
+![](doc/IdealTest_main_phase0.png)
+
 Compiler idealizes many instructions, it reduces computations and chooses a simple canonical form:
-```java
-VmState{lock=[],stack=[],local=[i9,i63,i16,i25,i19,null,i23,null,i47,i41,i43,i45,i61]}
-i2: block_start
-i16: 23
-i18: 46
-i19: 100
-i21: 200
-i23: -200
-i25: -46
-i26: 23.0
-i27: 3.14
-i29: -23.0
-i31: -3.14
-i33: 23
-i35: 23
-i37: 0
-i38: 3
-i39: new int[i38]
-i41: 3
-i42: 56
-i43: new Object[i42]
-i45: 56
-i46: 4
-i47: new int[i46]
-i48: 0
-i49: 2
-i50: i47[i48] = i49 [int]
-i51: 1
-i52: 4
-i53: i47[i51] = i52 [int]
-i54: 2
-i55: 5
-i56: i47[i54] = i55 [int]
-i57: 3
-i58: 6
-i59: i47[i57] = i58 [int]
-i61: 4
-i62: 1
-i63: i10 + i62
-i64: goto i3
-```
+
+![](doc/IdealTest_main_phase1.png)
+
 Also compiler removes unreachable blocks
 
 ![](doc/IdealTest_main_phase0.png)
@@ -177,6 +177,6 @@ can split control flow and builds the complete control flow graph
 
 ![](doc/SumTest_sum_phase1.png)
 
-Ater that, yarrow generates corresponding SSA instructions
+After that, yarrow generates corresponding SSA instructions
 
 ![](doc/SumTest_sum_phase2.png)
