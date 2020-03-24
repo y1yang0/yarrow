@@ -5,6 +5,7 @@ public enum Mnemonic {
     // 0 operand opcode
     NormalEntry,
     OsrEntry,
+    Label,
     Membar,
     MembarLoadLoad,
     MembarLoadStore,
@@ -14,7 +15,6 @@ public enum Mnemonic {
     MembarRelease,
 
     // 1 operand opcode
-    Label,
     MOV,
     TypeCast,
     JMP,

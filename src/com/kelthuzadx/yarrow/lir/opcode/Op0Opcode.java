@@ -27,9 +27,9 @@ public class Op0Opcode extends LirOpcode {
             case MembarRelease:
                 return Logger.format("r{}: membar Release", super.id);
             case OsrEntry:
-                return Logger.format("r{}: osr_entry",super.id);
+                return Logger.format("r{}: osr_entry", super.id);
             case NormalEntry:
-                return Logger.format("r{}: normal_entry",super.id);
+                return Logger.format("r{}: normal_entry", super.id);
             default:
                 break;
         }

@@ -7,7 +7,7 @@ import jdk.vm.ci.meta.JavaKind;
 public class LirOperandFactory {
     private static int vregisterId = 0;
 
-    public static LirOperand createIllegal() {
+    public static LirOperand illegalOperand() {
         return new LirOperand(OperandKind.Illegal, OperandType.Unknown);
     }
 
