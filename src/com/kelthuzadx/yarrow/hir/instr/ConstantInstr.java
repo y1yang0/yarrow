@@ -1,11 +1,9 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
-import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.hotspot.HotSpotObjectConstant;
 import jdk.vm.ci.meta.JavaConstant;
 import jdk.vm.ci.meta.JavaKind;
-import jdk.vm.ci.meta.PrimitiveConstant;
 
 import java.util.Objects;
 
@@ -28,7 +26,7 @@ public class ConstantInstr extends HirInstr {
             if (constant.isNull()) {
                 return Logger.format("i{}: nullptr", super.id);
             } else {
-                if(constant instanceof HotSpotObjectConstant && ((HotSpotObjectConstant) constant).isInternedString()){
+                if (constant instanceof HotSpotObjectConstant && ((HotSpotObjectConstant) constant).isInternedString()) {
                     return Logger.format("i{}: '{}'", super.id, constant.toValueString());
                 } else {
                     return Logger.format("i{}: {}", super.id, constant.toValueString());

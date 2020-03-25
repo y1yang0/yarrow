@@ -3,15 +3,12 @@ package com.kelthuzadx.yarrow.core;
 
 import com.kelthuzadx.yarrow.hir.CFG;
 import com.kelthuzadx.yarrow.hir.HirBuilder;
-import com.kelthuzadx.yarrow.lir.LirBuilder;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.code.CompilationRequest;
 import jdk.vm.ci.code.CompilationRequestResult;
 import jdk.vm.ci.hotspot.HotSpotCompilationRequestResult;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
-import jdk.vm.ci.runtime.JVMCI;
 import jdk.vm.ci.runtime.JVMCICompiler;
-import jdk.vm.ci.runtime.JVMCIRuntime;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -33,8 +30,8 @@ public class YarrowCompiler implements JVMCICompiler {
                 .map(HirBuilder::build)
                 .peek(HirBuilder::log)
                 .map(HirBuilder::getHir)
-                .map(LirBuilder::new)
-                .map(LirBuilder::build)
+                // .map(LirBuilder::new)
+                //.map(LirBuilder::build)
                 .collect(Collectors.toList());
 
         System.exit(0);

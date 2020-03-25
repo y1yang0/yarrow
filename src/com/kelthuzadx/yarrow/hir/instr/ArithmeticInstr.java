@@ -2,7 +2,6 @@ package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.core.YarrowError;
-import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaConstant;
 import jdk.vm.ci.meta.JavaKind;
@@ -38,7 +37,7 @@ public class ArithmeticInstr extends Op2Instr {
                 int y = ((ConstantInstr) right).getConstant().asInt();
                 switch (opcode) {
                     case Bytecode.IADD:
-                        return new ConstantInstr(JavaConstant.forInt(x+y));
+                        return new ConstantInstr(JavaConstant.forInt(x + y));
                     case Bytecode.ISUB:
                         return new ConstantInstr(JavaConstant.forInt(x - y));
                     case Bytecode.IMUL:
@@ -75,23 +74,23 @@ public class ArithmeticInstr extends Op2Instr {
         }
 
         if (right instanceof ConstantInstr) {
-            if (left.isType(JavaKind.Int) && (int) ((ConstantInstr) right).getConstant().asInt() == 0) {
-                int x = ((ConstantInstr)left).getConstant().asInt();
+            if (left.isType(JavaKind.Int) && ((ConstantInstr) right).getConstant().asInt() == 0) {
+                int x = ((ConstantInstr) left).getConstant().asInt();
                 switch (opcode) {
                     case Bytecode.IADD:
                     case Bytecode.ISUB:
-                        return new ConstantInstr(JavaConstant.forInt( x));
+                        return new ConstantInstr(JavaConstant.forInt(x));
                     case Bytecode.IMUL:
                         return new ConstantInstr(JavaConstant.INT_0);
                     default:
                         YarrowError.shouldNotReachHere();
                 }
             } else if (left.isType(JavaKind.Long)) {
-                long x = ((ConstantInstr)left).getConstant().asLong();
+                long x = ((ConstantInstr) left).getConstant().asLong();
                 switch (opcode) {
                     case Bytecode.IADD:
                     case Bytecode.ISUB:
-                        return new ConstantInstr(JavaConstant.forLong( x));
+                        return new ConstantInstr(JavaConstant.forLong(x));
                     case Bytecode.IMUL:
                         return new ConstantInstr(JavaConstant.LONG_0);
                     default:

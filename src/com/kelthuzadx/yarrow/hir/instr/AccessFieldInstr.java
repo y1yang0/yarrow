@@ -1,6 +1,5 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
-import com.kelthuzadx.yarrow.hir.Value;
 import jdk.vm.ci.meta.JavaField;
 
 public abstract class AccessFieldInstr extends HirInstr {

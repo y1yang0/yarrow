@@ -10,13 +10,13 @@ import jdk.vm.ci.runtime.JVMCI;
 public class YarrowRuntime {
     public static MetaAccessProvider metaAccess = JVMCI.getRuntime().getHostJVMCIBackend().getMetaAccess();
 
-    public static CodeCacheProvider codeCache=JVMCI.getRuntime().getHostJVMCIBackend().getCodeCache();
+    public static CodeCacheProvider codeCache = JVMCI.getRuntime().getHostJVMCIBackend().getCodeCache();
 
-    public static ConstantReflectionProvider constReflection=JVMCI.getRuntime().getHostJVMCIBackend().getConstantReflection();
+    public static ConstantReflectionProvider constReflection = JVMCI.getRuntime().getHostJVMCIBackend().getConstantReflection();
 
-    public static TargetDescription target=JVMCI.getRuntime().getHostJVMCIBackend().getTarget();
+    public static TargetDescription target = JVMCI.getRuntime().getHostJVMCIBackend().getTarget();
 
-    public static RegisterConfig regConfig= JVMCI.getRuntime().getHostJVMCIBackend().getCodeCache().getRegisterConfig();
+    public static RegisterConfig regConfig = JVMCI.getRuntime().getHostJVMCIBackend().getCodeCache().getRegisterConfig();
 
 
 }

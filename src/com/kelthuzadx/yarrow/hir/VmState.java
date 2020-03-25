@@ -138,14 +138,12 @@ public class VmState {
     }
 
     public void createPhiForStack(BlockStartInstr block, int index) {
-        Value val = new Value(stack.elementAt(index).type());
-        PhiInstr phi = new PhiInstr(val, -index - 1, block);
+        PhiInstr phi = new PhiInstr(stack.elementAt(index).type(), -index - 1, block);
         stack.set(index, phi);
     }
 
     public void createPhiForLocal(BlockStartInstr block, int index) {
-        Value val = new Value(local[index].type());
-        PhiInstr phi = new PhiInstr(val, index, block);
+        PhiInstr phi = new PhiInstr(local[index].type(), index, block);
         local[index] = phi;
     }
 

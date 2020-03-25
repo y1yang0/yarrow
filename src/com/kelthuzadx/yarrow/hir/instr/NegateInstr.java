@@ -1,6 +1,5 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
-import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaConstant;
 import jdk.vm.ci.meta.JavaKind;
@@ -19,13 +18,13 @@ public class NegateInstr extends HirInstr {
     public HirInstr ideal() {
         if (left instanceof ConstantInstr) {
             if (left.isType(JavaKind.Int)) {
-                return new ConstantInstr(JavaConstant.forInt( -((ConstantInstr)left).getConstant().asInt()));
+                return new ConstantInstr(JavaConstant.forInt(-((ConstantInstr) left).getConstant().asInt()));
             } else if (left.isType(JavaKind.Long)) {
-                return new ConstantInstr(JavaConstant.forLong( -((ConstantInstr)left).getConstant().asLong()));
+                return new ConstantInstr(JavaConstant.forLong(-((ConstantInstr) left).getConstant().asLong()));
             } else if (left.isType(JavaKind.Float)) {
-                return new ConstantInstr(JavaConstant.forFloat( -((ConstantInstr)left).getConstant().asFloat()));
+                return new ConstantInstr(JavaConstant.forFloat(-((ConstantInstr) left).getConstant().asFloat()));
             } else if (left.isType(JavaKind.Double)) {
-                return new ConstantInstr(JavaConstant.forDouble( -((ConstantInstr)left).getConstant().asDouble()));
+                return new ConstantInstr(JavaConstant.forDouble(-((ConstantInstr) left).getConstant().asDouble()));
             }
         }
         return this;

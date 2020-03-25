@@ -13,18 +13,18 @@ public class LirOperandFactory {
 
 
     public static LirOperand createConstInt(ConstantInstr instr) {
-        switch (instr.type()) {
-            case Int:
-                return new LirOperand(OperandKind.Constant, OperandType.Int, instr.value());
-            case Long:
-                return new LirOperand(OperandKind.Constant, OperandType.Long, instr.value());
-            case Float:
-                return new LirOperand(OperandKind.Constant, OperandType.Float, instr.value());
-            case Double:
-                return new LirOperand(OperandKind.Constant, OperandType.Double, instr.value());
-            default:
-                YarrowError.shouldNotReachHere();
-        }
+//        switch (instr.type()) {
+//            case Int:
+//                return new LirOperand(OperandKind.Constant, OperandType.Int, instr.value());
+//            case Long:
+//                return new LirOperand(OperandKind.Constant, OperandType.Long, instr.value());
+//            case Float:
+//                return new LirOperand(OperandKind.Constant, OperandType.Float, instr.value());
+//            case Double:
+//                return new LirOperand(OperandKind.Constant, OperandType.Double, instr.value());
+//            default:
+//                YarrowError.shouldNotReachHere();
+//        }
         return null;
     }
 

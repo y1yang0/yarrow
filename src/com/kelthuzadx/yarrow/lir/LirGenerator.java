@@ -255,7 +255,7 @@ public class LirGenerator extends InstructionVisitor {
 
     @Override
     public void visitReturnInstr(ReturnInstr instr) {
-        if(instr.isType(JavaKind.Void)) {
+        if (instr.isType(JavaKind.Void)) {
             returnOp(illegalOperand());
             return;
         }
@@ -334,8 +334,8 @@ public class LirGenerator extends InstructionVisitor {
         appendToList(new JmpOpcode(Cond.Always, block));
     }
 
-    private void returnOp(LirOperand ret){
-        appendToList(new Op1Opcode(Mnemonic.RETURN,illegalOperand(),ret));
+    private void returnOp(LirOperand ret) {
+        appendToList(new Op1Opcode(Mnemonic.RETURN, illegalOperand(), ret));
     }
 
     private void normalEntry() {

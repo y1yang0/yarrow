@@ -11,7 +11,6 @@ import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Converter;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.code.MemoryBarriers;
-import jdk.vm.ci.hotspot.HotSpotObjectConstant;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaField;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
 import jdk.vm.ci.meta.*;
@@ -714,7 +713,7 @@ public class HirBuilder implements Phase {
     private void ldc(int index) {
         Object item = method.getConstantPool().lookupConstant(index);
         if (item instanceof JavaConstant) {
-            ConstantInstr instr = new ConstantInstr(((JavaConstant)item));
+            ConstantInstr instr = new ConstantInstr(((JavaConstant) item));
             state.push(((JavaConstant) item).getJavaKind(), appendToBlock(instr));
         } else {
             CompilerErrors.bailOut();
