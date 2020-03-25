@@ -319,10 +319,10 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         if (!left.isVirtualRegister()) {
             LirOperand retReg = OperandFactory.createVirtualRegister(YarrowRuntime.regConfig.getReturnRegister(instr.type()));
             gen.emitMov(retReg, left);
+            left = retReg;
         }
-
+        gen.emitReturn(left);
         instr.setOperand(null); // ReturnInstr has no operand result
-
     }
 
     @Override

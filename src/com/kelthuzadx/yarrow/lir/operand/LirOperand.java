@@ -24,6 +24,11 @@ public abstract class LirOperand {
         public boolean isStackVar() {
             return false;
         }
+
+        @Override
+        public String toString() {
+            return "";
+        }
     };
 
     public abstract JavaKind getJavaKind();
