@@ -1,5 +1,6 @@
 package com.kelthuzadx.yarrow.lir.opcode;
 
+import com.kelthuzadx.yarrow.lir.Mnemonic;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.util.Logger;
 

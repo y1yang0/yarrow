@@ -4,6 +4,7 @@ import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.optimize.InstructionVisitor;
 import com.kelthuzadx.yarrow.optimize.Visitable;
+import com.kelthuzadx.yarrow.util.Increment;
 import jdk.vm.ci.meta.JavaKind;
 
 /**
@@ -21,7 +22,7 @@ public abstract class HirInstr implements Visitable {
     protected LirOperand operand;
 
     HirInstr(JavaKind type) {
-        this.id = IdGenerator.next();
+        this.id = Increment.next(HirInstr.class);
         this.type = type;
         this.next = null;
     }
@@ -72,19 +73,6 @@ public abstract class HirInstr implements Visitable {
      */
     public HirInstr ideal() {
         return this;
-    }
-
-    /**
-     * Simple ID generator
-     *
-     * @for HIR
-     */
-    private static class IdGenerator {
-        private static int id;
-
-        static int next() {
-            return id++;
-        }
     }
 }
 

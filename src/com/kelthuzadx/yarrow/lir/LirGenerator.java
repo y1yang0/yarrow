@@ -7,12 +7,11 @@ import com.kelthuzadx.yarrow.hir.Cond;
 import com.kelthuzadx.yarrow.hir.instr.*;
 import com.kelthuzadx.yarrow.lir.opcode.*;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
-import com.kelthuzadx.yarrow.lir.operand.LirOperandFactory;
+import com.kelthuzadx.yarrow.lir.operand.OperandFactory;
 import com.kelthuzadx.yarrow.optimize.InstructionVisitor;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 import jdk.vm.ci.meta.JavaKind;
 
-import static com.kelthuzadx.yarrow.lir.operand.LirOperandFactory.illegalOperand;
 
 /**
  * Stateful low level IR generator
@@ -48,7 +47,7 @@ public class LirGenerator extends InstructionVisitor {
 
     @Override
     public void visitParamInstr(ParamInstr instr) {
-        instr.setOperand(LirOperandFactory.createVirtualRegister(instr.type()));
+        instr.setOperand(OperandFactory.createVirtualRegister(instr.type()));
     }
 
     @Override
@@ -107,7 +106,7 @@ public class LirGenerator extends InstructionVisitor {
 
     @Override
     public void visitConstantInstr(ConstantInstr instr) {
-        instr.setOperand(LirOperandFactory.createConstInt(instr));
+        instr.setOperand(OperandFactory.createConstValue(instr.getConstant()));
     }
 
     @Override
@@ -139,7 +138,7 @@ public class LirGenerator extends InstructionVisitor {
     public void visitArithmeticInstr(ArithmeticInstr instr) {
         LirOperand left = instr.getLeft().getOperand(this);
         LirOperand right = instr.getRight().getOperand(this);
-        LirOperand result = LirOperandFactory.createVirtualRegister(instr.getLeft().type());
+        LirOperand result = OperandFactory.createVirtualRegister(instr.getLeft().type());
         instr.setOperand(result);
         if (left != result) {
             mov(result, left);
@@ -215,7 +214,7 @@ public class LirGenerator extends InstructionVisitor {
     @Override
     public void visitTypeCastInstr(TypeCastInstr instr) {
         LirOperand fromOperand = instr.getFrom().getOperand(this);
-        LirOperand fromResult = LirOperandFactory.createVirtualRegister(instr.type());
+        LirOperand fromResult = OperandFactory.createVirtualRegister(instr.type());
 
         LirOperand toOperand = fromOperand;
         LirOperand toResult = fromResult;
@@ -256,11 +255,11 @@ public class LirGenerator extends InstructionVisitor {
     @Override
     public void visitReturnInstr(ReturnInstr instr) {
         if (instr.isType(JavaKind.Void)) {
-            returnOp(illegalOperand());
+            returnOp(LirOperand.illegal);
             return;
         }
         LirOperand left = instr.getReturnValue().getOperand(this);
-        System.out.println(left);
+
     }
 
     @Override
@@ -303,31 +302,31 @@ public class LirGenerator extends InstructionVisitor {
     }
 
     private void membar() {
-        appendToList(new Op0Opcode(Mnemonic.Membar, illegalOperand()));
+        appendToList(new Op0Opcode(Mnemonic.Membar, LirOperand.illegal));
     }
 
     private void membarLoadLoad() {
-        appendToList(new Op0Opcode(Mnemonic.MembarLoadLoad, illegalOperand()));
+        appendToList(new Op0Opcode(Mnemonic.MembarLoadLoad, LirOperand.illegal));
     }
 
     private void membarLoadStore() {
-        appendToList(new Op0Opcode(Mnemonic.MembarLoadStore, illegalOperand()));
+        appendToList(new Op0Opcode(Mnemonic.MembarLoadStore, LirOperand.illegal));
     }
 
     private void membarStoreStore() {
-        appendToList(new Op0Opcode(Mnemonic.MembarStoreStore, illegalOperand()));
+        appendToList(new Op0Opcode(Mnemonic.MembarStoreStore, LirOperand.illegal));
     }
 
     private void membarStoreLoad() {
-        appendToList(new Op0Opcode(Mnemonic.MembarStoreLoad, illegalOperand()));
+        appendToList(new Op0Opcode(Mnemonic.MembarStoreLoad, LirOperand.illegal));
     }
 
     private void membarAcquire() {
-        appendToList(new Op0Opcode(Mnemonic.MembarAcquire, illegalOperand()));
+        appendToList(new Op0Opcode(Mnemonic.MembarAcquire, LirOperand.illegal));
     }
 
     private void membarRelease() {
-        appendToList(new Op0Opcode(Mnemonic.MembarRelease, illegalOperand()));
+        appendToList(new Op0Opcode(Mnemonic.MembarRelease, LirOperand.illegal));
     }
 
     private void jmp(BlockStartInstr block) {
@@ -335,15 +334,15 @@ public class LirGenerator extends InstructionVisitor {
     }
 
     private void returnOp(LirOperand ret) {
-        appendToList(new Op1Opcode(Mnemonic.RETURN, illegalOperand(), ret));
+        appendToList(new Op1Opcode(Mnemonic.RETURN, LirOperand.illegal, ret));
     }
 
     private void normalEntry() {
-        appendToList(new Op0Opcode(Mnemonic.NormalEntry, illegalOperand()));
+        appendToList(new Op0Opcode(Mnemonic.NormalEntry, LirOperand.illegal));
     }
 
     private void osrEntry() {
-        appendToList(new Op0Opcode(Mnemonic.OsrEntry, illegalOperand()));
+        appendToList(new Op0Opcode(Mnemonic.OsrEntry, LirOperand.illegal));
     }
 
     private void appendToList(LirOpcode instr) {

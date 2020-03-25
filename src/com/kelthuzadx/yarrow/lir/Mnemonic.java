@@ -1,4 +1,4 @@
-package com.kelthuzadx.yarrow.lir.opcode;
+package com.kelthuzadx.yarrow.lir;
 
 public enum Mnemonic {
     Illegal,

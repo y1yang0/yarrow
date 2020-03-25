@@ -1,5 +1,6 @@
 package com.kelthuzadx.yarrow.core;
 
+import jdk.vm.ci.code.Architecture;
 import jdk.vm.ci.code.CodeCacheProvider;
 import jdk.vm.ci.code.RegisterConfig;
 import jdk.vm.ci.code.TargetDescription;
@@ -15,6 +16,8 @@ public class YarrowRuntime {
     public static ConstantReflectionProvider constReflection = JVMCI.getRuntime().getHostJVMCIBackend().getConstantReflection();
 
     public static TargetDescription target = JVMCI.getRuntime().getHostJVMCIBackend().getTarget();
+
+    public static Architecture arch = target.arch;
 
     public static RegisterConfig regConfig = JVMCI.getRuntime().getHostJVMCIBackend().getCodeCache().getRegisterConfig();
 

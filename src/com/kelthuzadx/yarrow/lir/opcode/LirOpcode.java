@@ -1,6 +1,8 @@
 package com.kelthuzadx.yarrow.lir.opcode;
 
+import com.kelthuzadx.yarrow.lir.Mnemonic;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
+import com.kelthuzadx.yarrow.util.Increment;
 
 public class LirOpcode {
     protected int id;
@@ -8,21 +10,8 @@ public class LirOpcode {
     protected LirOperand result;
 
     public LirOpcode(Mnemonic mnemonic, LirOperand result) {
-        this.id = IdGenerator.next();
+        this.id = Increment.next(LirOpcode.class);
         this.mnemonic = mnemonic;
         this.result = result;
-    }
-
-    /**
-     * Simple ID generator
-     *
-     * @for HIR
-     */
-    private static class IdGenerator {
-        private static int id;
-
-        static int next() {
-            return id++;
-        }
     }
 }
