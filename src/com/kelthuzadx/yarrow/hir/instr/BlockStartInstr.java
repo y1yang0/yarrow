@@ -30,7 +30,7 @@ public class BlockStartInstr extends StateInstr {
     private List<BlockStartInstr> predecessor;
 
     public BlockStartInstr(int blockId, int bci) {
-        super(new Value(JavaKind.Illegal), null);
+        super(JavaKind.Illegal, null);
         this.blockId = blockId;
         this.startBci = this.endBci = bci;
         this.successor = new ArrayList<>();

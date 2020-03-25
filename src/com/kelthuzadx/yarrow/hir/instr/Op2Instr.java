@@ -1,6 +1,7 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.Value;
+import jdk.vm.ci.meta.JavaKind;
 
 import java.util.Objects;
 
@@ -9,8 +10,8 @@ public abstract class Op2Instr extends HirInstr {
     protected HirInstr left;
     protected HirInstr right;
 
-    public Op2Instr(Value value, int opcode, HirInstr left, HirInstr right) {
-        super(value);
+    public Op2Instr(JavaKind type, int opcode, HirInstr left, HirInstr right) {
+        super(type);
         this.opcode = opcode;
         this.left = left;
         this.right = right;

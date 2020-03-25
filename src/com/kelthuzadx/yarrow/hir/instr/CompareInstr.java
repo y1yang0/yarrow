@@ -8,7 +8,7 @@ import jdk.vm.ci.meta.JavaKind;
 
 public class CompareInstr extends Op2Instr {
     public CompareInstr(int opcode, HirInstr left, HirInstr right) {
-        super(new Value(JavaKind.Int), opcode, left, right);
+        super(JavaKind.Int, opcode, left, right);
     }
 
     @Override

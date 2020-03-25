@@ -9,7 +9,7 @@ public abstract class AccessFieldInstr extends HirInstr {
     protected JavaField field;
 
     public AccessFieldInstr(HirInstr object, int offset, JavaField field) {
-        super(new Value(field.getJavaKind()));
+        super(field.getJavaKind());
         this.object = object;
         this.offset = offset;
         this.field = field;

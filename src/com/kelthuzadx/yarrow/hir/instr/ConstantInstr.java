@@ -2,27 +2,36 @@ package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.util.Logger;
+import jdk.vm.ci.hotspot.HotSpotObjectConstant;
+import jdk.vm.ci.meta.JavaConstant;
 import jdk.vm.ci.meta.JavaKind;
+import jdk.vm.ci.meta.PrimitiveConstant;
 
 import java.util.Objects;
 
 public class ConstantInstr extends HirInstr {
-    public ConstantInstr(Value value) {
-        super(value);
+    private JavaConstant constant;
+
+    public ConstantInstr(JavaConstant constant) {
+        super(constant.getJavaKind());
+        this.constant = constant;
+    }
+
+    public JavaConstant getConstant() {
+        return constant;
     }
 
     @Override
     public String toString() {
         if (!isType(JavaKind.Illegal)) {
 
-            if (value() == null) {
+            if (constant.isNull()) {
                 return Logger.format("i{}: nullptr", super.id);
             } else {
-                var val = value();
-                if (val instanceof String) {
-                    return Logger.format("i{}: '{}'", super.id, val);
+                if(constant instanceof HotSpotObjectConstant && ((HotSpotObjectConstant) constant).isInternedString()){
+                    return Logger.format("i{}: '{}'", super.id, constant.toValueString());
                 } else {
-                    return Logger.format("i{}: {}", super.id, val);
+                    return Logger.format("i{}: {}", super.id, constant.toValueString());
                 }
             }
         }
@@ -34,36 +43,11 @@ public class ConstantInstr extends HirInstr {
         if (this == o) return true;
         if (!(o instanceof ConstantInstr)) return false;
         var that = (ConstantInstr) o;
-        switch (type()) {
-            case Boolean:
-                return (boolean) value() == (boolean) that.value();
-            case Byte:
-                return (byte) value() == (byte) that.value();
-            case Short:
-                return (short) value() == (short) that.value();
-            case Char:
-                return (char) value() == (char) that.value();
-            case Int:
-                return (int) value() == (int) that.value();
-            case Float:
-                return (float) value() == (float) that.value();
-            case Long:
-                return (long) value() == (long) that.value();
-            case Double:
-                return (double) value() == (double) that.value();
-            case Object:
-                return value().equals(that.value());
-            case Void:
-            case Illegal:
-            default:
-                break;
-        }
-        return false;
+        return constant.equals(that.constant);
     }
 
     @Override
     public int hashCode() {
-        var v = value();
-        return Objects.hash(v);
+        return Objects.hash(constant);
     }
 }

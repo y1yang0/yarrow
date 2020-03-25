@@ -2,6 +2,7 @@ package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.hir.VmState;
+import jdk.vm.ci.meta.JavaKind;
 
 import java.util.List;
 
@@ -9,8 +10,8 @@ public class BlockEndInstr extends StateInstr {
     private BlockStartInstr start;
     private List<BlockStartInstr> successor;
 
-    public BlockEndInstr(Value value, VmState stateBefore, List<BlockStartInstr> successor) {
-        super(value, stateBefore);
+    public BlockEndInstr(JavaKind type, VmState stateBefore, List<BlockStartInstr> successor) {
+        super(type, stateBefore);
         this.start = null;
         this.successor = successor;
     }

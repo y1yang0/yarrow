@@ -2,12 +2,13 @@ package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.hir.VmState;
+import jdk.vm.ci.meta.JavaKind;
 
 public abstract class StateInstr extends HirInstr {
     private VmState state;
 
-    StateInstr(Value value, VmState stateBefore) {
-        super(value);
+    StateInstr(JavaKind type, VmState stateBefore) {
+        super(type);
         this.state = stateBefore;
     }
 

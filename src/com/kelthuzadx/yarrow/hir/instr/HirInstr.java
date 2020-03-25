@@ -18,14 +18,14 @@ public abstract class HirInstr implements Visitable {
     // High level IR
     protected int id;
     protected HirInstr next;
-    protected Value value;
+    protected JavaKind type;
 
     // Low level IR
     protected LirOperand operand;
 
-    HirInstr(Value value) {
+    HirInstr(JavaKind type) {
         this.id = IdGenerator.next();
-        this.value = value;
+        this.type = type;
         this.next = null;
     }
 
@@ -33,17 +33,12 @@ public abstract class HirInstr implements Visitable {
         return id;
     }
 
-    public <T> T value() {
-        Optional<T> val = value.getValue();
-        return val.orElse(null);
-    }
-
     public boolean isType(JavaKind type) {
-        return value.getType() == type;
+        return this.type == type;
     }
 
     public JavaKind type() {
-        return value.getType();
+        return this.type;
     }
 
     public HirInstr getNext() {

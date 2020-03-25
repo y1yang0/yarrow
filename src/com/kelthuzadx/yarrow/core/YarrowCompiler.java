@@ -9,6 +9,7 @@ import jdk.vm.ci.code.CompilationRequest;
 import jdk.vm.ci.code.CompilationRequestResult;
 import jdk.vm.ci.hotspot.HotSpotCompilationRequestResult;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
+import jdk.vm.ci.runtime.JVMCI;
 import jdk.vm.ci.runtime.JVMCICompiler;
 import jdk.vm.ci.runtime.JVMCIRuntime;
 
@@ -16,21 +17,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class YarrowCompiler implements JVMCICompiler {
-
-    private JVMCIRuntime runtime;
-
-    YarrowCompiler(JVMCIRuntime runtime) {
-        this.runtime = runtime;
-    }
-
     @Override
     public CompilationRequestResult compileMethod(CompilationRequest request) {
         HotSpotResolvedJavaMethod method = (HotSpotResolvedJavaMethod) request.getMethod();
         if (method.hasCompiledCodeAtLevel(YarrowConfigAccess.CompLevel_full_optimization)) {
             return HotSpotCompilationRequestResult.success(0);
         }
-        Logger.logf("=====Compiling {}.{}=====", method.getDeclaringClass().getUnqualifiedName(), method.getName());
 
+        Logger.logf("=====Compiling {}.{}=====", method.getDeclaringClass().getUnqualifiedName(), method.getName());
         Stream.of(method)
                 .map(CFG::new)
                 .map(CFG::build)
@@ -46,9 +40,5 @@ public class YarrowCompiler implements JVMCICompiler {
         System.exit(0);
 
         return HotSpotCompilationRequestResult.success(0);
-    }
-
-    public JVMCIRuntime getRuntime() {
-        return runtime;
     }
 }

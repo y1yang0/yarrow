@@ -2,12 +2,13 @@ package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.util.Logger;
+import jdk.vm.ci.meta.JavaConstant;
 import jdk.vm.ci.meta.JavaKind;
 
 public class ArrayLenInstr extends AccessArrayInstr {
 
     public ArrayLenInstr(HirInstr array) {
-        super(new Value(JavaKind.Int), array);
+        super(JavaKind.Int, array);
     }
 
     @Override
@@ -17,14 +18,14 @@ public class ArrayLenInstr extends AccessArrayInstr {
         if (array instanceof NewTypeArrayInstr) {
             HirInstr lenInstr = ((NewTypeArrayInstr) array).arrayLength();
             if (lenInstr instanceof ConstantInstr) {
-                int len = ((ConstantInstr) lenInstr).value();
-                return new ConstantInstr(new Value(JavaKind.Int, len));
+                int len = ((ConstantInstr) lenInstr).getConstant().asInt();
+                return new ConstantInstr(JavaConstant.forInt(len));
             }
         } else if (array instanceof NewObjectArrayInstr) {
             HirInstr lenInstr = ((NewObjectArrayInstr) array).arrayLength();
             if (lenInstr instanceof ConstantInstr) {
-                int len = ((ConstantInstr) lenInstr).value();
-                return new ConstantInstr(new Value(JavaKind.Int, len));
+                int len = ((ConstantInstr) lenInstr).getConstant().asInt();
+                return new ConstantInstr(JavaConstant.forInt(len));
             }
         }
         return super.ideal();

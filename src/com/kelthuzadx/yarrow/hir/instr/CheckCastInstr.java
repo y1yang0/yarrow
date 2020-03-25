@@ -11,7 +11,7 @@ public class CheckCastInstr extends StateInstr {
     private HirInstr object;
 
     public CheckCastInstr(VmState stateBefore, JavaType klass, HirInstr object) {
-        super(new Value(JavaKind.Object), stateBefore);
+        super(JavaKind.Object, stateBefore);
         this.klass = klass;
         this.object = object;
     }

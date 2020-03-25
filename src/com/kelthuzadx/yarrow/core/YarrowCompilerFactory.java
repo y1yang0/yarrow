@@ -28,7 +28,7 @@ public class YarrowCompilerFactory extends HotSpotJVMCICompilerFactory {
 
     @Override
     public JVMCICompiler createCompiler(JVMCIRuntime runtime) {
-        return new YarrowCompiler(runtime);
+        return new YarrowCompiler();
     }
 
     @Override

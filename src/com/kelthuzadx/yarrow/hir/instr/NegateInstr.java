@@ -10,7 +10,7 @@ public class NegateInstr extends HirInstr {
     private HirInstr left;
 
     public NegateInstr(HirInstr left) {
-        super(new Value(left.type()));
+        super(left.type());
         this.left = left;
     }
 
