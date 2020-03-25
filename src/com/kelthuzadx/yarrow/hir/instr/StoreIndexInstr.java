@@ -11,7 +11,7 @@ public class StoreIndexInstr extends AccessArrayInstr {
     private HirInstr value;
 
     public StoreIndexInstr(HirInstr array, HirInstr index, HirInstr length, JavaKind elementType, HirInstr value) {
-        super(new Value(elementType), array);
+        super(elementType, array);
         this.index = index;
         this.length = length;
         this.elementType = elementType;

@@ -3,6 +3,7 @@ package com.kelthuzadx.yarrow.hir.instr;
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.hir.VmState;
 import com.kelthuzadx.yarrow.util.Logger;
+import jdk.vm.ci.meta.JavaKind;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -11,8 +12,8 @@ public class PhiInstr extends HirInstr {
     private int index; // negate number for stack, and positive number for local
     private BlockStartInstr block;
 
-    public PhiInstr(Value value, int index, BlockStartInstr block) {
-        super(value);
+    public PhiInstr(JavaKind type, int index, BlockStartInstr block) {
+        super(type);
         this.index = index;
         this.block = block;
     }

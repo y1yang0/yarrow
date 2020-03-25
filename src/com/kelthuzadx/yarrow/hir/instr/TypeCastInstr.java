@@ -11,7 +11,7 @@ public class TypeCastInstr extends HirInstr {
     private JavaKind toType;
 
     public TypeCastInstr(int opcode, HirInstr from, JavaKind toType) {
-        super(new Value(toType));
+        super(toType);
         this.opcode = opcode;
         this.from = from;
         this.toType = toType;

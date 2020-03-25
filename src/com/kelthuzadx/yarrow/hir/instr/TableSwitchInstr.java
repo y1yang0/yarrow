@@ -12,7 +12,7 @@ public class TableSwitchInstr extends BlockEndInstr {
     private int lowKey;
 
     public TableSwitchInstr(VmState stateBefore, List<BlockStartInstr> successor, HirInstr index, int lowKey) {
-        super(new Value(JavaKind.Illegal), stateBefore, successor);
+        super(JavaKind.Illegal, stateBefore, successor);
         this.index = index;
         this.lowKey = lowKey;
     }

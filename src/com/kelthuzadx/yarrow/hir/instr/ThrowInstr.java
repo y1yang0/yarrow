@@ -11,7 +11,7 @@ public class ThrowInstr extends BlockEndInstr {
     private HirInstr exception;
 
     public ThrowInstr(VmState stateBefore, List<BlockStartInstr> successor, HirInstr exception) {
-        super(new Value(JavaKind.Illegal), stateBefore, successor);
+        super(JavaKind.Illegal, stateBefore, successor);
         this.exception = exception;
     }
 

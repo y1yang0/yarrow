@@ -2,6 +2,7 @@ package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.util.Logger;
+import jdk.vm.ci.meta.JavaKind;
 import jdk.vm.ci.meta.JavaMethod;
 
 public class ParamInstr extends HirInstr {
@@ -9,8 +10,8 @@ public class ParamInstr extends HirInstr {
     private int index;
     private JavaMethod method;
 
-    public ParamInstr(Value value, JavaMethod method, boolean isReceiver, int index) {
-        super(value);
+    public ParamInstr(JavaKind type, JavaMethod method, boolean isReceiver, int index) {
+        super(type);
         this.method = method;
         this.isReceiver = isReceiver;
         this.index = index;
