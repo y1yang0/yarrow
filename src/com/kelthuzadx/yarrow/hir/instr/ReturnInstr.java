@@ -16,6 +16,10 @@ public class ReturnInstr extends BlockEndInstr {
         this.returnValue = returnValue;
     }
 
+    public HirInstr getReturnValue() {
+        return returnValue;
+    }
+
     @Override
     public String toString() {
         if (returnValue == null) {

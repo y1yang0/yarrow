@@ -13,27 +13,27 @@ public class Op0Opcode extends LirOpcode {
     public String toString() {
         switch (mnemonic) {
             case Membar:
-                return Logger.format("r{}: membar full", super.id);
+                return Logger.format("i{}: membar full", super.id);
             case MembarLoadLoad:
-                return Logger.format("r{}: membar LoadLoad", super.id);
+                return Logger.format("i{}: membar LoadLoad", super.id);
             case MembarLoadStore:
-                return Logger.format("r{}: membar LoadStore", super.id);
+                return Logger.format("i{}: membar LoadStore", super.id);
             case MembarStoreLoad:
-                return Logger.format("r{}: membar StoreLoad", super.id);
+                return Logger.format("i{}: membar StoreLoad", super.id);
             case MembarStoreStore:
-                return Logger.format("r{}: membar StoreStore", super.id);
+                return Logger.format("i{}: membar StoreStore", super.id);
             case MembarAcquire:
-                return Logger.format("r{}: membar Acquire", super.id);
+                return Logger.format("i{}: membar Acquire", super.id);
             case MembarRelease:
-                return Logger.format("r{}: membar Release", super.id);
+                return Logger.format("i{}: membar Release", super.id);
             case OsrEntry:
-                return Logger.format("r{}: osr_entry", super.id);
+                return Logger.format("i{}: osr_entry", super.id);
             case NormalEntry:
-                return Logger.format("r{}: normal_entry", super.id);
+                return Logger.format("i{}: normal_entry", super.id);
             default:
                 break;
         }
-        return Logger.format("r{}: {} {}", super.id, mnemonic.name().toLowerCase(), result.toString());
+        return Logger.format("i{}: {} {}", super.id, mnemonic.name().toLowerCase(), result.toString());
 
     }
 }

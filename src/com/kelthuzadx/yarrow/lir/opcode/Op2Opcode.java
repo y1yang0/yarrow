@@ -15,7 +15,7 @@ public class Op2Opcode extends LirOpcode {
 
     @Override
     public String toString() {
-        return Logger.format("r{}: {} {} {},{}", super.id, mnemonic.name().toLowerCase(), result.toString(),
+        return Logger.format("i{}: {} {} {},{}", super.id, mnemonic.name().toLowerCase(), result.toString(),
                 leftOperand.toString(), rightOperand.toString());
 
     }

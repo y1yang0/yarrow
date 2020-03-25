@@ -8,10 +8,11 @@ import com.kelthuzadx.yarrow.hir.instr.*;
 import com.kelthuzadx.yarrow.lir.opcode.*;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.lir.operand.LirOperandFactory;
-import com.kelthuzadx.yarrow.lir.operand.OperandKind;
-import com.kelthuzadx.yarrow.lir.operand.OperandType;
 import com.kelthuzadx.yarrow.optimize.InstructionVisitor;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
+import jdk.vm.ci.meta.JavaKind;
+
+import static com.kelthuzadx.yarrow.lir.operand.LirOperandFactory.illegalOperand;
 
 /**
  * Stateful low level IR generator
@@ -254,7 +255,12 @@ public class LirGenerator extends InstructionVisitor {
 
     @Override
     public void visitReturnInstr(ReturnInstr instr) {
-
+        if(instr.isType(JavaKind.Void)) {
+            returnOp(illegalOperand());
+            return;
+        }
+        LirOperand left = instr.getReturnValue().getOperand(this);
+        System.out.println(left);
     }
 
     @Override
@@ -297,43 +303,47 @@ public class LirGenerator extends InstructionVisitor {
     }
 
     private void membar() {
-        appendToList(new Op0Opcode(Mnemonic.Membar, LirOperandFactory.illegalOperand()));
+        appendToList(new Op0Opcode(Mnemonic.Membar, illegalOperand()));
     }
 
     private void membarLoadLoad() {
-        appendToList(new Op0Opcode(Mnemonic.MembarLoadLoad, LirOperandFactory.illegalOperand()));
+        appendToList(new Op0Opcode(Mnemonic.MembarLoadLoad, illegalOperand()));
     }
 
     private void membarLoadStore() {
-        appendToList(new Op0Opcode(Mnemonic.MembarLoadStore, LirOperandFactory.illegalOperand()));
+        appendToList(new Op0Opcode(Mnemonic.MembarLoadStore, illegalOperand()));
     }
 
     private void membarStoreStore() {
-        appendToList(new Op0Opcode(Mnemonic.MembarStoreStore, LirOperandFactory.illegalOperand()));
+        appendToList(new Op0Opcode(Mnemonic.MembarStoreStore, illegalOperand()));
     }
 
     private void membarStoreLoad() {
-        appendToList(new Op0Opcode(Mnemonic.MembarStoreLoad, LirOperandFactory.illegalOperand()));
+        appendToList(new Op0Opcode(Mnemonic.MembarStoreLoad, illegalOperand()));
     }
 
     private void membarAcquire() {
-        appendToList(new Op0Opcode(Mnemonic.MembarAcquire, LirOperandFactory.illegalOperand()));
+        appendToList(new Op0Opcode(Mnemonic.MembarAcquire, illegalOperand()));
     }
 
     private void membarRelease() {
-        appendToList(new Op0Opcode(Mnemonic.MembarRelease, LirOperandFactory.illegalOperand()));
+        appendToList(new Op0Opcode(Mnemonic.MembarRelease, illegalOperand()));
     }
 
     private void jmp(BlockStartInstr block) {
-        new JmpOpcode(Cond.Always, block);
+        appendToList(new JmpOpcode(Cond.Always, block));
+    }
+
+    private void returnOp(LirOperand ret){
+        appendToList(new Op1Opcode(Mnemonic.RETURN,illegalOperand(),ret));
     }
 
     private void normalEntry() {
-        appendToList(new Op0Opcode(Mnemonic.NormalEntry, LirOperandFactory.illegalOperand()));
+        appendToList(new Op0Opcode(Mnemonic.NormalEntry, illegalOperand()));
     }
 
     private void osrEntry() {
-        appendToList(new Op0Opcode(Mnemonic.OsrEntry, LirOperandFactory.illegalOperand()));
+        appendToList(new Op0Opcode(Mnemonic.OsrEntry, illegalOperand()));
     }
 
     private void appendToList(LirOpcode instr) {

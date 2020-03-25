@@ -14,6 +14,6 @@ public class TypeCastOpcode extends Op1Opcode {
 
     @Override
     public String toString() {
-        return Logger.format("r{}: {} {} {}", super.id, Bytecode.forName(bytecode).toLowerCase(), result.toString(), operand.toString());
+        return Logger.format("i{}: {} {} {}", super.id, Bytecode.forName(bytecode).toLowerCase(), result.toString(), operand.toString());
     }
 }
