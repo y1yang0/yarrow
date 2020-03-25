@@ -7,11 +7,11 @@ import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.util.Logger;
 
 
-public class JmpOpcode extends Op0Opcode {
+public class JmpInstr extends Op0Instr {
     private Cond condition;
     private BlockStartInstr block;
 
-    public JmpOpcode(Cond condition, BlockStartInstr block) {
+    public JmpInstr(Cond condition, BlockStartInstr block) {
         super(Mnemonic.JMP, LirOperand.illegal);
         this.condition = condition;
         this.block = block;

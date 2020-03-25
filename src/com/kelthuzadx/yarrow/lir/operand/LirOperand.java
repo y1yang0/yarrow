@@ -9,7 +9,28 @@ public abstract class LirOperand {
         public JavaKind getJavaKind() {
             return JavaKind.Illegal;
         }
+
+        @Override
+        public boolean isConstValue() {
+            return false;
+        }
+
+        @Override
+        public boolean isVirtualRegister() {
+            return false;
+        }
+
+        @Override
+        public boolean isStackVar() {
+            return false;
+        }
     };
 
     public abstract JavaKind getJavaKind();
+
+    public abstract boolean isConstValue();
+
+    public abstract boolean isVirtualRegister();
+
+    public abstract boolean isStackVar();
 }

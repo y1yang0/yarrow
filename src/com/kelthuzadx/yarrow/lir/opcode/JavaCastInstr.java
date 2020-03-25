@@ -5,10 +5,10 @@ import com.kelthuzadx.yarrow.lir.Mnemonic;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.util.Logger;
 
-public class TypeCastOpcode extends Op1Opcode {
+public class JavaCastInstr extends Op1Instr {
     private int bytecode;
 
-    public TypeCastOpcode(LirOperand result, LirOperand operand, int bytecode) {
+    public JavaCastInstr(LirOperand result, LirOperand operand, int bytecode) {
         super(Mnemonic.TypeCast, result, operand);
         this.bytecode = bytecode;
     }

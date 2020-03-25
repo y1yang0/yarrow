@@ -4,9 +4,9 @@ import com.kelthuzadx.yarrow.lir.Mnemonic;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.util.Logger;
 
-public class Op0Opcode extends LirOpcode {
+public class Op0Instr extends LirInstr {
 
-    public Op0Opcode(Mnemonic mnemonic, LirOperand result) {
+    public Op0Instr(Mnemonic mnemonic, LirOperand result) {
         super(mnemonic, result);
     }
 

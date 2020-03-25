@@ -12,6 +12,10 @@ public class MemBarrierInstr extends HirInstr {
         this.barrierType = barrierType;
     }
 
+    public int getBarrierType() {
+        return barrierType;
+    }
+
     @Override
     public String toString() {
         return Logger.format("i{}: membar {}", super.id, MemoryBarriers.barriersString(barrierType));

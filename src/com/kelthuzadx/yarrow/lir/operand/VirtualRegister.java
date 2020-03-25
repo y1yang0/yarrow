@@ -11,19 +11,34 @@ public class VirtualRegister extends LirOperand {
     private Register register;
     private JavaKind type;
 
-    public VirtualRegister(JavaKind type) {
+    VirtualRegister(JavaKind type) {
         this.type = type;
         final int regId = VREGID_BASE + Increment.next(VirtualRegister.class);
         this.register = new Register(regId, regId, "vreg" + regId, virtual);
     }
 
-    public VirtualRegister(Register register) {
+    VirtualRegister(Register register) {
         this.register = register;
     }
 
     @Override
     public JavaKind getJavaKind() {
         return type;
+    }
+
+    @Override
+    public boolean isConstValue() {
+        return false;
+    }
+
+    @Override
+    public boolean isVirtualRegister() {
+        return true;
+    }
+
+    @Override
+    public boolean isStackVar() {
+        return false;
     }
 
     @Override
