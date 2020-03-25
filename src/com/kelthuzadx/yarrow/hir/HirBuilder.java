@@ -104,14 +104,14 @@ public class HirBuilder implements Phase {
         int paramIndex = 0;
 
         if (method.hasReceiver()) {
-            ParamInstr receiverInstr = new ParamInstr(new Value(JavaKind.Object), method, false, paramIndex);
+            ParamInstr receiverInstr = new ParamInstr(JavaKind.Object, method, false, paramIndex);
             state.set(paramIndex, receiverInstr);
             paramIndex++;
         }
 
         Signature sig = method.getSignature();
         for (int i = 0; i < sig.getParameterCount(false/*Receiver already processed*/); i++) {
-            ParamInstr pi = new ParamInstr(new Value(sig.getParameterKind(i)), method, false, paramIndex);
+            ParamInstr pi = new ParamInstr(sig.getParameterKind(i), method, false, paramIndex);
             state.set(paramIndex, pi);
             paramIndex++;
         }
@@ -131,57 +131,57 @@ public class HirBuilder implements Phase {
                 case Bytecode.NOP:
                     break;
                 case Bytecode.ACONST_NULL:
-                    loadConst(JavaKind.Object, null);
+                    loadConst(JavaConstant.NULL_POINTER);
                     break;
                 case Bytecode.ICONST_M1:
-                    loadConst(JavaKind.Int, -1);
+                    loadConst(JavaConstant.INT_MINUS_1);
                     break;
                 case Bytecode.ICONST_0:
-                    loadConst(JavaKind.Int, 0);
+                    loadConst(JavaConstant.INT_0);
                     break;
                 case Bytecode.ICONST_1:
-                    loadConst(JavaKind.Int, 1);
+                    loadConst(JavaConstant.INT_1);
                     break;
                 case Bytecode.ICONST_2:
-                    loadConst(JavaKind.Int, 2);
+                    loadConst(JavaConstant.INT_2);
                     break;
                 case Bytecode.ICONST_3:
-                    loadConst(JavaKind.Int, 3);
+                    loadConst(JavaConstant.forInt(3));
                     break;
                 case Bytecode.ICONST_4:
-                    loadConst(JavaKind.Int, 4);
+                    loadConst(JavaConstant.forInt(4));
                     break;
                 case Bytecode.ICONST_5:
-                    loadConst(JavaKind.Int, 5);
+                    loadConst(JavaConstant.forInt(5));
                     break;
                 case Bytecode.LCONST_0:
-                    loadConst(JavaKind.Long, 0L);
+                    loadConst(JavaConstant.LONG_0);
                     break;
                 case Bytecode.LCONST_1:
-                    loadConst(JavaKind.Long, 1L);
+                    loadConst(JavaConstant.LONG_1);
                     break;
                 case Bytecode.FCONST_0:
-                    loadConst(JavaKind.Float, 0.0f);
+                    loadConst(JavaConstant.FLOAT_0);
                     break;
                 case Bytecode.FCONST_1:
-                    loadConst(JavaKind.Float, 1.0f);
+                    loadConst(JavaConstant.FLOAT_1);
                     break;
                 case Bytecode.FCONST_2:
-                    loadConst(JavaKind.Float, 2.0f);
+                    loadConst(JavaConstant.forFloat(2));
                     break;
                 case Bytecode.DCONST_0:
-                    loadConst(JavaKind.Double, 0.0d);
+                    loadConst(JavaConstant.DOUBLE_0);
                     break;
                 case Bytecode.DCONST_1:
-                    loadConst(JavaKind.Double, 1.0d);
+                    loadConst(JavaConstant.DOUBLE_1);
                     break;
                 case Bytecode.BIPUSH:
                     byte bval = (byte) bs.getBytecodeData();
-                    loadConst(JavaKind.Int, (int) bval);
+                    loadConst(JavaConstant.forInt(bval));
                     break;
                 case Bytecode.SIPUSH:
                     short sval = (short) bs.getBytecodeData();
-                    loadConst(JavaKind.Int, (int) sval);
+                    loadConst(JavaConstant.forInt(sval));
                     break;
                 case Bytecode.LDC:
                 case Bytecode.LDC_W:
@@ -705,9 +705,9 @@ public class HirBuilder implements Phase {
         return curInstr;
     }
 
-    private <T> void loadConst(JavaKind type, T value) {
-        ConstantInstr instr = new ConstantInstr(new Value(type, value));
-        state.push(type, appendToBlock(instr));
+    private void loadConst(JavaConstant constant) {
+        ConstantInstr instr = new ConstantInstr(constant);
+        state.push(constant.getJavaKind(), appendToBlock(instr));
     }
 
     private void ldc(int index) {
