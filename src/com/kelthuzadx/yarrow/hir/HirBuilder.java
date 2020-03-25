@@ -3,6 +3,7 @@ package com.kelthuzadx.yarrow.hir;
 import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.bytecode.BytecodeStream;
 import com.kelthuzadx.yarrow.core.YarrowError;
+import com.kelthuzadx.yarrow.core.YarrowRuntime;
 import com.kelthuzadx.yarrow.hir.instr.*;
 import com.kelthuzadx.yarrow.optimize.LVN;
 import com.kelthuzadx.yarrow.optimize.Phase;
@@ -711,33 +712,9 @@ public class HirBuilder implements Phase {
     }
 
     private void ldc(int index) {
-        Value temp = null;
         Object item = method.getConstantPool().lookupConstant(index);
         if (item instanceof JavaConstant) {
-            switch (((JavaConstant) item).getJavaKind()) {
-                case Boolean:
-                case Byte:
-                case Char:
-                case Short:
-                case Int:
-                    temp = new Value(JavaKind.Int, ((JavaConstant) item).asInt());
-                    break;
-                case Long:
-                    temp = new Value(JavaKind.Long, ((JavaConstant) item).asLong());
-                    break;
-                case Float:
-                    temp = new Value(JavaKind.Float, ((JavaConstant) item).asFloat());
-                    break;
-                case Double:
-                    temp = new Value(JavaKind.Double, ((JavaConstant) item).asDouble());
-                    break;
-                case Object:
-                    temp = new Value(JavaKind.Object, ((HotSpotObjectConstant) item).asObject(((HotSpotObjectConstant) item).getType()));
-                    break;
-                default:
-                    YarrowError.shouldNotReachHere();
-            }
-            ConstantInstr instr = new ConstantInstr(temp);
+            ConstantInstr instr = new ConstantInstr(((JavaConstant)item));
             state.push(((JavaConstant) item).getJavaKind(), appendToBlock(instr));
         } else {
             CompilerErrors.bailOut();
@@ -874,7 +851,7 @@ public class HirBuilder implements Phase {
 
         load(JavaKind.Int, index);
 
-        ConstantInstr instr = new ConstantInstr(new Value(JavaKind.Int, constant));
+        ConstantInstr instr = new ConstantInstr(JavaConstant.forInt(constant));
         state.push(JavaKind.Int, appendToBlock(instr));
 
         arithmetic(JavaKind.Int, Bytecode.IADD);
@@ -905,14 +882,14 @@ public class HirBuilder implements Phase {
     private void branchIfZero(Cond cond, int trueBci, int falseBci) {
         VmState stateBefore = state.copy();
         HirInstr left = state.pop(JavaKind.Int);
-        ConstantInstr right = new ConstantInstr(new Value(JavaKind.Int, 0));
+        ConstantInstr right = new ConstantInstr(JavaConstant.INT_0);
         branchIf(stateBefore, left, right, cond, trueBci, falseBci);
     }
 
     private void branchIfNull(Cond cond, int trueBci, int falseBci) {
         VmState stateBefore = state.copy();
         HirInstr left = state.pop(JavaKind.Object);
-        ConstantInstr right = new ConstantInstr(new Value(JavaKind.Object, null));
+        ConstantInstr right = new ConstantInstr(JavaConstant.NULL_POINTER);
         branchIf(stateBefore, left, right, cond, trueBci, falseBci);
     }
 
@@ -976,7 +953,7 @@ public class HirBuilder implements Phase {
         JavaKind returnKind = method.getSignature().getReturnKind();
         switch (returnKind) {
             case Byte: {
-                HirInstr mask = new ConstantInstr(new Value(JavaKind.Int, 0xFF));
+                HirInstr mask = new ConstantInstr(JavaConstant.forInt(0xff));
                 mask = appendToBlock(mask);
                 LogicInstr t = new LogicInstr(Bytecode.IAND, mask, val);
                 val = appendToBlock(t);
@@ -984,14 +961,14 @@ public class HirBuilder implements Phase {
             }
             case Short:
             case Char: {
-                HirInstr mask = new ConstantInstr(new Value(JavaKind.Int, 0xFFFF));
+                HirInstr mask = new ConstantInstr(JavaConstant.forInt(0xFFFF));
                 mask = appendToBlock(mask);
                 LogicInstr t = new LogicInstr(Bytecode.IAND, mask, val);
                 val = appendToBlock(t);
                 break;
             }
             case Boolean: {
-                HirInstr mask = new ConstantInstr(new Value(JavaKind.Int, 1));
+                HirInstr mask = new ConstantInstr(JavaConstant.INT_1);
                 mask = appendToBlock(mask);
                 LogicInstr t = new LogicInstr(Bytecode.IAND, mask, val);
                 val = appendToBlock(t);
@@ -1016,7 +993,7 @@ public class HirBuilder implements Phase {
         ConstantInstr holder = null;
         HotSpotResolvedJavaField field = (HotSpotResolvedJavaField) method.getConstantPool().lookupField(index, method, opcode);
         if (opcode == Bytecode.PUTSTATIC || opcode == Bytecode.GETSTATIC) {
-            holder = new ConstantInstr(new Value(JavaKind.Object, field.getJavaKind().toJavaClass()));
+            holder = new ConstantInstr(YarrowRuntime.constReflection.asJavaClass((ResolvedJavaType) field.getType()));
             appendToBlock(holder);
         }
 
@@ -1103,7 +1080,7 @@ public class HirBuilder implements Phase {
         if (hasReceiver) {
             receiver = state.pop(JavaKind.Object);
         }
-        HirInstr instr = new CallInstr(new Value(sig.getReturnKind()), stateBefore, receiver, arguments, target, sig, opcode);
+        HirInstr instr = new CallInstr(sig.getReturnKind(), stateBefore, receiver, arguments, target, sig, opcode);
         instr = appendToBlock(instr);
 
         if (sig.getReturnKind() != JavaKind.Void) {
