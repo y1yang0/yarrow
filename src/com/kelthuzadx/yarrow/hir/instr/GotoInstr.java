@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class GotoInstr extends BlockEndInstr {
     public GotoInstr(VmState stateBefore, BlockStartInstr successor) {
-        super(new Value(JavaKind.Illegal), stateBefore, new ArrayList<>() {{
+        super(JavaKind.Illegal, stateBefore, new ArrayList<>() {{
             add(successor);
         }});
     }

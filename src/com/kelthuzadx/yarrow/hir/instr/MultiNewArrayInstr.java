@@ -11,7 +11,7 @@ public class MultiNewArrayInstr extends StateInstr {
     private HirInstr[] dimenInstrs;
 
     public MultiNewArrayInstr(VmState stateBefore, JavaType klass, HirInstr[] dimenInstrs) {
-        super(new Value(JavaKind.Object), stateBefore);
+        super(JavaKind.Object, stateBefore);
         this.klass = klass;
         this.dimenInstrs = dimenInstrs;
     }

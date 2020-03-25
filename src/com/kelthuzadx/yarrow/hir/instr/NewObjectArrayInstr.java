@@ -11,7 +11,7 @@ public class NewObjectArrayInstr extends StateInstr {
     private JavaType klass;
 
     public NewObjectArrayInstr(VmState stateBefore, HirInstr len, JavaType klass) {
-        super(new Value(JavaKind.Object), stateBefore);
+        super(JavaKind.Object, stateBefore);
         this.len = len;
         this.klass = klass;
     }

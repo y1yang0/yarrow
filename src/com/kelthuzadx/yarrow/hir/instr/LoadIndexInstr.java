@@ -12,7 +12,7 @@ public class LoadIndexInstr extends AccessArrayInstr {
     private JavaKind elementType;
 
     public LoadIndexInstr(HirInstr array, HirInstr index, HirInstr length, JavaKind elementType) {
-        super(new Value(elementType), array);
+        super(elementType, array);
         this.index = index;
         this.length = length;
         this.elementType = elementType;

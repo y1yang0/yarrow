@@ -10,29 +10,12 @@ public class MemBarrierInstr extends HirInstr {
     private int barrierType;
 
     public MemBarrierInstr(int barrierType) {
-        super(new Value(JavaKind.Illegal));
+        super(JavaKind.Illegal);
         this.barrierType = barrierType;
     }
 
     @Override
     public String toString() {
-        String type = "";
-        switch (barrierType) {
-            case MemoryBarriers.LOAD_LOAD:
-                type = "LoadLoad";
-                break;
-            case MemoryBarriers.LOAD_STORE:
-                type = "LoadStore";
-                break;
-            case MemoryBarriers.STORE_LOAD:
-                type = "StoreLoad";
-                break;
-            case MemoryBarriers.STORE_STORE:
-                type = "StoreStore";
-                break;
-            default:
-                CompilerErrors.bailOut();
-        }
-        return Logger.format("i{}: membar {}", super.id, type);
+        return Logger.format("i{}: membar {}", super.id, MemoryBarriers.barriersString(barrierType));
     }
 }

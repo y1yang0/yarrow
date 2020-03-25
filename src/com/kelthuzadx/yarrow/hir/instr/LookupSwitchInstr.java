@@ -12,7 +12,7 @@ public class LookupSwitchInstr extends BlockEndInstr {
     private int[] key;
 
     public LookupSwitchInstr(VmState stateBefore, List<BlockStartInstr> successor, HirInstr index, int[] key) {
-        super(new Value(JavaKind.Illegal), stateBefore, successor);
+        super(JavaKind.Illegal, stateBefore, successor);
         this.index = index;
         this.key = key;
     }

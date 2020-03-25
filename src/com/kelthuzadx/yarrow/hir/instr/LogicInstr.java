@@ -4,11 +4,12 @@ import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.util.Logger;
+import jdk.vm.ci.meta.JavaConstant;
 import jdk.vm.ci.meta.JavaKind;
 
 public class LogicInstr extends Op2Instr {
     public LogicInstr(int opcode, HirInstr left, HirInstr right) {
-        super(new Value(left.type()), opcode, left, right);
+        super(left.type, opcode, left, right);
         if (!right.isType(left.type())) {
             throw new YarrowError("Incompatible operand type");
         }
@@ -19,9 +20,9 @@ public class LogicInstr extends Op2Instr {
         if (left == right) {
             switch (opcode) {
                 case Bytecode.IXOR:
-                    return new ConstantInstr(new Value(JavaKind.Int, 0));
+                    return new ConstantInstr(JavaConstant.INT_0);
                 case Bytecode.LXOR:
-                    return new ConstantInstr(new Value(JavaKind.Long, 0L));
+                    return new ConstantInstr(JavaConstant.LONG_0);
             }
         }
 
@@ -30,29 +31,29 @@ public class LogicInstr extends Op2Instr {
             // i1: 1|2 -> i2: 3
             // i1: 1^2 -> i2: 3
             if (left.isType(JavaKind.Int)) {
-                int x = left.value();
-                int y = right.value();
+                int x = ((ConstantInstr) left).getConstant().asInt();
+                int y = ((ConstantInstr) right).getConstant().asInt();
                 switch (opcode) {
                     case Bytecode.IAND:
-                        return new ConstantInstr(new Value(JavaKind.Int, x & y));
+                        return new ConstantInstr(JavaConstant.forInt(x & y));
                     case Bytecode.IOR:
-                        return new ConstantInstr(new Value(JavaKind.Int, x | y));
+                        return new ConstantInstr(JavaConstant.forInt(x | y));
                     case Bytecode.IXOR:
-                        return new ConstantInstr(new Value(JavaKind.Int, x ^ y));
+                        return new ConstantInstr(JavaConstant.forInt( x ^ y));
                     default:
                         YarrowError.shouldNotReachHere();
                 }
 
             } else if (left.isType(JavaKind.Long)) {
-                long x = left.value();
-                long y = right.value();
+                long x = ((ConstantInstr) left).getConstant().asLong();
+                long y = ((ConstantInstr) right).getConstant().asLong();
                 switch (opcode) {
                     case Bytecode.LAND:
-                        return new ConstantInstr(new Value(JavaKind.Long, x & y));
+                        return new ConstantInstr(JavaConstant.forLong(x & y));
                     case Bytecode.LOR:
-                        return new ConstantInstr(new Value(JavaKind.Long, x | y));
+                        return new ConstantInstr(JavaConstant.forLong(x | y));
                     case Bytecode.LXOR:
-                        return new ConstantInstr(new Value(JavaKind.Long, x ^ y));
+                        return new ConstantInstr(JavaConstant.forLong(x ^ y));
                     default:
                         YarrowError.shouldNotReachHere();
                 }
@@ -63,24 +64,24 @@ public class LogicInstr extends Op2Instr {
         }
 
         if (right instanceof ConstantInstr) {
-            if (left.isType(JavaKind.Int) && (int) right.value() == 0) {
-                int x = left.value();
+            if (left.isType(JavaKind.Int) && ((ConstantInstr) right).getConstant().asInt() == 0) {
+                int x = ((ConstantInstr)left).getConstant().asInt();
                 switch (opcode) {
                     case Bytecode.IAND:
-                        return new ConstantInstr(new Value(JavaKind.Int, 0));
+                        return new ConstantInstr(JavaConstant.INT_0);
                     case Bytecode.IOR:
-                        return new ConstantInstr(new Value(JavaKind.Int, x));
+                        return new ConstantInstr(JavaConstant.forInt(x));
                     default:
                         YarrowError.shouldNotReachHere();
                 }
             } else if (left.isType(JavaKind.Long)) {
-                long x = left.value();
+                long x = ((ConstantInstr)left).getConstant().asLong();
                 switch (opcode) {
                     case Bytecode.IADD:
                     case Bytecode.ISUB:
-                        return new ConstantInstr(new Value(JavaKind.Long, 0L));
+                        return new ConstantInstr(JavaConstant.LONG_1);
                     case Bytecode.IMUL:
-                        return new ConstantInstr(new Value(JavaKind.Long, x));
+                        return new ConstantInstr(JavaConstant.forLong(x));
                     default:
                         YarrowError.shouldNotReachHere();
                 }

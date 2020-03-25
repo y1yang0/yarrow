@@ -9,7 +9,7 @@ public class MonitorEnterInstr extends StateInstr {
     private HirInstr lock;
 
     public MonitorEnterInstr(HirInstr lock, VmState stateBefore) {
-        super(new Value(JavaKind.Illegal), stateBefore);
+        super(JavaKind.Illegal, stateBefore);
         this.lock = lock;
     }
 

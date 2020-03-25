@@ -3,6 +3,7 @@ package com.kelthuzadx.yarrow.hir.instr;
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.hir.VmState;
 import com.kelthuzadx.yarrow.util.Logger;
+import jdk.vm.ci.meta.JavaConstant;
 import jdk.vm.ci.meta.JavaKind;
 import jdk.vm.ci.meta.JavaType;
 
@@ -11,15 +12,15 @@ public class InstanceOfInstr extends StateInstr {
     private HirInstr object;
 
     public InstanceOfInstr(VmState stateBefore, JavaType klass, HirInstr object) {
-        super(new Value(JavaKind.Int), stateBefore);
+        super(JavaKind.Int, stateBefore);
         this.klass = klass;
         this.object = object;
     }
 
     @Override
     public HirInstr ideal() {
-        if (object instanceof ConstantInstr && object.isType(JavaKind.Object) && object.value() == null) {
-            return new ConstantInstr(new Value(JavaKind.Int, 0));
+        if(object instanceof ConstantInstr && ((ConstantInstr) object).getConstant().isNull()){
+            return new ConstantInstr(JavaConstant.INT_0);
         }
         return this;
     }

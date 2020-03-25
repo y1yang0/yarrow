@@ -15,7 +15,7 @@ public class IfInstr extends BlockEndInstr {
     private Cond cond;
 
     public IfInstr(VmState stateBefore, BlockStartInstr trueBlock, BlockStartInstr falseBlock, HirInstr left, HirInstr right, Cond cond) {
-        super(new Value(JavaKind.Illegal), stateBefore, new ArrayList<>() {{
+        super(JavaKind.Illegal, stateBefore, new ArrayList<>() {{
             add(trueBlock);
             add(falseBlock);
         }});
@@ -40,8 +40,8 @@ public class IfInstr extends BlockEndInstr {
             // i2: 23
             // if i1 == i2 then i3 else i4
             if (left.isType(JavaKind.Int) && right.isType(JavaKind.Int)) {
-                int x = left.value();
-                int y = right.value();
+                int x = ((ConstantInstr) left).getConstant().asInt();
+                int y = ((ConstantInstr) right).getConstant().asInt();
                 if (Cond.EQ == cond) {
                     if (x == y) {
                         return new GotoInstr(ifState, getSuccessor().get(0));

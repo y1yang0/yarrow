@@ -8,7 +8,7 @@ public class MonitorExitInstr extends StateInstr {
     private HirInstr lock;
 
     public MonitorExitInstr(HirInstr lock) {
-        super(new Value(JavaKind.Illegal), null);
+        super(JavaKind.Illegal, null);
         this.lock = lock;
     }
 

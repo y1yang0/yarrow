@@ -4,6 +4,7 @@ import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.Value;
 import com.kelthuzadx.yarrow.util.Logger;
+import jdk.vm.ci.meta.JavaConstant;
 import jdk.vm.ci.meta.JavaKind;
 
 public class CompareInstr extends Op2Instr {
@@ -15,55 +16,55 @@ public class CompareInstr extends Op2Instr {
     public HirInstr ideal() {
         if (left instanceof ConstantInstr && right instanceof ConstantInstr) {
             if (left.isType(JavaKind.Long) && right.isType(JavaKind.Long)) {
-                long x = left.value();
-                long y = right.value();
+                long x = ((ConstantInstr) left).getConstant().asLong();
+                long y = ((ConstantInstr) right).getConstant().asLong();
                 if (x > y) {
-                    return new ConstantInstr(new Value(JavaKind.Int, 1));
+                    return new ConstantInstr(JavaConstant.INT_1);
                 } else if (x == y) {
-                    return new ConstantInstr(new Value(JavaKind.Int, 0));
+                    return new ConstantInstr(JavaConstant.INT_0);
                 } else {
-                    return new ConstantInstr(new Value(JavaKind.Int, -1));
+                    return new ConstantInstr(JavaConstant.INT_MINUS_1);
                 }
             } else if (left.isType(JavaKind.Float) && right.isType(JavaKind.Float)) {
-                float x = left.value();
-                float y = right.value();
+                float x = ((ConstantInstr) left).getConstant().asFloat();
+                float y = ((ConstantInstr) right).getConstant().asFloat();
                 // at least one of value1' or value2' is NaN. The fcmpg instruction pushes the int value 1
                 // onto the operand stack and the fcmpl pushes the int value -1 onto the operand stack.
                 if (Float.isNaN(x) || Float.isNaN(y)) {
                     if (opcode == Bytecode.FCMPL) {
-                        return new ConstantInstr(new Value(JavaKind.Int, -1));
+                        return new ConstantInstr(JavaConstant.INT_MINUS_1);
                     } else if (opcode == Bytecode.FCMPG) {
-                        return new ConstantInstr(new Value(JavaKind.Int, 1));
+                        return new ConstantInstr(JavaConstant.INT_1);
                     } else {
                         YarrowError.shouldNotReachHere();
                     }
                 }
                 if (x > y) {
-                    return new ConstantInstr(new Value(JavaKind.Int, 1));
+                    return new ConstantInstr(JavaConstant.INT_1);
                 } else if (x == y) {
-                    return new ConstantInstr(new Value(JavaKind.Int, 0));
+                    return new ConstantInstr(JavaConstant.INT_0);
                 } else if (x < y) {
-                    return new ConstantInstr(new Value(JavaKind.Int, -1));
+                    return new ConstantInstr(JavaConstant.INT_MINUS_1);
                 }
             } else if (left.isType(JavaKind.Double) && right.isType(JavaKind.Double)) {
-                double x = left.value();
-                double y = right.value();
+                double x = ((ConstantInstr) left).getConstant().asDouble();
+                double y = ((ConstantInstr) right).getConstant().asDouble();
                 // ditto
                 if (Double.isNaN(x) || Double.isNaN(y)) {
                     if (opcode == Bytecode.DCMPL) {
-                        return new ConstantInstr(new Value(JavaKind.Int, -1));
+                        return new ConstantInstr(JavaConstant.INT_MINUS_1);
                     } else if (opcode == Bytecode.FCMPG) {
-                        return new ConstantInstr(new Value(JavaKind.Int, 1));
+                        return new ConstantInstr(JavaConstant.INT_1);
                     } else {
                         YarrowError.shouldNotReachHere();
                     }
                 }
                 if (x > y) {
-                    return new ConstantInstr(new Value(JavaKind.Int, 1));
+                    return new ConstantInstr(JavaConstant.INT_1);
                 } else if (x == y) {
-                    return new ConstantInstr(new Value(JavaKind.Int, 0));
+                    return new ConstantInstr(JavaConstant.INT_0);
                 } else if (x < y) {
-                    return new ConstantInstr(new Value(JavaKind.Int, -1));
+                    return new ConstantInstr(JavaConstant.INT_MINUS_1);
                 }
             }
         }

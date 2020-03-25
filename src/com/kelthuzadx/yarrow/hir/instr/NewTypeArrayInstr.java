@@ -10,7 +10,7 @@ public class NewTypeArrayInstr extends StateInstr {
     private JavaKind elemType;
 
     public NewTypeArrayInstr(VmState stateBefore, HirInstr len, JavaKind elemType) {
-        super(new Value(JavaKind.Object), stateBefore);
+        super(JavaKind.Object, stateBefore);
         this.len = len;
         this.elemType = elemType;
     }

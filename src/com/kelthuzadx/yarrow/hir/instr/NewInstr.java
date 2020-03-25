@@ -10,7 +10,7 @@ public class NewInstr extends StateInstr {
     JavaType klass;
 
     public NewInstr(VmState stateBefore, JavaType klass) {
-        super(new Value(JavaKind.Object), stateBefore);
+        super(JavaKind.Object, stateBefore);
         this.klass = klass;
     }
 
