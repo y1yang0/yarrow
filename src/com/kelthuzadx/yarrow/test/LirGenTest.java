@@ -1,13 +1,22 @@
 package com.kelthuzadx.yarrow.test;
 
 public class LirGenTest {
-    public static long lirGen1(int n) {
+    public static int lirGen1(int n) {
         int a = n;
         int b = a + 1;
         int c = b + 2;
         int d = a + b + c;
         long e = d;
-        return e;
+        float f = e;
+        double g = f;
+        short h = (short) g;
+        byte i = (byte) h;
+        char j = (char) i;
+        int k = j;
+        k <<=1;
+        k>>>=3;
+        k>>=3;
+        return k;
     }
 
     public static void main(String[] args) {

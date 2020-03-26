@@ -1,6 +1,6 @@
 package com.kelthuzadx.yarrow.lir;
 
-import com.kelthuzadx.yarrow.lir.opcode.LirInstr;
+import com.kelthuzadx.yarrow.lir.instr.LirInstr;
 import com.kelthuzadx.yarrow.util.Logger;
 
 import java.util.ArrayList;

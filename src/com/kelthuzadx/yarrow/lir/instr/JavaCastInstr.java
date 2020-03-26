@@ -1,4 +1,4 @@
-package com.kelthuzadx.yarrow.lir.opcode;
+package com.kelthuzadx.yarrow.lir.instr;
 
 import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.lir.Mnemonic;

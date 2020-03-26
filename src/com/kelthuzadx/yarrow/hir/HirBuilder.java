@@ -8,8 +8,8 @@ import com.kelthuzadx.yarrow.hir.instr.*;
 import com.kelthuzadx.yarrow.optimize.LVN;
 import com.kelthuzadx.yarrow.optimize.Phase;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
-import com.kelthuzadx.yarrow.util.Converter;
 import com.kelthuzadx.yarrow.util.Logger;
+import com.kelthuzadx.yarrow.util.TypeUtil;
 import jdk.vm.ci.code.MemoryBarriers;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaField;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
@@ -865,7 +865,7 @@ public class HirBuilder implements Phase {
             t = JavaKind.Int;
         }
         TypeCastInstr instr = new TypeCastInstr(opcode, from, t);
-        state.push(toType, appendToBlock(instr));
+        state.push(TypeUtil.decayType(toType), appendToBlock(instr));
     }
 
     private void compare(JavaKind type, int opcode) {
@@ -1097,7 +1097,7 @@ public class HirBuilder implements Phase {
     private void newTypeArray(int elementType) {
         VmState stateBefore = state.copy();
         HirInstr len = state.pop(JavaKind.Int);
-        JavaKind type = Converter.fromBasicType(elementType);
+        JavaKind type = TypeUtil.fromBasicType(elementType);
         NewTypeArrayInstr instr = new NewTypeArrayInstr(stateBefore, len, type);
         state.push(JavaKind.Object, appendToBlock(instr));
     }

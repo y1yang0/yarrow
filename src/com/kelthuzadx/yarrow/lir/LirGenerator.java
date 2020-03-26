@@ -2,7 +2,7 @@ package com.kelthuzadx.yarrow.lir;
 
 import com.kelthuzadx.yarrow.hir.Cond;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
-import com.kelthuzadx.yarrow.lir.opcode.*;
+import com.kelthuzadx.yarrow.lir.instr.*;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 
 
@@ -61,6 +61,7 @@ public class LirGenerator {
     public void emitReturn(LirOperand ret) {
         appendToList(new Op1Instr(Mnemonic.RETURN, LirOperand.illegal, ret));
     }
+
 
     public void emitNormalEntry() {
         appendToList(new Op0Instr(Mnemonic.NormalEntry, LirOperand.illegal));

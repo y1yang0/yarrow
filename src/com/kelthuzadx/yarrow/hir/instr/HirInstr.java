@@ -1,7 +1,10 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.core.YarrowError;
+import com.kelthuzadx.yarrow.lir.LirGenerator;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
+import com.kelthuzadx.yarrow.lir.operand.OperandFactory;
+import com.kelthuzadx.yarrow.lir.operand.VirtualRegister;
 import com.kelthuzadx.yarrow.optimize.InstructionVisitor;
 import com.kelthuzadx.yarrow.optimize.Visitable;
 import com.kelthuzadx.yarrow.util.Increment;
@@ -47,15 +50,67 @@ public abstract class HirInstr implements Visitable {
         this.next = next;
     }
 
-    public LirOperand getOperand(InstructionVisitor visitor) {
+    /**
+     * Load operand directly
+     * @param visitor if operand is null, visitor this instruction by visitor
+     * @return operand
+     */
+    public LirOperand loadOperand(InstructionVisitor visitor){
         if (operand == null) {
             this.visit(visitor);
-            YarrowError.guarantee(operand != null, "Must be not null");
         }
+        YarrowError.guarantee(operand != null, "Must be not null");
+
         return operand;
     }
 
-    public void setOperand(LirOperand operand) {
+    /**
+     * Load operand into new virtual register, new virtual register will allocate immediately
+     * @param visitor visitor if operand is null, visitor this instruction by visitor
+     * @param gen generate move instruction if needed
+     * @return operand
+     */
+    public LirOperand loadOperandToReg(InstructionVisitor visitor, LirGenerator gen) {
+        if (operand == null) {
+            this.visit(visitor);
+        }
+        YarrowError.guarantee(operand != null, "Must be not null");
+
+        if(!operand.isVirtualRegister()){
+            VirtualRegister register=OperandFactory.createVirtualRegister(type);
+
+            gen.emitMov(register,operand);
+            operand = register;
+        }
+        YarrowError.guarantee(operand.isVirtualRegister(),"Operand should retain in virtual register");
+
+        return operand;
+    }
+
+    /**
+     * Load operand into specific register
+     * @param visitor visitor if operand is null, visitor this instruction by visitor
+     * @param gen generate move instruction if needed
+     * @param register specific register
+     * @return operand
+     */
+    public LirOperand loadOperandToReg(InstructionVisitor visitor, LirGenerator gen, VirtualRegister register){
+        if (operand == null) {
+            this.visit(visitor);
+        }
+        YarrowError.guarantee(operand != null, "Must be not null");
+
+        if(operand!=register){
+            gen.emitMov(register,operand);
+            operand = register;
+        }
+        YarrowError.guarantee(operand.isVirtualRegister(),"Operand should retain in virtual register");
+
+        return operand;
+    }
+
+    public void installOperand(LirOperand operand) {
+        YarrowError.guarantee(this.operand == null, "The first installation");
         this.operand = operand;
     }
 

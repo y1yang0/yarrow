@@ -8,15 +8,22 @@ import com.kelthuzadx.yarrow.hir.Hir;
 import com.kelthuzadx.yarrow.hir.instr.*;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.lir.operand.OperandFactory;
+import com.kelthuzadx.yarrow.lir.operand.VirtualRegister;
 import com.kelthuzadx.yarrow.optimize.InstructionVisitor;
 import com.kelthuzadx.yarrow.optimize.Phase;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
+import jdk.vm.ci.amd64.AMD64;
 import jdk.vm.ci.code.MemoryBarriers;
 import jdk.vm.ci.meta.JavaKind;
 
 import java.util.ArrayDeque;
 import java.util.HashSet;
 
+/**
+ * Generate low level IR for x86_64 architecture, many lir generating follows x86 ABI convention
+ *
+ * @author kelthuzadx
+ */
 public class LirBuilder extends InstructionVisitor implements Phase {
     private final Hir hir;
     private Lir lir;
@@ -95,6 +102,21 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitShiftInstr(ShiftInstr instr) {
+//        LirOperand count;
+//        if (!(instr.getRight() instanceof ConstantInstr) || instr.getLeft().isType(JavaKind.Long)) {
+//            VirtualRegister rcx = OperandFactory.createVirtualRegister(AMD64.rcx);
+//            count = instr.getRight().getOperand(this,gen);
+//            if(!count.isVirtualRegister()){
+//                gen.emitMov(rcx,count);
+//                count = rcx;
+//            }
+//        }
+//        LirOperand value = instr.getLeft().getOperand(this);
+//        if(!value.isVirtualRegister()){
+//            var val = OperandFactory.createVirtualRegister(instr.getLeft().type());
+//            gen.emitMov(val,value);
+//            value = val;
+//        }
 
     }
 
@@ -104,7 +126,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitParamInstr(ParamInstr instr) {
-        instr.setOperand(OperandFactory.createVirtualRegister(instr.type()));
+        instr.installOperand(OperandFactory.createVirtualRegister(instr.type()));
     }
 
     @Override
@@ -163,7 +185,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitConstantInstr(ConstantInstr instr) {
-        instr.setOperand(OperandFactory.createConstValue(instr.getConstant()));
+        instr.installOperand(OperandFactory.createConstValue(instr.getConstant()));
     }
 
     @Override
@@ -193,48 +215,58 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitArithmeticInstr(ArithmeticInstr instr) {
-        LirOperand left = instr.getLeft().getOperand(this);
-        LirOperand right = instr.getRight().getOperand(this);
-        LirOperand result = OperandFactory.createVirtualRegister(instr.getLeft().type());
-        instr.setOperand(result);
-        if (left != result) {
-            gen.emitMov(result, left);
-            left = result;
-        }
-        switch (instr.getOpcode()) {
-            case Bytecode.IADD:
-            case Bytecode.LADD:
-            case Bytecode.FADD:
-            case Bytecode.DADD:
-                gen.emitAdd(result, left, right);
-                break;
-            case Bytecode.ISUB:
-            case Bytecode.LSUB:
-            case Bytecode.FSUB:
-            case Bytecode.DSUB:
-                gen.emitSub(result, left, right);
-                break;
-            case Bytecode.IMUL:
-            case Bytecode.LMUL:
-            case Bytecode.FMUL:
-            case Bytecode.DMUL:
-                gen.emitMul(result, left, right);
-                break;
-            case Bytecode.IDIV:
-            case Bytecode.LDIV:
-                CompilerErrors.bailOut();
-            case Bytecode.FDIV:
-            case Bytecode.DDIV:
-                gen.emitDiv(result, left, right);
-                break;
-            case Bytecode.IREM:
-            case Bytecode.LREM:
-            case Bytecode.FREM:
-            case Bytecode.DREM:
-                gen.emitRem(result, left, right);
-                break;
-            default:
-                YarrowError.shouldNotReachHere();
+        if(instr.getOpcode()==Bytecode.IDIV || instr.getOpcode() == Bytecode.IREM){
+            //TODO
+        }else{
+            LirOperand left = instr.getLeft().loadOperandToReg(this,gen);
+
+            if(instr.getOpcode() == Bytecode.IDIV){
+                //TODO
+            }else {
+                LirOperand right = instr.getRight().loadOperand(this);
+                LirOperand result = OperandFactory.createVirtualRegister(instr.type());
+                instr.installOperand(result);
+                if (left != result) {
+                    gen.emitMov(result, left);
+                    left = result;
+                }
+                switch (instr.getOpcode()) {
+                    case Bytecode.IADD:
+                    case Bytecode.LADD:
+                    case Bytecode.FADD:
+                    case Bytecode.DADD:
+                        gen.emitAdd(result, left, right);
+                        break;
+                    case Bytecode.ISUB:
+                    case Bytecode.LSUB:
+                    case Bytecode.FSUB:
+                    case Bytecode.DSUB:
+                        gen.emitSub(result, left, right);
+                        break;
+                    case Bytecode.IMUL:
+                    case Bytecode.LMUL:
+                    case Bytecode.FMUL:
+                    case Bytecode.DMUL:
+                        gen.emitMul(result, left, right);
+                        break;
+                    case Bytecode.IDIV:
+                    case Bytecode.LDIV:
+                        CompilerErrors.bailOut();
+                    case Bytecode.FDIV:
+                    case Bytecode.DDIV:
+                        gen.emitDiv(result, left, right);
+                        break;
+                    case Bytecode.IREM:
+                    case Bytecode.LREM:
+                    case Bytecode.FREM:
+                    case Bytecode.DREM:
+                        gen.emitRem(result, left, right);
+                        break;
+                    default:
+                        YarrowError.shouldNotReachHere();
+                }
+            }
+
         }
     }
 
@@ -270,7 +302,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitTypeCastInstr(TypeCastInstr instr) {
-        LirOperand fromOperand = instr.getFrom().getOperand(this);
+        LirOperand fromOperand = instr.getFrom().loadOperandToReg(this,gen);
         LirOperand fromResult = OperandFactory.createVirtualRegister(instr.type());
 
         LirOperand toOperand = fromOperand;
@@ -281,7 +313,8 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         if (fromResult != toResult) {
             gen.emitMov(toResult, fromResult);
         }
-        instr.setOperand(fromResult);
+        instr.installOperand(fromResult);
+        // FIXME:SPECIAL HANDLE
     }
 
     @Override
@@ -313,16 +346,14 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     public void visitReturnInstr(ReturnInstr instr) {
         if (instr.isType(JavaKind.Void)) {
             gen.emitReturn(LirOperand.illegal);
+            instr.installOperand(null); // ReturnInstr has no operand result
             return;
         }
-        LirOperand left = instr.getReturnValue().getOperand(this);
-        if (!left.isVirtualRegister()) {
-            LirOperand retReg = OperandFactory.createVirtualRegister(YarrowRuntime.regConfig.getReturnRegister(instr.type()));
-            gen.emitMov(retReg, left);
-            left = retReg;
-        }
+
+        VirtualRegister retReg = OperandFactory.createVirtualRegister(YarrowRuntime.regConfig.getReturnRegister(instr.type()));
+        LirOperand left = instr.getReturnValue().loadOperandToReg(this,gen,retReg);
         gen.emitReturn(left);
-        instr.setOperand(null); // ReturnInstr has no operand result
+        instr.installOperand(null); // ReturnInstr has no operand result
     }
 
     @Override
