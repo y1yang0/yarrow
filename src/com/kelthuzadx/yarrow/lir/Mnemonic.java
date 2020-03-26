@@ -26,5 +26,8 @@ public enum Mnemonic {
     MUL,
     DIV,
     REM,
+    SHL,
+    SHR,
+    USHR,
     // 3 operand opcode
 }

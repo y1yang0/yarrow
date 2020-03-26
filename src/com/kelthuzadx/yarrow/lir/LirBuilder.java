@@ -102,22 +102,31 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitShiftInstr(ShiftInstr instr) {
-//        LirOperand count;
-//        if (!(instr.getRight() instanceof ConstantInstr) || instr.getLeft().isType(JavaKind.Long)) {
-//            VirtualRegister rcx = OperandFactory.createVirtualRegister(AMD64.rcx);
-//            count = instr.getRight().getOperand(this,gen);
-//            if(!count.isVirtualRegister()){
-//                gen.emitMov(rcx,count);
-//                count = rcx;
-//            }
-//        }
-//        LirOperand value = instr.getLeft().getOperand(this);
-//        if(!value.isVirtualRegister()){
-//            var val = OperandFactory.createVirtualRegister(instr.getLeft().type());
-//            gen.emitMov(val,value);
-//            value = val;
-//        }
+        LirOperand count;
+        if (!(instr.getRight() instanceof ConstantInstr) || instr.getLeft().isType(JavaKind.Long)) {
+            VirtualRegister rcx = OperandFactory.createVirtualRegister(AMD64.rcx);
+            count = instr.getRight().loadOperandToReg(this,gen,rcx);
+        }else{
+            count = instr.getRight().loadOperand(this);
+        }
+        LirOperand value = instr.getLeft().loadOperandToReg(this,gen);
+        LirOperand result = OperandFactory.createVirtualRegister(instr.type());
+        instr.installOperand(result);
 
+        switch (instr.getOpcode()){
+            case Bytecode.ISHL:
+            case Bytecode.LSHL:
+                gen.emitShl(result,value,count);
+                break;
+            case Bytecode.ISHR:
+            case Bytecode.LSHR:
+                gen.emitShr(result,value,count);
+                break;
+            case Bytecode.IUSHR:
+            case Bytecode.LUSHR:
+                gen.emitUshr(result,value,count);
+                break;
+        }
     }
 
     @Override
@@ -215,14 +224,14 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitArithmeticInstr(ArithmeticInstr instr) {
-        if(instr.getOpcode()==Bytecode.IDIV || instr.getOpcode() == Bytecode.IREM){
+        if (instr.getOpcode() == Bytecode.IDIV || instr.getOpcode() == Bytecode.IREM) {
             //TODO
-        }else{
-            LirOperand left = instr.getLeft().loadOperandToReg(this,gen);
+        } else {
+            LirOperand left = instr.getLeft().loadOperandToReg(this, gen);
 
-            if(instr.getOpcode() == Bytecode.IDIV){
+            if (instr.getOpcode() == Bytecode.IDIV) {
                 //TODO
-            }else {
+            } else {
                 LirOperand right = instr.getRight().loadOperand(this);
                 LirOperand result = OperandFactory.createVirtualRegister(instr.type());
                 instr.installOperand(result);
@@ -302,8 +311,9 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitTypeCastInstr(TypeCastInstr instr) {
-        LirOperand fromOperand = instr.getFrom().loadOperandToReg(this,gen);
+        LirOperand fromOperand = instr.getFrom().loadOperandToReg(this, gen);
         LirOperand fromResult = OperandFactory.createVirtualRegister(instr.type());
+        instr.installOperand(fromResult);
 
         LirOperand toOperand = fromOperand;
         LirOperand toResult = fromResult;
@@ -313,7 +323,6 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         if (fromResult != toResult) {
             gen.emitMov(toResult, fromResult);
         }
-        instr.installOperand(fromResult);
         // FIXME:SPECIAL HANDLE
     }
 
@@ -351,7 +360,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         }
 
         VirtualRegister retReg = OperandFactory.createVirtualRegister(YarrowRuntime.regConfig.getReturnRegister(instr.type()));
-        LirOperand left = instr.getReturnValue().loadOperandToReg(this,gen,retReg);
+        LirOperand left = instr.getReturnValue().loadOperandToReg(this, gen, retReg);
         gen.emitReturn(left);
         instr.installOperand(null); // ReturnInstr has no operand result
     }

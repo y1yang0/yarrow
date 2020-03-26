@@ -13,9 +13,9 @@ public class LirGenTest {
         byte i = (byte) h;
         char j = (char) i;
         int k = j;
-        k <<=1;
-        k>>>=3;
-        k>>=3;
+        k <<= 1;
+        k >>>= 3;
+        k >>= 3;
         return k;
     }
 

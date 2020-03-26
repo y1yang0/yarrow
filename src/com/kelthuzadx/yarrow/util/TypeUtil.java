@@ -26,9 +26,10 @@ public class TypeUtil {
         }
     }
 
-    public static JavaKind decayType(JavaKind higher){
-        switch (higher){
-            case Void:return JavaKind.Void;
+    public static JavaKind decayType(JavaKind higher) {
+        switch (higher) {
+            case Void:
+                return JavaKind.Void;
             case Boolean:
             case Byte:
             case Short:

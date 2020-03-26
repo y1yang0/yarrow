@@ -22,6 +22,16 @@ public class LirGenerator {
         this.currentBlockId = currentBlockId;
     }
 
+    public void emitShl(LirOperand dest, LirOperand value,LirOperand count){
+        appendToList(new Op2Instr(Mnemonic.SHL,dest,value,count));
+    }
+    public void emitShr(LirOperand dest, LirOperand value,LirOperand count){
+        appendToList(new Op2Instr(Mnemonic.SHR,dest,value,count));
+    }
+    public void emitUshr(LirOperand dest, LirOperand value,LirOperand count){
+        appendToList(new Op2Instr(Mnemonic.USHR,dest,value,count));
+    }
+
     public void emitJavaCast(LirOperand result, LirOperand operand, int bytecode) {
         appendToList(new JavaCastInstr(result, operand, bytecode));
     }
