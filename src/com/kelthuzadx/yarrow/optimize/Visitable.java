@@ -10,7 +10,6 @@ public interface Visitable {
         try {
             MethodHandle mh = MethodHandles.lookup().findVirtual(visitor.getClass(), "visit" + this.getClass().getSimpleName(), mt);
             mh.invoke(visitor, this);
-            System.out.println("visit" + this.getClass().getSimpleName());
         } catch (Throwable e) {
             e.printStackTrace();
         }

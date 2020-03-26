@@ -16,6 +16,10 @@ public class LirGenTest {
         k <<= 1;
         k >>>= 3;
         k >>= 3;
+        k &= 12;
+        k |= 123;
+        k ^= 342;
+        k&= n;
         return k;
     }
 

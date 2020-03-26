@@ -29,5 +29,8 @@ public enum Mnemonic {
     SHL,
     SHR,
     USHR,
+    AND,
+    OR,
+    XOR,
     // 3 operand opcode
 }

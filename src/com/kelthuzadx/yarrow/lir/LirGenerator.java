@@ -22,14 +22,28 @@ public class LirGenerator {
         this.currentBlockId = currentBlockId;
     }
 
-    public void emitShl(LirOperand dest, LirOperand value,LirOperand count){
-        appendToList(new Op2Instr(Mnemonic.SHL,dest,value,count));
+    public void emitAnd(LirOperand dest, LirOperand left, LirOperand right) {
+        appendToList(new Op2Instr(Mnemonic.AND, dest, left, right));
     }
-    public void emitShr(LirOperand dest, LirOperand value,LirOperand count){
-        appendToList(new Op2Instr(Mnemonic.SHR,dest,value,count));
+
+    public void emitOr(LirOperand dest, LirOperand left, LirOperand right) {
+        appendToList(new Op2Instr(Mnemonic.OR, dest, left, right));
     }
-    public void emitUshr(LirOperand dest, LirOperand value,LirOperand count){
-        appendToList(new Op2Instr(Mnemonic.USHR,dest,value,count));
+
+    public void emitXor(LirOperand dest, LirOperand left, LirOperand right) {
+        appendToList(new Op2Instr(Mnemonic.XOR, dest, left, right));
+    }
+
+    public void emitShl(LirOperand dest, LirOperand value, LirOperand count) {
+        appendToList(new Op2Instr(Mnemonic.SHL, dest, value, count));
+    }
+
+    public void emitShr(LirOperand dest, LirOperand value, LirOperand count) {
+        appendToList(new Op2Instr(Mnemonic.SHR, dest, value, count));
+    }
+
+    public void emitUshr(LirOperand dest, LirOperand value, LirOperand count) {
+        appendToList(new Op2Instr(Mnemonic.USHR, dest, value, count));
     }
 
     public void emitJavaCast(LirOperand result, LirOperand operand, int bytecode) {

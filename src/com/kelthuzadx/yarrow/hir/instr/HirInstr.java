@@ -80,11 +80,12 @@ public abstract class HirInstr implements Visitable {
 
         if (!operand.isVirtualRegister()) {
             VirtualRegister register = OperandFactory.createVirtualRegister(type);
-
             gen.emitMov(register, operand);
-            operand = register;
+            if (!operand.isConstValue()) {
+                operand = register;
+            }
         }
-        YarrowError.guarantee(operand.isVirtualRegister(), "Operand should retain in virtual register");
+        YarrowError.guarantee(operand.isConstValue() || operand.isVirtualRegister(), "Operand should retain in virtual register");
 
         return operand;
     }

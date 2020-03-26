@@ -105,26 +105,26 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         LirOperand count;
         if (!(instr.getRight() instanceof ConstantInstr) || instr.getLeft().isType(JavaKind.Long)) {
             VirtualRegister rcx = OperandFactory.createVirtualRegister(AMD64.rcx);
-            count = instr.getRight().loadOperandToReg(this,gen,rcx);
-        }else{
+            count = instr.getRight().loadOperandToReg(this, gen, rcx);
+        } else {
             count = instr.getRight().loadOperand(this);
         }
-        LirOperand value = instr.getLeft().loadOperandToReg(this,gen);
+        LirOperand value = instr.getLeft().loadOperandToReg(this, gen);
         LirOperand result = OperandFactory.createVirtualRegister(instr.type());
         instr.installOperand(result);
 
-        switch (instr.getOpcode()){
+        switch (instr.getOpcode()) {
             case Bytecode.ISHL:
             case Bytecode.LSHL:
-                gen.emitShl(result,value,count);
+                gen.emitShl(result, value, count);
                 break;
             case Bytecode.ISHR:
             case Bytecode.LSHR:
-                gen.emitShr(result,value,count);
+                gen.emitShr(result, value, count);
                 break;
             case Bytecode.IUSHR:
             case Bytecode.LUSHR:
-                gen.emitUshr(result,value,count);
+                gen.emitUshr(result, value, count);
                 break;
         }
     }
@@ -140,7 +140,35 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitLogicInstr(LogicInstr instr) {
-
+        LirOperand left = instr.getLeft().loadOperandToReg(this, gen);
+        LirOperand right;
+        if (!(instr.getRight() instanceof ConstantInstr)) {
+            right = instr.getRight().loadOperandToReg(this, gen);
+        } else {
+            right = instr.getRight().loadOperand(this);
+        }
+        LirOperand result = OperandFactory.createVirtualRegister(instr.type());
+        instr.installOperand(result);
+        if (left != result) {
+            gen.emitMov(result, left);
+            left = result;
+        }
+        switch (instr.getOpcode()) {
+            case Bytecode.IAND:
+            case Bytecode.LAND:
+                gen.emitAnd(result, left, right);
+                break;
+            case Bytecode.IOR:
+            case Bytecode.LOR:
+                gen.emitOr(result, left, right);
+                break;
+            case Bytecode.IXOR:
+            case Bytecode.LXOR:
+                gen.emitXor(result, left, right);
+                break;
+            default:
+                YarrowError.shouldNotReachHere();
+        }
     }
 
     @Override
