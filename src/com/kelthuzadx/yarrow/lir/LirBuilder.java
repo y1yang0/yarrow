@@ -217,7 +217,15 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitNegateInstr(NegateInstr instr) {
-
+        LirOperand value = instr.getValue().loadOperandToReg(this, gen);
+        if (value.isVirtualRegister()) {
+            LirOperand newValue = OperandFactory.createVirtualRegister(instr.getValue().type());
+            gen.emitMov(newValue, value);
+            value = newValue;
+        }
+        LirOperand result = OperandFactory.createVirtualRegister(instr.type());
+        instr.installOperand(result);
+        gen.emitNeg(value, result);
     }
 
     @Override

@@ -27,7 +27,7 @@ public abstract class LirOperand {
 
         @Override
         public String toString() {
-            return "";
+            return "-";
         }
     };
 

@@ -32,5 +32,6 @@ public enum Mnemonic {
     AND,
     OR,
     XOR,
+    NEG,
     // 3 operand opcode
 }

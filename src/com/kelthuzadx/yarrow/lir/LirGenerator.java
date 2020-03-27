@@ -22,6 +22,10 @@ public class LirGenerator {
         this.currentBlockId = currentBlockId;
     }
 
+    public void emitNeg(LirOperand from, LirOperand to) {
+        appendToList(new Op2Instr(Mnemonic.NEG, to ,from, LirOperand.illegal));
+    }
+
     public void emitAnd(LirOperand dest, LirOperand left, LirOperand right) {
         appendToList(new Op2Instr(Mnemonic.AND, dest, left, right));
     }

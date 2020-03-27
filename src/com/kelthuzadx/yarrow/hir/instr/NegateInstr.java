@@ -7,24 +7,28 @@ import jdk.vm.ci.meta.JavaKind;
 import java.util.Objects;
 
 public class NegateInstr extends HirInstr {
-    private HirInstr left;
+    private HirInstr value;
 
-    public NegateInstr(HirInstr left) {
-        super(left.type());
-        this.left = left;
+    public NegateInstr(HirInstr value) {
+        super(value.type());
+        this.value = value;
+    }
+
+    public HirInstr getValue() {
+        return value;
     }
 
     @Override
     public HirInstr ideal() {
-        if (left instanceof ConstantInstr) {
-            if (left.isType(JavaKind.Int)) {
-                return new ConstantInstr(JavaConstant.forInt(-((ConstantInstr) left).getConstant().asInt()));
-            } else if (left.isType(JavaKind.Long)) {
-                return new ConstantInstr(JavaConstant.forLong(-((ConstantInstr) left).getConstant().asLong()));
-            } else if (left.isType(JavaKind.Float)) {
-                return new ConstantInstr(JavaConstant.forFloat(-((ConstantInstr) left).getConstant().asFloat()));
-            } else if (left.isType(JavaKind.Double)) {
-                return new ConstantInstr(JavaConstant.forDouble(-((ConstantInstr) left).getConstant().asDouble()));
+        if (value instanceof ConstantInstr) {
+            if (value.isType(JavaKind.Int)) {
+                return new ConstantInstr(JavaConstant.forInt(-((ConstantInstr) value).getConstant().asInt()));
+            } else if (value.isType(JavaKind.Long)) {
+                return new ConstantInstr(JavaConstant.forLong(-((ConstantInstr) value).getConstant().asLong()));
+            } else if (value.isType(JavaKind.Float)) {
+                return new ConstantInstr(JavaConstant.forFloat(-((ConstantInstr) value).getConstant().asFloat()));
+            } else if (value.isType(JavaKind.Double)) {
+                return new ConstantInstr(JavaConstant.forDouble(-((ConstantInstr) value).getConstant().asDouble()));
             }
         }
         return this;
@@ -32,7 +36,7 @@ public class NegateInstr extends HirInstr {
 
     @Override
     public String toString() {
-        return Logger.format("i{}: -i{}", super.id, left.id);
+        return Logger.format("i{}: -i{}", super.id, value.id);
     }
 
     @Override
@@ -40,11 +44,11 @@ public class NegateInstr extends HirInstr {
         if (this == o) return true;
         if (!(o instanceof NegateInstr)) return false;
         var that = (NegateInstr) o;
-        return left.equals(that.left);
+        return value.equals(that.value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(left);
+        return Objects.hash(value);
     }
 }

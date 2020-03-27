@@ -19,7 +19,9 @@ public class LirGenTest {
         k &= 12;
         k |= 123;
         k ^= 342;
-        k&= n;
+        k &= n;
+        k = -12;
+        k = -b;
         return k;
     }
 
