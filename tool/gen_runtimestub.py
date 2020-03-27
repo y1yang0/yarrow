@@ -60,24 +60,10 @@ def pascalCase(st):
     return st
 
 def gen(klass,method):
-    content = """package com.kelthuzadx.yarrow.lir.stub;
-import com.kelthuzadx.yarrow.core.YarrowRuntime;
-
-public class Stub{} extends RuntimeStub{{
-    private long addr;
-
+    content = """
+public static class Stub{} extends RuntimeStub{{
     public Stub{}(){{
-        this.addr = YarrowRuntime.access.getAddress("{}::{}");
-    }}
-
-    @Override
-    public String name(){{
-        return "{}::{}";
-    }}
-
-    @Override
-    public long getAddress(){{
-        return addr;
+        super("{}::{}",YarrowRuntime.access.getAddress("{}::{}"));
     }}
 }}
 """.format(pascalCase(method),pascalCase(method),klass,method,klass,method)
@@ -88,6 +74,5 @@ for val in stubs:
     a = val[:val.find(":")]
     b = val[val.find(":")+2:]
     content = gen(a,b)
-    with open("./stub/Stub{}.java".format(pascalCase(b)),"a+") as f:
-        f.write(content)
+    print(content)
 

@@ -300,6 +300,7 @@ public class CFG implements Phase {
     private void printCFGToDotFile() {
         StringBuilder content = new StringBuilder();
         content.append("digraph G{\n");
+        content.append("\tgraph [ dpi = 500 ];\n");
         for (BlockStartInstr block : blocks) {
             if (!block.getSuccessor().isEmpty()) {
                 for (BlockStartInstr succ : block.getSuccessor()) {
@@ -318,6 +319,7 @@ public class CFG implements Phase {
     private void printCFGDetailToDotFile() {
         StringBuilder content = new StringBuilder();
         content.append("digraph G{\n");
+        content.append("\tgraph [ dpi = 500 ];\n");
         for (BlockStartInstr block : blocks) {
             if (!block.getSuccessor().isEmpty()) {
                 for (BlockStartInstr succ : block.getSuccessor()) {

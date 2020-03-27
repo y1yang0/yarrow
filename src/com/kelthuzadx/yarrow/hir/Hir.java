@@ -93,6 +93,7 @@ public class Hir {
         } else {
             StringBuilder content = new StringBuilder();
             content.append("digraph G{\n");
+            content.append("\tgraph [ dpi = 500 ];\n");
             printHIRToFile(new HashSet<>(), entry, content);
             content.append("}");
             String fileName = method.getDeclaringClass().getUnqualifiedName() + "_" +

@@ -10,7 +10,6 @@ import com.kelthuzadx.yarrow.lir.operand.ConstValue;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.lir.operand.OperandFactory;
 import com.kelthuzadx.yarrow.lir.operand.VirtualRegister;
-import com.kelthuzadx.yarrow.lir.stub.StubNewInstance;
 import com.kelthuzadx.yarrow.optimize.InstructionVisitor;
 import com.kelthuzadx.yarrow.optimize.Phase;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
@@ -354,7 +353,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
         VirtualRegister metadataReg = OperandFactory.createVirtualRegister(AMD64.rdx);
         gen.emitMov(metadataReg, new ConstValue(JavaConstant.forLong(metadataPointer)));
-        gen.emitJmp(new StubNewInstance());
+        gen.emitJmp(new RuntimeStub.StubNewInstance());
     }
 
     @Override

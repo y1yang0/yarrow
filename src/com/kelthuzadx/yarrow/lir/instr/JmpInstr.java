@@ -3,8 +3,8 @@ package com.kelthuzadx.yarrow.lir.instr;
 import com.kelthuzadx.yarrow.hir.Cond;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.lir.Mnemonic;
+import com.kelthuzadx.yarrow.lir.RuntimeStub;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
-import com.kelthuzadx.yarrow.lir.stub.RuntimeStub;
 import com.kelthuzadx.yarrow.util.Logger;
 
 
