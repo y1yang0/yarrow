@@ -2,6 +2,7 @@ package com.kelthuzadx.yarrow.lir;
 
 import com.kelthuzadx.yarrow.core.YarrowRuntime;
 
+@SuppressWarnings("unused")
 public abstract class RuntimeStub {
     private String name;
     private long addr;
