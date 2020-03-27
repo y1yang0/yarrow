@@ -6,7 +6,7 @@ import jdk.vm.ci.meta.JavaKind;
 public class ConstValue extends LirOperand {
     private JavaConstant constant;
 
-    ConstValue(JavaConstant constant) {
+    public ConstValue(JavaConstant constant) {
         this.constant = constant;
     }
 

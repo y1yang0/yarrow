@@ -1,23 +1,28 @@
 package com.kelthuzadx.yarrow.lir;
 
 import com.kelthuzadx.yarrow.bytecode.Bytecode;
-import com.kelthuzadx.yarrow.core.YarrowConfigAccess;
 import com.kelthuzadx.yarrow.core.YarrowError;
-import com.kelthuzadx.yarrow.core.YarrowProperties;
 import com.kelthuzadx.yarrow.core.YarrowRuntime;
 import com.kelthuzadx.yarrow.hir.BlockFlag;
 import com.kelthuzadx.yarrow.hir.Hir;
 import com.kelthuzadx.yarrow.hir.instr.*;
+import com.kelthuzadx.yarrow.lir.operand.ConstValue;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.lir.operand.OperandFactory;
 import com.kelthuzadx.yarrow.lir.operand.VirtualRegister;
+import com.kelthuzadx.yarrow.lir.stub.StubNewInstance;
 import com.kelthuzadx.yarrow.optimize.InstructionVisitor;
 import com.kelthuzadx.yarrow.optimize.Phase;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 import jdk.vm.ci.amd64.AMD64;
 import jdk.vm.ci.code.MemoryBarriers;
+import jdk.vm.ci.code.Register;
+import jdk.vm.ci.hotspot.HotSpotResolvedObjectType;
+import jdk.vm.ci.meta.JavaConstant;
 import jdk.vm.ci.meta.JavaKind;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.HashSet;
 
@@ -335,7 +340,21 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitNewInstr(NewInstr instr) {
+        Register retReg = YarrowRuntime.regConfig.getReturnRegister(instr.type());
+        var klass = (HotSpotResolvedObjectType) instr.getKlass();
 
+        long metadataPointer = 0;
+        try {
+            Method m = klass.getClass().getMethod("getMetaspacePointer");
+            m.setAccessible(true);
+            metadataPointer = (long) m.invoke(klass);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+        VirtualRegister metadataReg = OperandFactory.createVirtualRegister(AMD64.rdx);
+        gen.emitMov(metadataReg, new ConstValue(JavaConstant.forLong(metadataPointer)));
+        gen.emitJmp(new StubNewInstance());
     }
 
     @Override

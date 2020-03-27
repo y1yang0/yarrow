@@ -13,6 +13,10 @@ public class NewInstr extends StateInstr {
         this.klass = klass;
     }
 
+    public JavaType getKlass() {
+        return klass;
+    }
+
     @Override
     public String toString() {
         return Logger.format("i{}: new {}", super.id, klass.getUnqualifiedName());

@@ -4,6 +4,7 @@ import com.kelthuzadx.yarrow.hir.Cond;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.lir.instr.*;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
+import com.kelthuzadx.yarrow.lir.stub.RuntimeStub;
 
 
 /**
@@ -84,6 +85,10 @@ public class LirGenerator {
 
     public void emitJmp(BlockStartInstr block) {
         appendToList(new JmpInstr(Cond.Always, block));
+    }
+
+    public void emitJmp(RuntimeStub stub) {
+        appendToList(new JmpInstr(Cond.Always, stub));
     }
 
     public void emitReturn(LirOperand ret) {

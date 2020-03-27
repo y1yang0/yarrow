@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 
 public class YarrowCompiler implements JVMCICompiler {
 
-    public YarrowCompiler(){
+    public YarrowCompiler() {
         YarrowRuntime.initialize();
     }
 

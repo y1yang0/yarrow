@@ -49,9 +49,45 @@ stubs=["CompilerRuntime::backedge_event",
 "os::javaTimeMillis",
 "os::javaTimeNanos"]
 
+def camelCase(st):
+    output = ''.join(x for x in st.title() if x.isalnum())
+    output = output.replace("_","")
+    return output[0].lower() + output[1:]
+
+def pascalCase(st):
+    st = st.title()
+    st = st.replace("_","")
+    return st
+
+def gen(klass,method):
+    content = """package com.kelthuzadx.yarrow.lir.stub;
+import com.kelthuzadx.yarrow.core.YarrowRuntime;
+
+public class Stub{} extends RuntimeStub{{
+    private long addr;
+
+    public Stub{}(){{
+        this.addr = YarrowRuntime.access.getAddress("{}::{}");
+    }}
+
+    @Override
+    public String name(){{
+        return "{}::{}";
+    }}
+
+    @Override
+    public long getAddress(){{
+        return addr;
+    }}
+}}
+""".format(pascalCase(method),pascalCase(method),klass,method,klass,method)
+    return content
+
 ####!!! Special handle for RTLD_DEFAULT
 for val in stubs:
     a = val[:val.find(":")]
     b = val[val.find(":")+2:]
-    res = '{}.{}=YarrowRuntime.access.getAddress("{}");'.format(a,b,val)
-    print(res)
+    content = gen(a,b)
+    with open("./stub/Stub{}.java".format(pascalCase(b)),"a+") as f:
+        f.write(content)
+

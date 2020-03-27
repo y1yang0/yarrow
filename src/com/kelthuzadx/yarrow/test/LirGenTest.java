@@ -22,6 +22,7 @@ public class LirGenTest {
         k &= n;
         k = -12;
         k = -b;
+        Object o = new Object();
         return k;
     }
 

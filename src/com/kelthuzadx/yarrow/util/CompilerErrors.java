@@ -1,6 +1,5 @@
 package com.kelthuzadx.yarrow.util;
 
-import com.kelthuzadx.yarrow.core.YarrowError;
 import jdk.vm.ci.code.BailoutException;
 
 public class CompilerErrors {

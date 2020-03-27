@@ -14,7 +14,7 @@ public class YarrowConfigAccess extends HotSpotVMConfigAccess {
         super(store);
     }
 
-    public static YarrowConfigAccess access(){
+    public static YarrowConfigAccess access() {
         return access;
     }
 }
