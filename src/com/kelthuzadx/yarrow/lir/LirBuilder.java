@@ -252,60 +252,51 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitArithmeticInstr(ArithmeticInstr instr) {
-        if (instr.getOpcode() == Bytecode.IDIV || instr.getOpcode() == Bytecode.IREM) {
-            //TODO
-        } else {
-            LirOperand left = instr.getLeft().loadOperandToReg(this, gen);
-
-            if (instr.getOpcode() == Bytecode.IDIV) {
-                //TODO
-            } else {
-                LirOperand right = instr.getRight().loadOperand(this);
-                LirOperand result = OperandFactory.createVirtualRegister(instr.type());
-                instr.installOperand(result);
-                if (left != result) {
-                    gen.emitMov(result, left);
-                    left = result;
-                }
-                switch (instr.getOpcode()) {
-                    case Bytecode.IADD:
-                    case Bytecode.LADD:
-                    case Bytecode.FADD:
-                    case Bytecode.DADD:
-                        gen.emitAdd(result, left, right);
-                        break;
-                    case Bytecode.ISUB:
-                    case Bytecode.LSUB:
-                    case Bytecode.FSUB:
-                    case Bytecode.DSUB:
-                        gen.emitSub(result, left, right);
-                        break;
-                    case Bytecode.IMUL:
-                    case Bytecode.LMUL:
-                    case Bytecode.FMUL:
-                    case Bytecode.DMUL:
-                        gen.emitMul(result, left, right);
-                        break;
-                    case Bytecode.IDIV:
-                    case Bytecode.LDIV:
-                        CompilerErrors.bailOut();
-                    case Bytecode.FDIV:
-                    case Bytecode.DDIV:
-                        gen.emitDiv(result, left, right);
-                        break;
-                    case Bytecode.IREM:
-                    case Bytecode.LREM:
-                    case Bytecode.FREM:
-                    case Bytecode.DREM:
-                        gen.emitRem(result, left, right);
-                        break;
-                    default:
-                        YarrowError.shouldNotReachHere();
-                }
-            }
-
+        LirOperand left = instr.getLeft().loadOperandToReg(this, gen);
+        LirOperand right = instr.getRight().loadOperand(this);
+        LirOperand result = OperandFactory.createVirtualRegister(instr.type());
+        instr.installOperand(result);
+        if (left != result) {
+            gen.emitMov(result, left);
+            left = result;
+        }
+        switch (instr.getOpcode()) {
+            case Bytecode.IADD:
+            case Bytecode.LADD:
+            case Bytecode.FADD:
+            case Bytecode.DADD:
+                gen.emitAdd(result, left, right);
+                break;
+            case Bytecode.ISUB:
+            case Bytecode.LSUB:
+            case Bytecode.FSUB:
+            case Bytecode.DSUB:
+                gen.emitSub(result, left, right);
+                break;
+            case Bytecode.IMUL:
+            case Bytecode.LMUL:
+            case Bytecode.FMUL:
+            case Bytecode.DMUL:
+                gen.emitMul(result, left, right);
+                break;
+            case Bytecode.IDIV:
+            case Bytecode.LDIV:
+                CompilerErrors.bailOut();
+            case Bytecode.FDIV:
+            case Bytecode.DDIV:
+                gen.emitDiv(result, left, right);
+                break;
+            case Bytecode.IREM:
+            case Bytecode.LREM:
+            case Bytecode.FREM:
+            case Bytecode.DREM:
+                gen.emitRem(result, left, right);
+                break;
+            default:
+                YarrowError.shouldNotReachHere();
         }
     }
+
 
     @Override
     public void visitArrayLenInstr(ArrayLenInstr instr) {
