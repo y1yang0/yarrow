@@ -1,7 +1,9 @@
 package com.kelthuzadx.yarrow.lir;
 
 import com.kelthuzadx.yarrow.bytecode.Bytecode;
+import com.kelthuzadx.yarrow.core.YarrowConfigAccess;
 import com.kelthuzadx.yarrow.core.YarrowError;
+import com.kelthuzadx.yarrow.core.YarrowProperties;
 import com.kelthuzadx.yarrow.core.YarrowRuntime;
 import com.kelthuzadx.yarrow.hir.BlockFlag;
 import com.kelthuzadx.yarrow.hir.Hir;
@@ -188,7 +190,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitPhiInstr(PhiInstr instr) {
-
+        YarrowError.shouldNotReachHere();
     }
 
     @Override
@@ -250,7 +252,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitStateInstr(StateInstr instr) {
-
+        YarrowError.shouldNotReachHere();
     }
 
     @Override
@@ -355,7 +357,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitInstruction(HirInstr instr) {
-
+        YarrowError.shouldNotReachHere();
     }
 
     @Override
