@@ -15,6 +15,8 @@ import com.kelthuzadx.yarrow.optimize.Phase;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 import jdk.vm.ci.amd64.AMD64;
 import jdk.vm.ci.code.MemoryBarriers;
+import jdk.vm.ci.hotspot.HotSpotJVMCIRuntime;
+import jdk.vm.ci.hotspot.HotSpotResolvedJavaType;
 import jdk.vm.ci.hotspot.HotSpotResolvedObjectType;
 import jdk.vm.ci.meta.JavaConstant;
 import jdk.vm.ci.meta.JavaKind;
@@ -23,6 +25,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.HashSet;
+
 
 /**
  * Generate low level IR for x86_64 architecture, many lir generating follows x86 ABI convention
@@ -339,20 +342,11 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     @Override
     public void visitNewInstr(NewInstr instr) {
         VirtualRegister retReg = OperandFactory.createVirtualRegister(YarrowRuntime.regConfig.getReturnRegister(instr.type()));
-        var klass = (HotSpotResolvedObjectType) instr.getKlass();
-
-        long metadataPointer = 0;
-        try {
-            Method m = klass.getClass().getMethod("getMetaspacePointer");
-            m.setAccessible(true);
-            metadataPointer = (long) m.invoke(klass);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        var klassPointer = getKlassPointer((HotSpotResolvedJavaType) instr.getKlass());
 
         VirtualRegister metadataReg = OperandFactory.createVirtualRegister(AMD64.rdx);
-        gen.emitMov(metadataReg, new ConstValue(JavaConstant.forLong(metadataPointer)));
-        var stub = new RuntimeStub.StubNewInstance();
+        gen.emitMov(metadataReg, new ConstValue(JavaConstant.forLong(klassPointer)));
+        var stub = new RuntimeStub.StubNewInstance((HotSpotResolvedObjectType) instr.getKlass(),metadataReg,retReg);
         gen.emitJmp(stub);
         gen.emitLabel(stub.getContinuation());
         VirtualRegister result = OperandFactory.createVirtualRegister(instr.type());
@@ -384,7 +378,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitAccessArrayInstr(AccessArrayInstr instr) {
-
+        YarrowError.shouldNotReachHere();
     }
 
     @Override
@@ -428,6 +422,27 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitNewTypeArrayInstr(NewTypeArrayInstr instr) {
+        LirOperand length = instr.arrayLength().loadOperandToReg(this,gen,
+                OperandFactory.createVirtualRegister(AMD64.rbx));
+        VirtualRegister retReg = OperandFactory.createVirtualRegister(YarrowRuntime.regConfig.getReturnRegister(instr.type()));
 
+    }
+
+    private long getKlassPointer(HotSpotResolvedJavaType klass){
+        Class<?> javaClass = null;
+        try {
+            Method m = klass.getClass().getMethod("mirror");
+            m.setAccessible(true);
+            javaClass = (Class<?>) m.invoke(klass);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+
+
+        int klassOffset = YarrowRuntime.access.getFieldValue("java_lang_Class::_klass_offset", Integer.class, "int");;
+        if (HotSpotJVMCIRuntime.getHostWordKind() == JavaKind.Long) {
+            return YarrowRuntime.unsafe.getLong(javaClass, klassOffset);
+        }
+        return YarrowRuntime.unsafe.getInt(javaClass, klassOffset) & 0xFFFFFFFFL;
     }
 }

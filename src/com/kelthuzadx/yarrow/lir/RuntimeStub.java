@@ -2,6 +2,8 @@ package com.kelthuzadx.yarrow.lir;
 
 import com.kelthuzadx.yarrow.core.YarrowRuntime;
 import com.kelthuzadx.yarrow.lir.instr.LabelInstr;
+import com.kelthuzadx.yarrow.lir.operand.VirtualRegister;
+import jdk.vm.ci.hotspot.HotSpotResolvedObjectType;
 
 @SuppressWarnings("unused")
 public abstract class RuntimeStub {
@@ -208,14 +210,15 @@ public abstract class RuntimeStub {
 
 
     public static class StubNewInstance extends RuntimeStub {
-        private LabelInstr entry;
+        private HotSpotResolvedObjectType klass;
+        private VirtualRegister klassRegister;
+        private VirtualRegister result;
 
-        public StubNewInstance() {
+        public StubNewInstance(HotSpotResolvedObjectType klass, VirtualRegister klassRegister, VirtualRegister result) {
             super("JVMCIRuntime::new_instance", YarrowRuntime.access.getAddress("JVMCIRuntime::new_instance"));
-        }
-
-        public LabelInstr getEntry() {
-            return entry;
+            this.klass = klass;
+            this.klassRegister = klassRegister;
+            this.result = result;
         }
     }
 
