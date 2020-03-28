@@ -22,6 +22,10 @@ public class LirGenerator {
         this.currentBlockId = currentBlockId;
     }
 
+    public void emitLabel(LabelInstr labelInstr) {
+        appendToList(labelInstr);
+    }
+
     public void emitNeg(LirOperand from, LirOperand to) {
         appendToList(new Op2Instr(Mnemonic.NEG, to, from, LirOperand.illegal));
     }

@@ -15,7 +15,6 @@ import com.kelthuzadx.yarrow.optimize.Phase;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 import jdk.vm.ci.amd64.AMD64;
 import jdk.vm.ci.code.MemoryBarriers;
-import jdk.vm.ci.code.Register;
 import jdk.vm.ci.hotspot.HotSpotResolvedObjectType;
 import jdk.vm.ci.meta.JavaConstant;
 import jdk.vm.ci.meta.JavaKind;
@@ -339,7 +338,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitNewInstr(NewInstr instr) {
-        Register retReg = YarrowRuntime.regConfig.getReturnRegister(instr.type());
+        VirtualRegister retReg = OperandFactory.createVirtualRegister(YarrowRuntime.regConfig.getReturnRegister(instr.type()));
         var klass = (HotSpotResolvedObjectType) instr.getKlass();
 
         long metadataPointer = 0;
@@ -353,7 +352,12 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
         VirtualRegister metadataReg = OperandFactory.createVirtualRegister(AMD64.rdx);
         gen.emitMov(metadataReg, new ConstValue(JavaConstant.forLong(metadataPointer)));
-        gen.emitJmp(new RuntimeStub.StubNewInstance());
+        var stub = new RuntimeStub.StubNewInstance();
+        gen.emitJmp(stub);
+        gen.emitLabel(stub.getContinuation());
+        VirtualRegister result = OperandFactory.createVirtualRegister(instr.type());
+        gen.emitMov(result, retReg);
+        instr.installOperand(result);
     }
 
     @Override

@@ -1,19 +1,32 @@
 package com.kelthuzadx.yarrow.lir;
 
 import com.kelthuzadx.yarrow.core.YarrowRuntime;
+import com.kelthuzadx.yarrow.lir.instr.LabelInstr;
 
 @SuppressWarnings("unused")
 public abstract class RuntimeStub {
     private String name;
-    private long addr;
+    private long stubAddress;
+    private LabelInstr trampoline;
+    private LabelInstr continuation;
 
-    public RuntimeStub(String name, long addr) {
+    public RuntimeStub(String name, long stubAddress) {
         this.name = name;
-        this.addr = addr;
+        this.stubAddress = stubAddress;
+        this.trampoline = new LabelInstr();
+        this.continuation = new LabelInstr();
     }
 
-    public long getAddress() {
-        return addr;
+    public long getStubAddress() {
+        return stubAddress;
+    }
+
+    public LabelInstr getTrampoline() {
+        return trampoline;
+    }
+
+    public LabelInstr getContinuation() {
+        return continuation;
     }
 
     public String toString() {
@@ -195,8 +208,14 @@ public abstract class RuntimeStub {
 
 
     public static class StubNewInstance extends RuntimeStub {
+        private LabelInstr entry;
+
         public StubNewInstance() {
             super("JVMCIRuntime::new_instance", YarrowRuntime.access.getAddress("JVMCIRuntime::new_instance"));
+        }
+
+        public LabelInstr getEntry() {
+            return entry;
         }
     }
 
