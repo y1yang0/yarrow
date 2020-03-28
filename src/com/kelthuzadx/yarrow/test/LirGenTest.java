@@ -24,6 +24,7 @@ public class LirGenTest {
         k = -b;
         Object o = new Object();
         o = new int[25];
+        o = new StringBuilder[32];
         return k;
     }
 

@@ -15,6 +15,10 @@ public class NewObjectArrayInstr extends StateInstr {
         this.klass = klass;
     }
 
+    public JavaType getKlass() {
+        return klass;
+    }
+
     public HirInstr arrayLength() {
         return len;
     }

@@ -383,7 +383,21 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitNewObjectArrayInstr(NewObjectArrayInstr instr) {
-
+        VirtualRegister length = (VirtualRegister) instr.arrayLength().loadOperandToReg(this, gen,
+                OperandFactory.createVirtualRegister(AMD64.rbx));
+        VirtualRegister retReg = OperandFactory.createVirtualRegister(YarrowRuntime.regConfig.getReturnRegister(instr.type()));
+        VirtualRegister temp1 = OperandFactory.createVirtualRegister(AMD64.rcx);
+        VirtualRegister temp2 = OperandFactory.createVirtualRegister(AMD64.rsi);
+        VirtualRegister temp3 = OperandFactory.createVirtualRegister(AMD64.rdi);
+        VirtualRegister temp4 = retReg;
+        VirtualRegister klassReg = OperandFactory.createVirtualRegister(AMD64.rdx);
+        var klassPointer = getKlassPointer((HotSpotResolvedJavaType) instr.getKlass());
+        gen.emitMov(klassReg, new ConstValue(JavaConstant.forLong(klassPointer)));
+        var stub = new RuntimeStub.StubNewArray(length, klassReg, retReg);
+        gen.emitAllocateArray(stub, klassReg, retReg, length, temp1, temp2, temp3, temp4, JavaKind.Object);
+        LirOperand result = OperandFactory.createVirtualRegister(instr.type());
+        gen.emitMov(result, retReg);
+        instr.installOperand(result);
     }
 
     @Override
