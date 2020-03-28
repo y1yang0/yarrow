@@ -16,7 +16,7 @@ public abstract class InstructionVisitor {
 
     public abstract void visitLogicInstr(LogicInstr instr);
 
-    public abstract void visitMultiNewArrayInstr(MultiNewArrayInstr instr);
+    public abstract void visitMultiNewArrayInstr(NewMultiArrayInstr instr);
 
     public abstract void visitStoreIndexInstr(StoreIndexInstr instr);
 

@@ -26,7 +26,14 @@ public class ArrayLenInstr extends AccessArrayInstr {
                 int len = ((ConstantInstr) lenInstr).getConstant().asInt();
                 return new ConstantInstr(JavaConstant.forInt(len));
             }
+        } else if (array instanceof NewMultiArrayInstr) {
+            HirInstr lenInstr = ((NewMultiArrayInstr) array).arrayLength();
+            if (lenInstr instanceof ConstantInstr) {
+                int len = ((ConstantInstr) lenInstr).getConstant().asInt();
+                return new ConstantInstr(JavaConstant.forInt(len));
+            }
         }
+
         return super.ideal();
     }
 

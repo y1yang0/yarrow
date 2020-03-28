@@ -5,14 +5,20 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 import jdk.vm.ci.meta.JavaType;
 
-public class MultiNewArrayInstr extends StateInstr {
+public class NewMultiArrayInstr extends StateInstr {
     private JavaType klass;
     private HirInstr[] dimenInstrs;
+    private HirInstr len;
 
-    public MultiNewArrayInstr(VmState stateBefore, JavaType klass, HirInstr[] dimenInstrs) {
+    public NewMultiArrayInstr(VmState stateBefore, JavaType klass, HirInstr[] dimenInstrs) {
         super(JavaKind.Object, stateBefore);
         this.klass = klass;
         this.dimenInstrs = dimenInstrs;
+        this.len = dimenInstrs[dimenInstrs.length - 1];
+    }
+
+    public HirInstr arrayLength() {
+        return len;
     }
 
     @Override

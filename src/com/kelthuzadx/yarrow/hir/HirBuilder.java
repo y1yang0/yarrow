@@ -1164,7 +1164,7 @@ public class HirBuilder implements Phase {
             dimenInstr[i] = di;
         }
 
-        MultiNewArrayInstr instr = new MultiNewArrayInstr(stateBefore, klass, dimenInstr);
+        NewMultiArrayInstr instr = new NewMultiArrayInstr(stateBefore, klass, dimenInstr);
         state.push(JavaKind.Object, appendToBlock(instr));
     }
 }

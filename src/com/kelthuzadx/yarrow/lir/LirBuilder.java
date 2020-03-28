@@ -180,7 +180,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     }
 
     @Override
-    public void visitMultiNewArrayInstr(MultiNewArrayInstr instr) {
+    public void visitMultiNewArrayInstr(NewMultiArrayInstr instr) {
 
     }
 

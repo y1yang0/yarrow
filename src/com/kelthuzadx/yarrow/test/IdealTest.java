@@ -89,6 +89,11 @@ public class IdealTest {
         int index = 2;
         double dd2 = idealTest.arr[index];
         double dd3 = dd1 + dd2;
+
+        int[][][] arr = new int[1][2][3];
+        int k = arr.length;
+        k += arr[1].length;
+        ret += k;
         return ret + (int) dd3;
     }
 
