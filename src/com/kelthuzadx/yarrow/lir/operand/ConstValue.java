@@ -6,7 +6,7 @@ import jdk.vm.ci.meta.JavaKind;
 public class ConstValue extends LirOperand {
     private JavaConstant constant;
 
-    public ConstValue(JavaConstant constant) {
+    ConstValue(JavaConstant constant) {
         this.constant = constant;
     }
 
@@ -27,6 +27,11 @@ public class ConstValue extends LirOperand {
 
     @Override
     public boolean isStackVar() {
+        return false;
+    }
+
+    @Override
+    public boolean isAddress() {
         return false;
     }
 

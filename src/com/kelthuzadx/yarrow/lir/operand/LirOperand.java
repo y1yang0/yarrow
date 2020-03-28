@@ -26,6 +26,11 @@ public abstract class LirOperand {
         }
 
         @Override
+        public boolean isAddress() {
+            return false;
+        }
+
+        @Override
         public String toString() {
             return "-";
         }
@@ -38,4 +43,6 @@ public abstract class LirOperand {
     public abstract boolean isVirtualRegister();
 
     public abstract boolean isStackVar();
+
+    public abstract boolean isAddress();
 }

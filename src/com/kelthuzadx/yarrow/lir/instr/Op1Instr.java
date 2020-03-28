@@ -14,7 +14,7 @@ public class Op1Instr extends LirInstr {
 
     @Override
     public String toString() {
-        return Logger.format("i{}: {} {} {}", super.id, mnemonic.name().toLowerCase(), result.toString(),
+        return Logger.format("i{}: {} {},{}", super.id, mnemonic.name().toLowerCase(), result.toString(),
                 operand.toString());
 
     }

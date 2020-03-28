@@ -42,6 +42,11 @@ public class VirtualRegister extends LirOperand {
     }
 
     @Override
+    public boolean isAddress() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         if (register.getRegisterCategory().equals(virtual)
         ) {

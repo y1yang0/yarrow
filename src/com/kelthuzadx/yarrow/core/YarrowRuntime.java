@@ -38,4 +38,15 @@ public class YarrowRuntime {
             e.printStackTrace();
         }
     }
+
+
+    public static int getArrayLengthOffset() {
+        boolean flag = access.getFlag("UseCompressedClassPointers", Boolean.class);
+        if (flag) {
+            int sizeofNarrowKlass = access.getFieldValue("CompilerToVM::Data::sizeof_narrowKlass", Integer.class, "int");
+            return sizeofNarrowKlass + access.getFieldOffset("oopDesc::_metadata._klass", Integer.class, "Klass*");
+        } else {
+            return access.getConstant("sizeof_arrayOopDesc", Integer.class);
+        }
+    }
 }

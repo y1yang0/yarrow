@@ -6,7 +6,7 @@ import com.kelthuzadx.yarrow.core.YarrowRuntime;
 import com.kelthuzadx.yarrow.hir.BlockFlag;
 import com.kelthuzadx.yarrow.hir.Hir;
 import com.kelthuzadx.yarrow.hir.instr.*;
-import com.kelthuzadx.yarrow.lir.operand.ConstValue;
+import com.kelthuzadx.yarrow.lir.operand.Address;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.lir.operand.OperandFactory;
 import com.kelthuzadx.yarrow.lir.operand.VirtualRegister;
@@ -316,7 +316,11 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitArrayLenInstr(ArrayLenInstr instr) {
-
+        LirOperand array = instr.getArray().loadOperandToReg(this, gen);
+        LirOperand result = OperandFactory.createVirtualRegister(instr.type());
+        instr.installOperand(result);
+        Address addr = OperandFactory.createAddress(array, YarrowRuntime.getArrayLengthOffset(), JavaKind.Int);
+        gen.emitMov(result, addr);
     }
 
     @Override
@@ -345,7 +349,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         var klassPointer = getKlassPointer((HotSpotResolvedJavaType) instr.getKlass());
 
         VirtualRegister metadataReg = OperandFactory.createVirtualRegister(AMD64.rdx);
-        gen.emitMov(metadataReg, new ConstValue(JavaConstant.forLong(klassPointer)));
+        gen.emitMov(metadataReg, OperandFactory.createConstValue(JavaConstant.forLong(klassPointer)));
         var stub = new RuntimeStub.StubNewInstance((HotSpotResolvedObjectType) instr.getKlass(), metadataReg, retReg);
         gen.emitJmp(stub);
         gen.emitLabel(stub.getContinuation());
@@ -392,7 +396,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         VirtualRegister temp4 = retReg;
         VirtualRegister klassReg = OperandFactory.createVirtualRegister(AMD64.rdx);
         var klassPointer = getKlassPointer((HotSpotResolvedJavaType) instr.getKlass());
-        gen.emitMov(klassReg, new ConstValue(JavaConstant.forLong(klassPointer)));
+        gen.emitMov(klassReg, OperandFactory.createConstValue(JavaConstant.forLong(klassPointer)));
         var stub = new RuntimeStub.StubNewArray(length, klassReg, retReg);
         gen.emitAllocateArray(stub, klassReg, retReg, length, temp1, temp2, temp3, temp4, JavaKind.Object);
         LirOperand result = OperandFactory.createVirtualRegister(instr.type());
@@ -445,7 +449,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         VirtualRegister temp4 = retReg;
         VirtualRegister klassReg = OperandFactory.createVirtualRegister(AMD64.rdx);
         var klassPointer = getKlassPointer(instr.getElemementType().toJavaClass());
-        gen.emitMov(klassReg, new ConstValue(JavaConstant.forLong(klassPointer)));
+        gen.emitMov(klassReg, OperandFactory.createConstValue(JavaConstant.forLong(klassPointer)));
         var stub = new RuntimeStub.StubNewArray(length, klassReg, retReg);
         gen.emitAllocateArray(stub, klassReg, retReg, length, temp1, temp2, temp3, temp4, instr.getElemementType());
         LirOperand result = OperandFactory.createVirtualRegister(instr.type());
