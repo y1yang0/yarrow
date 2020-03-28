@@ -23,7 +23,7 @@ public class YarrowCompiler implements JVMCICompiler {
     @Override
     public CompilationRequestResult compileMethod(CompilationRequest request) {
         HotSpotResolvedJavaMethod method = (HotSpotResolvedJavaMethod) request.getMethod();
-        if (method.hasCompiledCodeAtLevel(YarrowConfigAccess.CompLevel_full_optimization)) {
+        if (method.hasCompiledCodeAtLevel(YarrowConfigAccess.access().CompLevel_full_optimization)) {
             return HotSpotCompilationRequestResult.success(0);
         }
         Logger.logf("=====Compiling {}.{}=====", method.getDeclaringClass().getUnqualifiedName(), method.getName());

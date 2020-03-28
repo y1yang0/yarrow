@@ -1,6 +1,7 @@
 package com.kelthuzadx.yarrow.lir;
 
 import com.kelthuzadx.yarrow.bytecode.Bytecode;
+import com.kelthuzadx.yarrow.core.YarrowConfigAccess;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.core.YarrowRuntime;
 import com.kelthuzadx.yarrow.hir.BlockFlag;
@@ -319,7 +320,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         LirOperand array = instr.getArray().loadOperandToReg(this, gen);
         LirOperand result = OperandFactory.createVirtualRegister(instr.type());
         instr.installOperand(result);
-        Address addr = OperandFactory.createAddress(array, YarrowRuntime.getArrayLengthOffset(), JavaKind.Int);
+        Address addr = OperandFactory.createAddress(array, YarrowConfigAccess.access().getArrayLengthOffset(), JavaKind.Int);
         gen.emitMov(result, addr);
     }
 
