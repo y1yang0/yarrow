@@ -14,20 +14,20 @@ public class Lir {
         this.instructions = new HashMap<>();
     }
 
-    public List<LirInstr> getOpcodes(int blockStartId) {
+    public List<LirInstr> getLirList(int blockStartId) {
         return instructions.get(blockStartId);
     }
 
     public void appendLirInstr(int blockStartId, LirInstr instr) {
-        var lirInstrs = instructions.get(blockStartId);
-        if (lirInstrs == null) {
+        var instrs = instructions.get(blockStartId);
+        if (instrs == null) {
             instructions.put(blockStartId, new ArrayList<>() {
                 {
                     add(instr);
                 }
             });
         } else {
-            lirInstrs.add(instr);
+            instrs.add(instr);
         }
     }
 

@@ -33,5 +33,8 @@ public enum Mnemonic {
     OR,
     XOR,
     NEG,
+    FCMP,
+    FCMPU,
+    LCMP
     // 3 operand opcode
 }

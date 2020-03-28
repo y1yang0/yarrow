@@ -25,8 +25,14 @@ public class LirGenTest {
         Object o = new Object();
         o = new int[25];
         o = new StringBuilder[32];
-        int[] p = new int[k];
+        int[] p = new int[50];
         k += p.length;
+        double cmp1 = 123.4d;
+        double cmp2 = n+32.;
+        boolean t = cmp1==cmp2;
+        long cmp3 = 21;
+        long cmp4 = n+32;//89
+        t = (cmp4==cmp3);
         return k;
     }
 

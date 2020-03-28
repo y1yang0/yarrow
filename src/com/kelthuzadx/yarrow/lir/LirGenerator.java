@@ -4,7 +4,10 @@ import com.kelthuzadx.yarrow.hir.Cond;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.lir.instr.*;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
+import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
+
+import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintLIRGeneration;
 
 
 /**
@@ -21,6 +24,14 @@ public class LirGenerator {
 
     public void setCurrentBlockId(int currentBlockId) {
         this.currentBlockId = currentBlockId;
+    }
+
+    public void emitLcmp(LirOperand result, LirOperand left, LirOperand right){
+        appendToList(new Op2Instr(Mnemonic.LCMP,result,left,right));
+    }
+
+    public void emitFcmp(LirOperand result, LirOperand left, LirOperand right, boolean isUnorderedLess){
+        appendToList(new Op2Instr(isUnorderedLess?Mnemonic.FCMPU:Mnemonic.FCMP,result,left,right));
     }
 
     public void emitAllocateArray(RuntimeStub.StubNewArray stub, LirOperand klassReg, LirOperand dest, LirOperand len, LirOperand temp1, LirOperand temp2, LirOperand temp3, LirOperand temp4, JavaKind elementType) {
@@ -113,6 +124,9 @@ public class LirGenerator {
     }
 
     private void appendToList(LirInstr instr) {
+        if(PrintLIRGeneration){
+            Logger.logf("{}",instr.toString());
+        }
         lir.appendLirInstr(currentBlockId, instr);
     }
 }

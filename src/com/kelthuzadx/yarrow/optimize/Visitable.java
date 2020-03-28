@@ -1,5 +1,8 @@
 package com.kelthuzadx.yarrow.optimize;
 
+import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.*;
+import com.kelthuzadx.yarrow.util.Logger;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -9,6 +12,9 @@ public interface Visitable {
         MethodType mt = MethodType.methodType(void.class, this.getClass());
         try {
             MethodHandle mh = MethodHandles.lookup().findVirtual(visitor.getClass(), "visit" + this.getClass().getSimpleName(), mt);
+            if(PrintLIRGeneration){
+                Logger.logf("====={}=====>",this.getClass().getSimpleName());
+            }
             mh.invoke(visitor, this);
         } catch (Throwable e) {
             e.printStackTrace();

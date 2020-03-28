@@ -35,10 +35,8 @@ import java.util.HashSet;
  */
 public class LirBuilder extends InstructionVisitor implements Phase {
     private final Hir hir;
-    private Lir lir;
-    private HashSet<Integer> visit;
-    private ArrayDeque<BlockStartInstr> workList;
-    private LirGenerator gen;
+    private final Lir lir;
+    private final LirGenerator gen;
 
 
     public LirBuilder(Hir hir) {
@@ -60,8 +58,8 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public Phase build() {
-        visit = new HashSet<>();
-        workList = new ArrayDeque<>();
+        HashSet<Integer> visit = new HashSet<>();
+        ArrayDeque<BlockStartInstr> workList = new ArrayDeque<>();
         workList.add(hir.getEntryBlock());
         while (!workList.isEmpty()) {
             BlockStartInstr blockStart = workList.remove();
@@ -77,7 +75,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public String name() {
-        return "Create Low level IR";
+        return "Low level IR";
     }
 
     @Override
@@ -221,7 +219,22 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitCompareInstr(CompareInstr instr) {
-
+        LirOperand left = instr.getLeft().loadOperandToReg(this,gen);
+        if(instr.getLeft().isType(JavaKind.Long)){
+            if(left.isVirtualRegister()){
+                LirOperand t = OperandFactory.createVirtualRegister(instr.getLeft().type());
+                gen.emitMov(t,left);
+                left = t;
+            }
+        }
+        LirOperand right = instr.getRight().loadOperandToReg(this,gen);
+        LirOperand result = OperandFactory.createVirtualRegister(instr.type());
+        instr.installOperand(result);
+        if(instr.getLeft().isType(JavaKind.Float)|| instr.getLeft().isType(JavaKind.Double)){
+            gen.emitFcmp(result,left,right,instr.getOpcode()==Bytecode.FCMPL||instr.getOpcode()==Bytecode.DCMPL);
+        }else if(instr.getLeft().isType(JavaKind.Long)){
+            gen.emitLcmp(result,left,right);
+        }
     }
 
     @Override
@@ -249,7 +262,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitCheckCastInstr(CheckCastInstr instr) {
-
+        YarrowError.shouldNotReachHere();
     }
 
     @Override
