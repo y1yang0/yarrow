@@ -18,6 +18,10 @@ public class NewTypeArrayInstr extends StateInstr {
         return len;
     }
 
+    public JavaKind getElemementType() {
+        return elemType;
+    }
+
     @Override
     public String toString() {
         return Logger.format("i{}: new {}[i{}]", super.id, elemType.getJavaName(), len.id);

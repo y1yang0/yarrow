@@ -2,10 +2,10 @@ package com.kelthuzadx.yarrow.lir;
 
 public enum Mnemonic {
     Illegal,
-    // 0 operand opcode
     NormalEntry,
     OsrEntry,
     Label,
+    AllocateArray,
     Membar,
     MembarLoadLoad,
     MembarLoadStore,

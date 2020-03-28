@@ -23,6 +23,7 @@ public class LirGenTest {
         k = -12;
         k = -b;
         Object o = new Object();
+        o = new int[25];
         return k;
     }
 

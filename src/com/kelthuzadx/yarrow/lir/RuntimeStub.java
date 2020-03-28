@@ -196,8 +196,15 @@ public abstract class RuntimeStub {
 
 
     public static class StubNewArray extends RuntimeStub {
-        public StubNewArray() {
+        private VirtualRegister length;
+        private VirtualRegister klassRegister;
+        private VirtualRegister result;
+
+        public StubNewArray(VirtualRegister length, VirtualRegister klassRegister, VirtualRegister result) {
             super("JVMCIRuntime::new_array", YarrowRuntime.access.getAddress("JVMCIRuntime::new_array"));
+            this.length = length;
+            this.klassRegister = klassRegister;
+            this.result = result;
         }
     }
 

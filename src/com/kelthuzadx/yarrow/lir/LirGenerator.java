@@ -4,6 +4,7 @@ import com.kelthuzadx.yarrow.hir.Cond;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.lir.instr.*;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
+import jdk.vm.ci.meta.JavaKind;
 
 
 /**
@@ -20,6 +21,10 @@ public class LirGenerator {
 
     public void setCurrentBlockId(int currentBlockId) {
         this.currentBlockId = currentBlockId;
+    }
+
+    public void emitAllocateArray(RuntimeStub.StubNewArray stub, LirOperand klassReg, LirOperand dest, LirOperand len, LirOperand temp1, LirOperand temp2, LirOperand temp3, LirOperand temp4, JavaKind elementType) {
+        appendToList(new AllocateArrayInstr(stub, klassReg, dest, len, temp1, temp2, temp3, temp4, elementType));
     }
 
     public void emitLabel(LabelInstr labelInstr) {

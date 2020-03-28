@@ -346,7 +346,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
         VirtualRegister metadataReg = OperandFactory.createVirtualRegister(AMD64.rdx);
         gen.emitMov(metadataReg, new ConstValue(JavaConstant.forLong(klassPointer)));
-        var stub = new RuntimeStub.StubNewInstance((HotSpotResolvedObjectType) instr.getKlass(),metadataReg,retReg);
+        var stub = new RuntimeStub.StubNewInstance((HotSpotResolvedObjectType) instr.getKlass(), metadataReg, retReg);
         gen.emitJmp(stub);
         gen.emitLabel(stub.getContinuation());
         VirtualRegister result = OperandFactory.createVirtualRegister(instr.type());
@@ -422,14 +422,26 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitNewTypeArrayInstr(NewTypeArrayInstr instr) {
-        LirOperand length = instr.arrayLength().loadOperandToReg(this,gen,
+        VirtualRegister length = (VirtualRegister) instr.arrayLength().loadOperandToReg(this, gen,
                 OperandFactory.createVirtualRegister(AMD64.rbx));
         VirtualRegister retReg = OperandFactory.createVirtualRegister(YarrowRuntime.regConfig.getReturnRegister(instr.type()));
-
+        VirtualRegister temp1 = OperandFactory.createVirtualRegister(AMD64.rcx);
+        VirtualRegister temp2 = OperandFactory.createVirtualRegister(AMD64.rsi);
+        VirtualRegister temp3 = OperandFactory.createVirtualRegister(AMD64.rdi);
+        VirtualRegister temp4 = retReg;
+        VirtualRegister klassReg = OperandFactory.createVirtualRegister(AMD64.rdx);
+        var klassPointer = getKlassPointer(instr.getElemementType().toJavaClass());
+        gen.emitMov(klassReg, new ConstValue(JavaConstant.forLong(klassPointer)));
+        var stub = new RuntimeStub.StubNewArray(length, klassReg, retReg);
+        gen.emitAllocateArray(stub, klassReg, retReg, length, temp1, temp2, temp3, temp4, instr.getElemementType());
+        LirOperand result = OperandFactory.createVirtualRegister(instr.type());
+        gen.emitMov(result, retReg);
+        instr.installOperand(result);
     }
 
-    private long getKlassPointer(HotSpotResolvedJavaType klass){
+    private long getKlassPointer(HotSpotResolvedJavaType klass) {
         Class<?> javaClass = null;
+
         try {
             Method m = klass.getClass().getMethod("mirror");
             m.setAccessible(true);
@@ -437,9 +449,11 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
+        return getKlassPointer(javaClass);
+    }
 
-
-        int klassOffset = YarrowRuntime.access.getFieldValue("java_lang_Class::_klass_offset", Integer.class, "int");;
+    private long getKlassPointer(Class<?> javaClass) {
+        int klassOffset = YarrowRuntime.access.getFieldValue("java_lang_Class::_klass_offset", Integer.class, "int");
         if (HotSpotJVMCIRuntime.getHostWordKind() == JavaKind.Long) {
             return YarrowRuntime.unsafe.getLong(javaClass, klassOffset);
         }
