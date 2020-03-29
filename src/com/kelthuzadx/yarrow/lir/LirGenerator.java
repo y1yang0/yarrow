@@ -3,6 +3,7 @@ package com.kelthuzadx.yarrow.lir;
 import com.kelthuzadx.yarrow.hir.Cond;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.lir.instr.*;
+import com.kelthuzadx.yarrow.lir.operand.Address;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
@@ -96,6 +97,10 @@ public class LirGenerator {
 
     public void emitMov(LirOperand dest, LirOperand src) {
         appendToList(new Op1Instr(Mnemonic.MOV, dest, src));
+    }
+
+    public void emitCallRt(LirOperand result, Address rountine, LirOperand[] argument) {
+        appendToList(new CallRtInstr(result, rountine, argument));
     }
 
     public void emitMembar(Mnemonic mnemonic) {

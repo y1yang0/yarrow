@@ -17,6 +17,10 @@ public class NewMultiArrayInstr extends StateInstr {
         this.len = sizeArray[sizeArray.length - 1];
     }
 
+    public JavaType getKlass() {
+        return klass;
+    }
+
     public HirInstr[] getSizeArray() {
         return sizeArray;
     }

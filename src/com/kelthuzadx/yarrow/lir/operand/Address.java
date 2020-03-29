@@ -3,7 +3,6 @@ package com.kelthuzadx.yarrow.lir.operand;
 import jdk.vm.ci.meta.JavaKind;
 
 public class Address extends LirOperand {
-
     private LirOperand base;
     private LirOperand index;
     private int scale;
@@ -70,7 +69,7 @@ public class Address extends LirOperand {
         if (displacement != 0) {
             result.append(displacement);
         }
-        result.append("[base");
+        result.append("[").append(base);
         if (index != illegal) {
             result.append("+" + index);
             if (scale != 1) {

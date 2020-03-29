@@ -16,7 +16,6 @@ import com.kelthuzadx.yarrow.optimize.Phase;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.amd64.AMD64;
-import jdk.vm.ci.amd64.AMD64Kind;
 import jdk.vm.ci.code.MemoryBarriers;
 import jdk.vm.ci.hotspot.HotSpotJVMCIRuntime;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaType;
@@ -63,7 +62,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public LirBuilder build() {
-        if(PrintLIRGeneration){
+        if (PrintLIRGeneration) {
             Logger.logf("===== Generate Lir from Hir=====");
         }
         HashSet<Integer> visit = new HashSet<>();
@@ -190,16 +189,39 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     @Override
     public void visitNewMultiArrayInstr(NewMultiArrayInstr instr) {
         HirInstr[] sizeArray = instr.getSizeArray();
-        for(int i=0;i<sizeArray.length;i++){
+        for (int i = 0; i < sizeArray.length; i++) {
             LirOperand size = sizeArray[i].loadOperand(this);
-            if(!size.isConstValue()){
-                size = sizeArray[i].loadOperandToReg(this,gen);
+            if (!size.isConstValue()) {
+                size = sizeArray[i].loadOperandToReg(this, gen);
                 JavaKind type = sizeArray[i].type();
                 Address addr = OperandFactory.createAddress(
-                        OperandFactory.createVirtualRegister(AMD64.rsp),i*4,type);
-                gen.emitMov(size,addr);
+                        OperandFactory.createVirtualRegister(AMD64.rsp), i * 4, type);
+                gen.emitMov(size, addr);
             }
         }
+
+        VirtualRegister klass = OperandFactory.createVirtualRegister(AMD64.rbx);
+        gen.emitMov(klass, OperandFactory.createConstValue(JavaConstant.forLong(getKlassPointer((HotSpotResolvedJavaType) instr.getKlass()))));
+
+        LirOperand rank = OperandFactory.createVirtualRegister(AMD64.rbx);
+        gen.emitMov(rank, OperandFactory.createConstValue(JavaConstant.forInt(sizeArray.length)));
+
+        VirtualRegister varArgs = OperandFactory.createVirtualRegister(AMD64.rcx);
+        gen.emitMov(varArgs, OperandFactory.createVirtualRegister(AMD64.rsp));
+
+        LirOperand[] args = new LirOperand[3];
+        args[0] = klass;
+        args[1] = rank;
+        args[2] = varArgs;
+
+        LirOperand ret = OperandFactory.createVirtualRegister(YarrowRuntime.regConfig.getReturnRegister(instr.type()));
+        long stub = new RuntimeStub.StubNewArray().getStubAddress();
+        Address stubAddr = OperandFactory.createAddress(
+                OperandFactory.createConstValue(JavaConstant.forLong(stub)), JavaKind.Int);
+        gen.emitCallRt(ret, stubAddr, args);
+        LirOperand result = OperandFactory.createVirtualRegister(instr.type());
+        gen.emitMov(result, ret);
+        instr.installOperand(result);
     }
 
     @Override

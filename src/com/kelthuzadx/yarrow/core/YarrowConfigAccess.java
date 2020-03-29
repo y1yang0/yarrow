@@ -17,7 +17,7 @@ public class YarrowConfigAccess extends HotSpotVMConfigAccess {
 
     public final int sizeofNarrowKlass = getFieldValue("CompilerToVM::Data::sizeof_narrowKlass", Integer.class, "int");
 
-    public final int hubOffset = getFieldOffset("oopDesc::_metadata._klass", Integer.class, "Klass*");
+    public final int klassOffset = getFieldOffset("oopDesc::_metadata._klass", Integer.class, "Klass*");
 
 
     private YarrowConfigAccess(HotSpotVMConfigStore store) {
@@ -33,7 +33,7 @@ public class YarrowConfigAccess extends HotSpotVMConfigAccess {
 
     public int getArrayLengthOffset() {
         if (useCompressedClassPointers) {
-            return sizeofNarrowKlass + hubOffset;
+            return sizeofNarrowKlass + klassOffset;
         } else {
             return sizeofArrayOopDesc;
         }

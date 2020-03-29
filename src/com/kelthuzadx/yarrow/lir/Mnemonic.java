@@ -13,6 +13,7 @@ public enum Mnemonic {
     MembarStoreLoad,
     MembarAcquire,
     MembarRelease,
+    CallRt,
 
     // 1 operand opcode
     MOV,

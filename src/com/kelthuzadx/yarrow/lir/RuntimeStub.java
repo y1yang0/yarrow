@@ -206,6 +206,10 @@ public abstract class RuntimeStub {
             this.klassRegister = klassRegister;
             this.result = result;
         }
+
+        public StubNewArray() {
+            this(null, null, null);
+        }
     }
 
 
