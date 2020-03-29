@@ -14,7 +14,9 @@ import com.kelthuzadx.yarrow.lir.operand.VirtualRegister;
 import com.kelthuzadx.yarrow.optimize.InstructionVisitor;
 import com.kelthuzadx.yarrow.optimize.Phase;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
+import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.amd64.AMD64;
+import jdk.vm.ci.amd64.AMD64Kind;
 import jdk.vm.ci.code.MemoryBarriers;
 import jdk.vm.ci.hotspot.HotSpotJVMCIRuntime;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaType;
@@ -28,6 +30,7 @@ import java.util.ArrayDeque;
 import java.util.HashSet;
 
 import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintIR;
+import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintLIRGeneration;
 
 
 /**
@@ -60,6 +63,9 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public LirBuilder build() {
+        if(PrintLIRGeneration){
+            Logger.logf("===== Generate Lir from Hir=====");
+        }
         HashSet<Integer> visit = new HashSet<>();
         ArrayDeque<BlockStartInstr> workList = new ArrayDeque<>();
         workList.add(hir.getEntryBlock());
@@ -81,7 +87,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void log() {
-        if(PrintIR){
+        if (PrintIR) {
             lir.printLir();
         }
     }
@@ -183,7 +189,17 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitNewMultiArrayInstr(NewMultiArrayInstr instr) {
-        System.out.println("ff");
+        HirInstr[] sizeArray = instr.getSizeArray();
+        for(int i=0;i<sizeArray.length;i++){
+            LirOperand size = sizeArray[i].loadOperand(this);
+            if(!size.isConstValue()){
+                size = sizeArray[i].loadOperandToReg(this,gen);
+                JavaKind type = sizeArray[i].type();
+                Address addr = OperandFactory.createAddress(
+                        OperandFactory.createVirtualRegister(AMD64.rsp),i*4,type);
+                gen.emitMov(size,addr);
+            }
+        }
     }
 
     @Override
@@ -222,22 +238,22 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitCompareInstr(CompareInstr instr) {
-        LirOperand left = instr.getLeft().loadOperandToReg(this,gen);
+        LirOperand left = instr.getLeft().loadOperandToReg(this, gen);
 
-        LirOperand right = instr.getRight().loadOperandToReg(this,gen);
+        LirOperand right = instr.getRight().loadOperandToReg(this, gen);
         LirOperand result = OperandFactory.createVirtualRegister(instr.type());
         instr.installOperand(result);
-        if(instr.getLeft().isType(JavaKind.Long)){
-            if(left.isVirtualRegister()){
+        if (instr.getLeft().isType(JavaKind.Long)) {
+            if (left.isVirtualRegister()) {
                 LirOperand t = OperandFactory.createVirtualRegister(instr.getLeft().type());
-                gen.emitMov(t,left);
+                gen.emitMov(t, left);
                 left = t;
             }
         }
-        if(instr.getLeft().isType(JavaKind.Float)|| instr.getLeft().isType(JavaKind.Double)){
-            gen.emitFcmp(result,left,right,instr.getOpcode()==Bytecode.FCMPL||instr.getOpcode()==Bytecode.DCMPL);
-        }else if(instr.getLeft().isType(JavaKind.Long)){
-            gen.emitLcmp(result,left,right);
+        if (instr.getLeft().isType(JavaKind.Float) || instr.getLeft().isType(JavaKind.Double)) {
+            gen.emitFcmp(result, left, right, instr.getOpcode() == Bytecode.FCMPL || instr.getOpcode() == Bytecode.DCMPL);
+        } else if (instr.getLeft().isType(JavaKind.Long)) {
+            gen.emitLcmp(result, left, right);
         }
     }
 

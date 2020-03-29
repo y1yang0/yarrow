@@ -28,11 +28,11 @@ public class LirGenTest {
         int[] p = new int[50];
         k += p.length;
         double cmp1 = 123.4d;
-        double cmp2 = n+32.;
-        boolean t = cmp1==cmp2;
+        double cmp2 = n + 32.;
+        boolean t = cmp1 == cmp2;
         long cmp3 = 21;
-        long cmp4 = n+32;//89
-        t = (cmp4==cmp3);
+        long cmp4 = n + 32;//89
+        t = (cmp4 == cmp3);
         Object multi = new int[2][4][5];
         return k;
     }

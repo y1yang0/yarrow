@@ -7,14 +7,18 @@ import jdk.vm.ci.meta.JavaType;
 
 public class NewMultiArrayInstr extends StateInstr {
     private JavaType klass;
-    private HirInstr[] dimenInstrs;
+    private HirInstr[] sizeArray;
     private HirInstr len;
 
-    public NewMultiArrayInstr(VmState stateBefore, JavaType klass, HirInstr[] dimenInstrs) {
+    public NewMultiArrayInstr(VmState stateBefore, JavaType klass, HirInstr[] sizeArray) {
         super(JavaKind.Object, stateBefore);
         this.klass = klass;
-        this.dimenInstrs = dimenInstrs;
-        this.len = dimenInstrs[dimenInstrs.length - 1];
+        this.sizeArray = sizeArray;
+        this.len = sizeArray[sizeArray.length - 1];
+    }
+
+    public HirInstr[] getSizeArray() {
+        return sizeArray;
     }
 
     public HirInstr arrayLength() {
@@ -24,7 +28,7 @@ public class NewMultiArrayInstr extends StateInstr {
     @Override
     public String toString() {
         String typeStr = klass.toJavaName();
-        for (HirInstr dimen : dimenInstrs) {
+        for (HirInstr dimen : sizeArray) {
             typeStr = typeStr.replaceFirst("\\[\\]", "[i" + dimen.id + "]");
         }
         return Logger.format("i{}: new {}", super.id, typeStr);
