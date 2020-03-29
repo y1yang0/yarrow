@@ -27,6 +27,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.HashSet;
 
+import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintIR;
+
 
 /**
  * Generate low level IR for x86_64 architecture, many lir generating follows x86 ABI convention
@@ -57,7 +59,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     }
 
     @Override
-    public Phase build() {
+    public LirBuilder build() {
         HashSet<Integer> visit = new HashSet<>();
         ArrayDeque<BlockStartInstr> workList = new ArrayDeque<>();
         workList.add(hir.getEntryBlock());
@@ -69,7 +71,6 @@ public class LirBuilder extends InstructionVisitor implements Phase {
                 workList.addAll(blockStart.getBlockEnd().getSuccessor());
             }
         }
-        lir.printLir();
         return this;
     }
 
@@ -80,7 +81,9 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void log() {
-
+        if(PrintIR){
+            lir.printLir();
+        }
     }
 
     @Override
@@ -179,8 +182,8 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     }
 
     @Override
-    public void visitMultiNewArrayInstr(NewMultiArrayInstr instr) {
-
+    public void visitNewMultiArrayInstr(NewMultiArrayInstr instr) {
+        System.out.println("ff");
     }
 
     @Override
@@ -220,6 +223,10 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     @Override
     public void visitCompareInstr(CompareInstr instr) {
         LirOperand left = instr.getLeft().loadOperandToReg(this,gen);
+
+        LirOperand right = instr.getRight().loadOperandToReg(this,gen);
+        LirOperand result = OperandFactory.createVirtualRegister(instr.type());
+        instr.installOperand(result);
         if(instr.getLeft().isType(JavaKind.Long)){
             if(left.isVirtualRegister()){
                 LirOperand t = OperandFactory.createVirtualRegister(instr.getLeft().type());
@@ -227,9 +234,6 @@ public class LirBuilder extends InstructionVisitor implements Phase {
                 left = t;
             }
         }
-        LirOperand right = instr.getRight().loadOperandToReg(this,gen);
-        LirOperand result = OperandFactory.createVirtualRegister(instr.type());
-        instr.installOperand(result);
         if(instr.getLeft().isType(JavaKind.Float)|| instr.getLeft().isType(JavaKind.Double)){
             gen.emitFcmp(result,left,right,instr.getOpcode()==Bytecode.FCMPL||instr.getOpcode()==Bytecode.DCMPL);
         }else if(instr.getLeft().isType(JavaKind.Long)){

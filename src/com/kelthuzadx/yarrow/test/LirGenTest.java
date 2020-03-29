@@ -33,6 +33,7 @@ public class LirGenTest {
         long cmp3 = 21;
         long cmp4 = n+32;//89
         t = (cmp4==cmp3);
+        Object multi = new int[2][4][5];
         return k;
     }
 
