@@ -37,6 +37,11 @@ public class ConstValue extends LirOperand {
 
     @Override
     public String toString() {
+        if(constant.getJavaKind()==JavaKind.Int){
+            return "0x"+Integer.toHexString(Integer.parseInt(constant.toValueString()));
+        }else if(constant.getJavaKind()== JavaKind.Long){
+            return  "0x"+Long.toHexString(Long.parseLong(constant.toValueString()));
+        }
         return constant.toValueString();
     }
 }
