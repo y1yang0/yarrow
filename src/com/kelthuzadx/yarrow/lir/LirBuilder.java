@@ -263,6 +263,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitCompareInstr(CompareInstr instr) {
+        //FIXME: remove redundant mov instruction for constant value
         LirOperand left = instr.getLeft().loadOperandToReg(this, gen);
 
         LirOperand right = instr.getRight().loadOperandToReg(this, gen);
@@ -307,7 +308,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitCheckCastInstr(CheckCastInstr instr) {
-        YarrowError.shouldNotReachHere();
+
     }
 
     @Override
