@@ -112,7 +112,10 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitInstanceOfInstr(InstanceOfInstr instr) {
-
+        LirOperand object = instr.getObject().loadOperandToReg(this, gen);
+        LirOperand result = OperandFactory.createVirtualRegister(instr.type());
+        instr.storeOperand(result);
+        gen.emitInstanceOf(result, object, instr.getKlass());
     }
 
     @Override
@@ -126,7 +129,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         }
         LirOperand value = instr.getLeft().loadOperandToReg(this, gen);
         LirOperand result = OperandFactory.createVirtualRegister(instr.type());
-        instr.installOperand(result);
+        instr.storeOperand(result);
 
         switch (instr.getOpcode()) {
             case Bytecode.ISHL:
@@ -150,7 +153,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitParamInstr(ParamInstr instr) {
-        instr.installOperand(OperandFactory.createVirtualRegister(instr.type()));
+        instr.storeOperand(OperandFactory.createVirtualRegister(instr.type()));
     }
 
     @Override
@@ -163,7 +166,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
             right = instr.getRight().loadOperand(this);
         }
         LirOperand result = OperandFactory.createVirtualRegister(instr.type());
-        instr.installOperand(result);
+        instr.storeOperand(result);
         if (left != result) {
             gen.emitMov(result, left);
             left = result;
@@ -221,7 +224,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         gen.emitCallRt(ret, stubAddr, args);
         LirOperand result = OperandFactory.createVirtualRegister(instr.type());
         gen.emitMov(result, ret);
-        instr.installOperand(result);
+        instr.storeOperand(result);
     }
 
     @Override
@@ -264,7 +267,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
         LirOperand right = instr.getRight().loadOperandToReg(this, gen);
         LirOperand result = OperandFactory.createVirtualRegister(instr.type());
-        instr.installOperand(result);
+        instr.storeOperand(result);
         if (instr.getLeft().isType(JavaKind.Long)) {
             if (left.isVirtualRegister()) {
                 LirOperand t = OperandFactory.createVirtualRegister(instr.getLeft().type());
@@ -288,13 +291,13 @@ public class LirBuilder extends InstructionVisitor implements Phase {
             value = newValue;
         }
         LirOperand result = OperandFactory.createVirtualRegister(instr.type());
-        instr.installOperand(result);
+        instr.storeOperand(result);
         gen.emitNeg(value, result);
     }
 
     @Override
     public void visitConstantInstr(ConstantInstr instr) {
-        instr.installOperand(OperandFactory.createConstValue(instr.getConstant()));
+        instr.storeOperand(OperandFactory.createConstValue(instr.getConstant()));
     }
 
     @Override
@@ -327,7 +330,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         LirOperand left = instr.getLeft().loadOperandToReg(this, gen);
         LirOperand right = instr.getRight().loadOperand(this);
         LirOperand result = OperandFactory.createVirtualRegister(instr.type());
-        instr.installOperand(result);
+        instr.storeOperand(result);
         if (left != result) {
             gen.emitMov(result, left);
             left = result;
@@ -374,7 +377,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     public void visitArrayLenInstr(ArrayLenInstr instr) {
         LirOperand array = instr.getArray().loadOperandToReg(this, gen);
         LirOperand result = OperandFactory.createVirtualRegister(instr.type());
-        instr.installOperand(result);
+        instr.storeOperand(result);
         Address addr = OperandFactory.createAddress(array, YarrowConfigAccess.access().getArrayLengthOffset(), JavaKind.Int);
         gen.emitMov(result, addr);
     }
@@ -411,14 +414,14 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         gen.emitLabel(stub.getContinuation());
         VirtualRegister result = OperandFactory.createVirtualRegister(instr.type());
         gen.emitMov(result, retReg);
-        instr.installOperand(result);
+        instr.storeOperand(result);
     }
 
     @Override
     public void visitTypeCastInstr(TypeCastInstr instr) {
         LirOperand fromOperand = instr.getFrom().loadOperandToReg(this, gen);
         LirOperand fromResult = OperandFactory.createVirtualRegister(instr.type());
-        instr.installOperand(fromResult);
+        instr.storeOperand(fromResult);
 
         LirOperand toOperand = fromOperand;
         LirOperand toResult = fromResult;
@@ -457,7 +460,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         gen.emitAllocateArray(stub, klassReg, retReg, length, temp1, temp2, temp3, temp4, JavaKind.Object);
         LirOperand result = OperandFactory.createVirtualRegister(instr.type());
         gen.emitMov(result, retReg);
-        instr.installOperand(result);
+        instr.storeOperand(result);
     }
 
     @Override
@@ -474,14 +477,14 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     public void visitReturnInstr(ReturnInstr instr) {
         if (instr.isType(JavaKind.Void)) {
             gen.emitReturn(LirOperand.illegal);
-            instr.installOperand(null); // ReturnInstr has no operand result
+            instr.storeOperand(null); // ReturnInstr has no operand result
             return;
         }
 
         VirtualRegister retReg = OperandFactory.createVirtualRegister(YarrowRuntime.regConfig.getReturnRegister(instr.type()));
         LirOperand left = instr.getReturnValue().loadOperandToReg(this, gen, retReg);
         gen.emitReturn(left);
-        instr.installOperand(null); // ReturnInstr has no operand result
+        instr.storeOperand(null); // ReturnInstr has no operand result
     }
 
     @Override
@@ -510,7 +513,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         gen.emitAllocateArray(stub, klassReg, retReg, length, temp1, temp2, temp3, temp4, instr.getElemementType());
         LirOperand result = OperandFactory.createVirtualRegister(instr.type());
         gen.emitMov(result, retReg);
-        instr.installOperand(result);
+        instr.storeOperand(result);
     }
 
     private long getKlassPointer(HotSpotResolvedJavaType klass) {

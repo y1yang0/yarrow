@@ -13,6 +13,7 @@ import com.kelthuzadx.yarrow.util.TypeUtil;
 import jdk.vm.ci.code.MemoryBarriers;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaField;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaMethod;
+import jdk.vm.ci.hotspot.HotSpotResolvedJavaType;
 import jdk.vm.ci.meta.*;
 
 import java.util.*;
@@ -1136,7 +1137,7 @@ public class HirBuilder implements Phase {
         VmState stateBefore = state.copy();
         JavaType klass = method.getConstantPool().lookupType(index, -1);
         HirInstr object = state.pop(JavaKind.Object);
-        InstanceOfInstr instr = new InstanceOfInstr(stateBefore, klass, object);
+        InstanceOfInstr instr = new InstanceOfInstr(stateBefore, (HotSpotResolvedJavaType) klass, object);
         state.push(JavaKind.Int, appendToBlock(instr));
     }
 

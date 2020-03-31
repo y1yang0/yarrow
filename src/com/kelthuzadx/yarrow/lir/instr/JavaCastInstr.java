@@ -1,6 +1,5 @@
 package com.kelthuzadx.yarrow.lir.instr;
 
-import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.lir.Mnemonic;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.util.Logger;
@@ -15,6 +14,6 @@ public class JavaCastInstr extends Op1Instr {
 
     @Override
     public String toString() {
-        return Logger.format("i{}: {} {} {}", super.id, Bytecode.forName(bytecode).toLowerCase(), result.toString(), operand.toString());
+        return Logger.format("i{}: type_cast {},{}", super.id, result.toString(), operand.toString());
     }
 }

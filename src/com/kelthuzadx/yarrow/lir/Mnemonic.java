@@ -18,6 +18,7 @@ public enum Mnemonic {
     // 1 operand opcode
     MOV,
     TypeCast,
+    TypeCheck,
     JMP,
     RETURN,
 

@@ -6,6 +6,7 @@ import com.kelthuzadx.yarrow.lir.instr.*;
 import com.kelthuzadx.yarrow.lir.operand.Address;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.util.Logger;
+import jdk.vm.ci.hotspot.HotSpotResolvedJavaType;
 import jdk.vm.ci.meta.JavaKind;
 
 import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintLIRGeneration;
@@ -25,6 +26,10 @@ public class LirGenerator {
 
     public void setCurrentBlockId(int currentBlockId) {
         this.currentBlockId = currentBlockId;
+    }
+
+    public void emitInstanceOf(LirOperand result, LirOperand object, HotSpotResolvedJavaType klass) {
+        appendToList(new JavaInstanceOfInstr(result, object, klass));
     }
 
     public void emitLcmp(LirOperand result, LirOperand left, LirOperand right) {

@@ -113,7 +113,7 @@ public abstract class HirInstr implements Visitable {
         return operand;
     }
 
-    public void installOperand(LirOperand operand) {
+    public void storeOperand(LirOperand operand) {
         YarrowError.guarantee(this.operand == null, "The first installation");
         this.operand = operand;
     }

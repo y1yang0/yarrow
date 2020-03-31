@@ -2,18 +2,26 @@ package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.VmState;
 import com.kelthuzadx.yarrow.util.Logger;
+import jdk.vm.ci.hotspot.HotSpotResolvedJavaType;
 import jdk.vm.ci.meta.JavaConstant;
 import jdk.vm.ci.meta.JavaKind;
-import jdk.vm.ci.meta.JavaType;
 
 public class InstanceOfInstr extends StateInstr {
-    private JavaType klass;
+    private HotSpotResolvedJavaType klass;
     private HirInstr object;
 
-    public InstanceOfInstr(VmState stateBefore, JavaType klass, HirInstr object) {
+    public InstanceOfInstr(VmState stateBefore, HotSpotResolvedJavaType klass, HirInstr object) {
         super(JavaKind.Int, stateBefore);
         this.klass = klass;
         this.object = object;
+    }
+
+    public HirInstr getObject() {
+        return object;
+    }
+
+    public HotSpotResolvedJavaType getKlass() {
+        return klass;
     }
 
     @Override
