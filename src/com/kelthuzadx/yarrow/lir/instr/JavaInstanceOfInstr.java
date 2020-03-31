@@ -1,0 +1,22 @@
+package com.kelthuzadx.yarrow.lir.instr;
+
+import com.kelthuzadx.yarrow.lir.Mnemonic;
+import com.kelthuzadx.yarrow.lir.operand.LirOperand;
+import com.kelthuzadx.yarrow.util.Logger;
+import jdk.vm.ci.hotspot.HotSpotResolvedJavaType;
+
+public class JavaInstanceOfInstr extends LirInstr {
+    private LirOperand object;
+    private HotSpotResolvedJavaType klass;
+
+    public JavaInstanceOfInstr(LirOperand result, LirOperand object, HotSpotResolvedJavaType klass) {
+        super(Mnemonic.TypeCheck, result);
+        this.object = object;
+        this.klass = klass;
+    }
+
+    @Override
+    public String toString() {
+        return Logger.format("i{}: type_check {},{}", super.id, object.toString(), klass.getName());
+    }
+}
