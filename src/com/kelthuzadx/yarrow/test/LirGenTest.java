@@ -38,7 +38,7 @@ public class LirGenTest {
         Object multi = new int[2][4][5];
         t = multi instanceof Object[];
         o = new ArrayList<>();
-        t = ((ArrayList)o).add(new Object());
+        t = ((ArrayList) o).add(new Object());
         return k;
     }
 

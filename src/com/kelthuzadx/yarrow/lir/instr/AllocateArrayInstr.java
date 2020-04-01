@@ -1,9 +1,8 @@
 package com.kelthuzadx.yarrow.lir.instr;
 
 import com.kelthuzadx.yarrow.lir.Mnemonic;
-import com.kelthuzadx.yarrow.lir.stub.NewArrayStub;
-import com.kelthuzadx.yarrow.lir.stub.RuntimeStub;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
+import com.kelthuzadx.yarrow.lir.stub.NewArrayStub;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 

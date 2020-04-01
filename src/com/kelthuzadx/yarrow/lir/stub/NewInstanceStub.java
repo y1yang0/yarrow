@@ -1,6 +1,5 @@
 package com.kelthuzadx.yarrow.lir.stub;
 
-import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.lir.operand.VirtualRegister;
 import jdk.vm.ci.hotspot.HotSpotResolvedObjectType;
 

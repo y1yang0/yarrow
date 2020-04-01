@@ -5,6 +5,7 @@ import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.lir.instr.*;
 import com.kelthuzadx.yarrow.lir.operand.Address;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
+import com.kelthuzadx.yarrow.lir.stub.ClassCastExStub;
 import com.kelthuzadx.yarrow.lir.stub.NewArrayStub;
 import com.kelthuzadx.yarrow.lir.stub.RuntimeStub;
 import com.kelthuzadx.yarrow.util.Logger;
@@ -28,6 +29,10 @@ public class LirGenerator {
 
     public void setCurrentBlockId(int currentBlockId) {
         this.currentBlockId = currentBlockId;
+    }
+
+    public void emitCheckCast(LirOperand result, LirOperand object, HotSpotResolvedJavaType klassType, ClassCastExStub stub) {
+        appendToList(new JavaCheckCastInstr(result, object, klassType, stub));
     }
 
     public void emitInstanceOf(LirOperand result, LirOperand object, HotSpotResolvedJavaType klass) {
@@ -79,7 +84,7 @@ public class LirGenerator {
     }
 
     public void emitJavaCast(LirOperand result, LirOperand operand, int bytecode) {
-        appendToList(new JavaCastInstr(result, operand, bytecode));
+        appendToList(new JavaTypeCastInstr(result, operand, bytecode));
     }
 
     public void emitAdd(LirOperand result, LirOperand left, LirOperand right) {

@@ -128,8 +128,8 @@ public class HirBuilder implements Phase {
         while (bs.hasNext()) {
             int curBci = bs.next();
             int opcode = bs.currentBytecode();
-            if(TraceHIRGeneration){
-                Logger.logf("====={}=====>",bs.getCurrentBytecodeString());
+            if (TraceHIRGeneration) {
+                Logger.logf("====={}=====>", bs.getCurrentBytecodeString());
             }
             switch (opcode) {
                 case Bytecode.NOP:
@@ -702,8 +702,8 @@ public class HirBuilder implements Phase {
         curInstr = better;
         lastInstr.setNext(curInstr);
         lastInstr = curInstr;
-        if(TraceHIRGeneration){
-            Logger.logf("{}",lastInstr);
+        if (TraceHIRGeneration) {
+            Logger.logf("{}", lastInstr);
         }
 
         if (lastInstr instanceof StateInstr) {

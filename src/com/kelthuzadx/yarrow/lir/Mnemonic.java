@@ -14,11 +14,12 @@ public enum Mnemonic {
     MembarAcquire,
     MembarRelease,
     CallRt,
+    TypeCast,
+    InstanceOf,
+    CheckCast,
 
     // 1 operand opcode
     MOV,
-    TypeCast,
-    TypeCheck,
     JMP,
     RETURN,
 

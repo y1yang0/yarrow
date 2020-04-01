@@ -7,16 +7,16 @@ import jdk.vm.ci.hotspot.HotSpotResolvedJavaType;
 
 public class JavaInstanceOfInstr extends LirInstr {
     private LirOperand object;
-    private HotSpotResolvedJavaType klass;
+    private HotSpotResolvedJavaType klassType;
 
-    public JavaInstanceOfInstr(LirOperand result, LirOperand object, HotSpotResolvedJavaType klass) {
-        super(Mnemonic.TypeCheck, result);
+    public JavaInstanceOfInstr(LirOperand result, LirOperand object, HotSpotResolvedJavaType klassType) {
+        super(Mnemonic.InstanceOf, result);
         this.object = object;
-        this.klass = klass;
+        this.klassType = klassType;
     }
 
     @Override
     public String toString() {
-        return Logger.format("i{}: type_check {},{}", super.id, object.toString(), klass.getName());
+        return Logger.format("i{}: type_check {},{}", super.id, object.toString(), klassType.getName());
     }
 }
