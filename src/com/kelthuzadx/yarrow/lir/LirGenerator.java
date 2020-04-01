@@ -9,7 +9,7 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaType;
 import jdk.vm.ci.meta.JavaKind;
 
-import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintLIRGeneration;
+import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.TraceLIRGeneration;
 
 
 /**
@@ -134,7 +134,7 @@ public class LirGenerator {
     }
 
     private void appendToList(LirInstr instr) {
-        if (PrintLIRGeneration) {
+        if (TraceLIRGeneration) {
             Logger.logf("{}", instr.toString());
         }
         lir.appendLirInstr(currentBlockId, instr);

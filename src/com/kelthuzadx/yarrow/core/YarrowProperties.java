@@ -48,6 +48,7 @@ public class YarrowProperties {
         public static boolean PrintIRToFile = false;
         public static boolean PrintIdeal = false;
         public static boolean PrintLVN = false;
-        public static boolean PrintLIRGeneration = true;
+        public static boolean TraceHIRGeneration = true;
+        public static boolean TraceLIRGeneration = true;
     }
 }

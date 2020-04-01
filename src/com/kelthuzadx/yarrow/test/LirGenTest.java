@@ -1,5 +1,7 @@
 package com.kelthuzadx.yarrow.test;
 
+import java.util.ArrayList;
+
 public class LirGenTest {
     public static int lirGen1(int n) {
         int a = n;
@@ -35,6 +37,8 @@ public class LirGenTest {
         t = (cmp4 == cmp3);
         Object multi = new int[2][4][5];
         t = multi instanceof Object[];
+        o = new ArrayList<>();
+        t = ((ArrayList)o).add(new Object());
         return k;
     }
 

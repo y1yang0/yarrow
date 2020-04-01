@@ -29,7 +29,7 @@ import java.util.ArrayDeque;
 import java.util.HashSet;
 
 import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintIR;
-import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintLIRGeneration;
+import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.TraceLIRGeneration;
 
 
 /**
@@ -62,7 +62,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public LirBuilder build() {
-        if (PrintLIRGeneration) {
+        if (TraceLIRGeneration) {
             Logger.logf("===== Generate Lir from Hir=====");
         }
         HashSet<Integer> visit = new HashSet<>();
@@ -313,7 +313,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitAccessFieldInstr(AccessFieldInstr instr) {
-
+        YarrowError.shouldNotReachHere();
     }
 
     @Override
