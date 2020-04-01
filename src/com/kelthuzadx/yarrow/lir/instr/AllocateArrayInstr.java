@@ -1,13 +1,14 @@
 package com.kelthuzadx.yarrow.lir.instr;
 
 import com.kelthuzadx.yarrow.lir.Mnemonic;
-import com.kelthuzadx.yarrow.lir.RuntimeStub;
+import com.kelthuzadx.yarrow.lir.stub.NewArrayStub;
+import com.kelthuzadx.yarrow.lir.stub.RuntimeStub;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 
 public class AllocateArrayInstr extends LirInstr {
-    private RuntimeStub.StubNewArray stub;
+    private NewArrayStub stub;
     private LirOperand klassReg;
     private LirOperand len;
     private LirOperand temp1;
@@ -16,7 +17,7 @@ public class AllocateArrayInstr extends LirInstr {
     private LirOperand temp4;
     private JavaKind elementType;
 
-    public AllocateArrayInstr(RuntimeStub.StubNewArray stub, LirOperand klassReg, LirOperand dest, LirOperand len, LirOperand temp1, LirOperand temp2, LirOperand temp3, LirOperand temp4, JavaKind elementType) {
+    public AllocateArrayInstr(NewArrayStub stub, LirOperand klassReg, LirOperand dest, LirOperand len, LirOperand temp1, LirOperand temp2, LirOperand temp3, LirOperand temp4, JavaKind elementType) {
         super(Mnemonic.AllocateArray, dest);
         this.stub = stub;
         this.klassReg = klassReg;

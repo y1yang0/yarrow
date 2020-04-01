@@ -15,6 +15,14 @@ public class CheckCastInstr extends StateInstr {
         this.object = object;
     }
 
+    public HirInstr getObject() {
+        return object;
+    }
+
+    public JavaType getKlass() {
+        return klass;
+    }
+
     @Override
     public String toString() {
         return Logger.format("i{}: checkcast i{} -> {}", super.id, object.id, klass.getUnqualifiedName());

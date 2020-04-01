@@ -5,6 +5,8 @@ import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.lir.instr.*;
 import com.kelthuzadx.yarrow.lir.operand.Address;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
+import com.kelthuzadx.yarrow.lir.stub.NewArrayStub;
+import com.kelthuzadx.yarrow.lir.stub.RuntimeStub;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaType;
 import jdk.vm.ci.meta.JavaKind;
@@ -40,7 +42,7 @@ public class LirGenerator {
         appendToList(new Op2Instr(isUnorderedLess ? Mnemonic.FCMPU : Mnemonic.FCMP, result, left, right));
     }
 
-    public void emitAllocateArray(RuntimeStub.StubNewArray stub, LirOperand klassReg, LirOperand dest, LirOperand len, LirOperand temp1, LirOperand temp2, LirOperand temp3, LirOperand temp4, JavaKind elementType) {
+    public void emitAllocateArray(NewArrayStub stub, LirOperand klassReg, LirOperand dest, LirOperand len, LirOperand temp1, LirOperand temp2, LirOperand temp3, LirOperand temp4, JavaKind elementType) {
         appendToList(new AllocateArrayInstr(stub, klassReg, dest, len, temp1, temp2, temp3, temp4, elementType));
     }
 

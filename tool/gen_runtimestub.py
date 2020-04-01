@@ -60,13 +60,8 @@ def pascalCase(st):
     return st
 
 def gen(klass,method):
-    content = """
-public static class Stub{} extends RuntimeStub{{
-    public Stub{}(){{
-        super("{}::{}",YarrowRuntime.access.getAddress("{}::{}"));
-    }}
-}}
-""".format(pascalCase(method),pascalCase(method),klass,method,klass,method)
+    content = """Stub{}("{}::{}",YarrowRuntime.access.getAddress("{}::{}")),
+""".format(pascalCase(method),klass,method,klass,method)
     return content
 
 ####!!! Special handle for RTLD_DEFAULT
