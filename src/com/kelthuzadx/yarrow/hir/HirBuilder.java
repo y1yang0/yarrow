@@ -1086,11 +1086,12 @@ public class HirBuilder implements Phase {
         if (hasReceiver) {
             receiver = state.pop(JavaKind.Object);
         }
-        HirInstr instr = new CallInstr(sig.getReturnKind(), stateBefore, receiver, arguments, target, sig, opcode);
+        JavaKind returnType = TypeUtil.decayType(sig.getReturnKind());
+        HirInstr instr = new CallInstr(returnType, stateBefore, receiver, arguments, target, sig, opcode);
         instr = appendToBlock(instr);
 
         if (sig.getReturnKind() != JavaKind.Void) {
-            state.push(sig.getReturnKind(), instr);
+            state.push(returnType, instr);
         }
     }
 
