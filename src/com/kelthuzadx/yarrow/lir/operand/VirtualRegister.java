@@ -11,13 +11,13 @@ public class VirtualRegister extends LirOperand {
     private Register register;
     private JavaKind type;
 
-    VirtualRegister(JavaKind type) {
+    public VirtualRegister(JavaKind type) {
         this.type = type;
         final int regId = VREGID_BASE + Increment.next(VirtualRegister.class);
         this.register = new Register(regId, regId, "vreg" + regId, virtual);
     }
 
-    VirtualRegister(Register register) {
+    public VirtualRegister(Register register) {
         this.register = register;
     }
 

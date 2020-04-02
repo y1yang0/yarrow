@@ -3,7 +3,6 @@ package com.kelthuzadx.yarrow.hir.instr;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.lir.LirGenerator;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
-import com.kelthuzadx.yarrow.lir.operand.OperandFactory;
 import com.kelthuzadx.yarrow.lir.operand.VirtualRegister;
 import com.kelthuzadx.yarrow.optimize.InstructionVisitor;
 import com.kelthuzadx.yarrow.optimize.Visitable;
@@ -79,7 +78,7 @@ public abstract class HirInstr implements Visitable {
         YarrowError.guarantee(operand != null, "Must be not null");
 
         if (!operand.isVirtualRegister()) {
-            VirtualRegister register = OperandFactory.createVirtualRegister(type);
+            VirtualRegister register = new VirtualRegister(type);
             gen.emitMov(register, operand);
             if (!operand.isConstValue()) {
                 operand = register;

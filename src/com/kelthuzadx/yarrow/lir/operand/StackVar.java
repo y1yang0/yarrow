@@ -7,7 +7,7 @@ import jdk.vm.ci.meta.ValueKind;
 public class StackVar extends LirOperand {
     private StackSlot stackSlot;
 
-    StackVar(ValueKind<?> kind, int offset, boolean addFrameSize) {
+    public StackVar(ValueKind<?> kind, int offset, boolean addFrameSize) {
         this.stackSlot = StackSlot.get(kind, offset, addFrameSize);
     }
 
