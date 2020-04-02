@@ -23,6 +23,22 @@ public class CallInstr extends StateInstr {
         this.opcode = opcode;
     }
 
+    public boolean hasReceiver(){
+        return receiver!=null;
+    }
+
+    public HirInstr getReceiver() {
+        return receiver;
+    }
+
+    public HirInstr[] getArguments() {
+        return args;
+    }
+
+    public Signature getSignature() {
+        return signature;
+    }
+
     @Override
     public String toString() {
         return Logger.format("i{}: {} {}.{}", super.id, Bytecode.forName(opcode), target.getDeclaringClass().getUnqualifiedName(), target.getName());

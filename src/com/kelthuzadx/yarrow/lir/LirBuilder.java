@@ -7,10 +7,7 @@ import com.kelthuzadx.yarrow.core.YarrowRuntime;
 import com.kelthuzadx.yarrow.hir.BlockFlag;
 import com.kelthuzadx.yarrow.hir.Hir;
 import com.kelthuzadx.yarrow.hir.instr.*;
-import com.kelthuzadx.yarrow.lir.operand.Address;
-import com.kelthuzadx.yarrow.lir.operand.ConstValue;
-import com.kelthuzadx.yarrow.lir.operand.LirOperand;
-import com.kelthuzadx.yarrow.lir.operand.VirtualRegister;
+import com.kelthuzadx.yarrow.lir.operand.*;
 import com.kelthuzadx.yarrow.lir.stub.ClassCastExStub;
 import com.kelthuzadx.yarrow.lir.stub.NewArrayStub;
 import com.kelthuzadx.yarrow.lir.stub.NewInstanceStub;
@@ -20,6 +17,7 @@ import com.kelthuzadx.yarrow.optimize.Phase;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.amd64.AMD64;
+import jdk.vm.ci.code.CallingConvention;
 import jdk.vm.ci.code.MemoryBarriers;
 import jdk.vm.ci.hotspot.HotSpotJVMCIRuntime;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaType;
@@ -30,6 +28,7 @@ import jdk.vm.ci.meta.JavaKind;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintIR;
@@ -434,9 +433,6 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
         gen.emitJavaCast(toResult, toOperand, instr.getOpcode());
 
-        if (fromResult != toResult) {
-            gen.emitMov(toResult, fromResult);
-        }
         // FIXME:SPECIAL HANDLE
     }
 
@@ -471,6 +467,23 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitCallInstr(CallInstr instr) {
+        CallingConvention cc = YarrowRuntime.regConfig.getCallingConvention();
+        HirInstr[] args  = new HirInstr[instr.getArguments().length+(instr.hasReceiver()?1:0)];
+        int i=0;
+        args[i++]=instr.getReceiver();
+        for(;i<args.length;i++){
+            args[i]=instr.getArguments()[i-1];
+        }
+
+        LirOperand receiver = LirOperand.illegal;
+        LirOperand result = LirOperand.illegal;
+        if(instr.getSignature().getReturnKind()!=JavaKind.Void){
+            result = new VirtualRegister(YarrowRuntime.regConfig.getReturnRegister(instr.getSignature().getReturnKind()));
+        }
+        for(i=0;i<args.length;i++){
+            args[i].loadOperandToReg(this,gen);
+        }
+        CallingConvention c;
     }
 
     @Override
