@@ -38,13 +38,26 @@ public class LirGenTest {
         Object multi = new int[2][4][5];
         t = multi instanceof Object[];
         o = new ArrayList<>();
-        t = ((ArrayList) o).add(new Object());
+        //t = ((ArrayList) o).add(new Object());
+        if(true){
+            k = 12+23;
+        }
+        return k;
+    }
+    public static int lirGen2(int n) {
+        int k = n+1;
+        if(k>20){
+            k+=12;
+        }else{
+            k+=14;
+        }
         return k;
     }
 
+
     public static void main(String[] args) {
         for (int i = 0; i < 100000; i++) {
-            lirGen1(i);
+            lirGen2(i);
         }
     }
 }

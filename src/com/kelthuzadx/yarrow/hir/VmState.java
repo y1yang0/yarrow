@@ -157,10 +157,20 @@ public class VmState {
             if (instr instanceof ParamInstr) {
                 return instr.toString();
             } else {
+                if(instr instanceof PhiInstr){
+                    return instr.toString();
+                }
                 return "i" + instr.id();
             }
         }).collect(Collectors.joining(","));
-        String lx = lock.stream().map(instr -> instr == null ? "null" : "i" + instr.id()).collect(Collectors.joining(","));
+        String lx = lock.stream().map(instr ->
+                instr == null ?
+                        "null" :
+                        (instr instanceof PhiInstr?
+                                ((PhiInstr)instr).toString():
+                                ("i" + instr.id())
+                        )
+        ).collect(Collectors.joining(","));
         return "VmState{" +
                 "lock=[" + lx +
                 "],stack=[" + sk +

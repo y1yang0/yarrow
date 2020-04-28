@@ -19,11 +19,12 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.amd64.AMD64;
 import jdk.vm.ci.code.CallingConvention;
 import jdk.vm.ci.code.MemoryBarriers;
+import jdk.vm.ci.code.RegisterValue;
+import jdk.vm.ci.hotspot.HotSpotCallingConventionType;
 import jdk.vm.ci.hotspot.HotSpotJVMCIRuntime;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaType;
 import jdk.vm.ci.hotspot.HotSpotResolvedObjectType;
-import jdk.vm.ci.meta.JavaConstant;
-import jdk.vm.ci.meta.JavaKind;
+import jdk.vm.ci.meta.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -41,12 +42,14 @@ import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.TraceLIRGenerati
  * @author kelthuzadx
  */
 public class LirBuilder extends InstructionVisitor implements Phase {
+    private final LirValueKindFactory valueFactory;
     private final Hir hir;
     private final Lir lir;
     private final LirGenerator gen;
 
 
     public LirBuilder(Hir hir) {
+        this.valueFactory = new LirValueKindFactory();
         this.hir = hir;
         this.lir = new Lir();
         this.gen = new LirGenerator(lir);
@@ -467,28 +470,44 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitCallInstr(CallInstr instr) {
-        CallingConvention cc = YarrowRuntime.regConfig.getCallingConvention();
-        HirInstr[] args  = new HirInstr[instr.getArguments().length+(instr.hasReceiver()?1:0)];
-        int i=0;
-        args[i++]=instr.getReceiver();
-        for(;i<args.length;i++){
-            args[i]=instr.getArguments()[i-1];
+        Signature sig = instr.getSignature();
+        JavaKind[] paramKinds  = sig.toParameterKinds(instr.hasReceiver());
+        JavaType[] paramTypes = new JavaType[paramKinds.length];
+        for(int i=0;i<paramKinds.length;i++){
+            paramTypes[i] = sig.getParameterType(i,null);
         }
 
+        HirInstr[] param  = new HirInstr[instr.argumentCount()+(instr.hasReceiver()?1:0)];
+        int i=0;
+        if(param.length>0){
+            if(instr.hasReceiver()){
+                param[i++]= instr.getReceiver();
+            }
+            for(int j=0;i<param.length;i++,j++){
+                param[i]=instr.getArguments(j);
+            }
+        }
+
+        CallingConvention cc = YarrowRuntime.regConfig.getCallingConvention(
+                HotSpotCallingConventionType.JavaCall, sig.getReturnType(null),paramTypes,valueFactory);
         LirOperand receiver = LirOperand.illegal;
         LirOperand result = LirOperand.illegal;
         if(instr.getSignature().getReturnKind()!=JavaKind.Void){
             result = new VirtualRegister(YarrowRuntime.regConfig.getReturnRegister(instr.getSignature().getReturnKind()));
         }
-        for(i=0;i<args.length;i++){
-            args[i].loadOperandToReg(this,gen);
+        AllocatableValue[] args = cc.getArguments();
+        for(i=0;i<param.length;i++){
+            if(args[i] instanceof RegisterValue){
+                param[i].loadOperandToReg(this,gen,new VirtualRegister(((RegisterValue)args[i]).getRegister()));
+            }else{
+               // TODO
+            }
         }
-        CallingConvention c;
     }
 
     @Override
     public void visitGotoInstr(GotoInstr instr) {
-
+        instr.storeOperand(LirOperand.illegal);
     }
 
     @Override

@@ -31,8 +31,12 @@ public class CallInstr extends StateInstr {
         return receiver;
     }
 
-    public HirInstr[] getArguments() {
-        return args;
+    public HirInstr getArguments(int index) {
+        return args[index];
+    }
+
+    public int argumentCount(){
+        return args.length;
     }
 
     public Signature getSignature() {

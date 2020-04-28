@@ -170,7 +170,7 @@ public class BlockStartInstr extends StateInstr {
                             // if existing local variable is not PhiInstr OR
                             // if existing local variable is PhiInstr and it
                             // doesn't belong to this block
-                            if (val != newState.getLocal()[i]) {
+                            if (val != getVmState().getLocal()[i]) {
                                 if (val instanceof PhiInstr) {
                                     if (((PhiInstr) val).getBlock() != this) {
                                         getVmState().createPhiForLocal(this, i);
