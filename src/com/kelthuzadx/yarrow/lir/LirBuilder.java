@@ -6,6 +6,7 @@ import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.core.YarrowRuntime;
 import com.kelthuzadx.yarrow.hir.BlockFlag;
 import com.kelthuzadx.yarrow.hir.Hir;
+import com.kelthuzadx.yarrow.hir.VmState;
 import com.kelthuzadx.yarrow.hir.instr.*;
 import com.kelthuzadx.yarrow.lir.operand.*;
 import com.kelthuzadx.yarrow.lir.stub.ClassCastExStub;
@@ -31,6 +32,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.PrintIR;
 import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.TraceLIRGeneration;
@@ -46,6 +48,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     private final Hir hir;
     private final Lir lir;
     private final LirGenerator gen;
+    private PhiResolver phiResolver;
 
 
     public LirBuilder(Hir hir) {
@@ -53,6 +56,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         this.hir = hir;
         this.lir = new Lir();
         this.gen = new LirGenerator(lir);
+        this.phiResolver = new PhiResolver(this,gen);
     }
 
     private void transformBlock(BlockStartInstr block) {
@@ -508,6 +512,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     @Override
     public void visitGotoInstr(GotoInstr instr) {
         instr.storeOperand(LirOperand.illegal);
+        phiResolver.resolvePhi(instr.getSuccessor(),instr.getVmState());
     }
 
     @Override

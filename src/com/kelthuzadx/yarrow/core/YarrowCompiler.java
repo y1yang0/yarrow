@@ -34,10 +34,10 @@ public class YarrowCompiler implements JVMCICompiler {
                 .map(HirBuilder::new)
                 .map(HirBuilder::build)
                 .peek(HirBuilder::log)
-                //.map(HirBuilder::getHir);
-               // .map(LirBuilder::new)
-               //.map(LirBuilder::build)
-                //.peek(LirBuilder::log)
+                .map(HirBuilder::getHir)
+                .map(LirBuilder::new)
+                .map(LirBuilder::build)
+                .peek(LirBuilder::log)
                 .collect(Collectors.toList());
         System.exit(0);
         return HotSpotCompilationRequestResult.success(0);

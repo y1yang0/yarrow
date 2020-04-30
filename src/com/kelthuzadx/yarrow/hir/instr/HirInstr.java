@@ -49,6 +49,10 @@ public abstract class HirInstr implements Visitable {
         this.next = next;
     }
 
+    public LirOperand loadOperandRaw(){
+        return operand;
+    }
+
     /**
      * Load operand directly
      *

@@ -21,6 +21,10 @@ public class VirtualRegister extends LirOperand {
         this.register = register;
     }
 
+    public int getVirtualRegisterId(){
+        return register.number;
+    }
+
     @Override
     public JavaKind getJavaKind() {
         return type;
