@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 public class PhiResolver {
-    private final InstructionVisitor visitor;
     private final LirGenerator gen;
     private Map<Integer,ResolveNode> vregList;
     private List<ResolveNode> virtualOperand;
@@ -23,8 +22,7 @@ public class PhiResolver {
     private ResolveNode loop;
     private LirOperand temp;
 
-    public PhiResolver(InstructionVisitor visitor, LirGenerator gen){
-        this.visitor = visitor;
+    public PhiResolver(LirGenerator gen){
         this.gen = gen;
         vregList = new HashMap<>();
         virtualOperand = new ArrayList<>();
@@ -80,14 +78,15 @@ public class PhiResolver {
         }
     }
 
-    public void resolvePhi(List<BlockStartInstr> successor, VmState curState){
+    public void resolve(List<BlockStartInstr> successor, VmState curState){
         if(successor.size()==1){
             BlockStartInstr succ = successor.get(0);
             if(succ.getPredecessor().size()<=1){
                 return;
             }
 
-            // now block has at least two predecessor blocks
+            // now block has at least two predecessor blocks,
+            // resolve all PhiInstr in stack and local slots
             VmState succState = succ.getVmState();
             for(int i=0;i<succState.getStackSize();i++){
                 moveToPhi(curState.getStack().get(i),succState.getStack().get(i));
@@ -99,8 +98,8 @@ public class PhiResolver {
                 }
             }
 
-            // generate move from non vritual register to arbitrary destination
-            genMove();
+            // generate move from non virtual register to arbitrary destination
+            generateMove();
         }
     }
 
@@ -125,7 +124,9 @@ public class PhiResolver {
 
         if(operand.isVirtualRegister()){
             int vregId = ((VirtualRegister)operand).getVirtualRegisterId();
+            vregList.put(vregId,null);
             resolveNode = vregList.get(vregId);
+
             if(resolveNode==null){
                 resolveNode = new ResolveNode(operand);
                 vregList.put(vregId,resolveNode);
@@ -141,7 +142,7 @@ public class PhiResolver {
         return resolveNode;
     }
 
-    private void genMove(){
+    private void generateMove(){
         for(ResolveNode node:virtualOperand){
             if(!node.isVisited()){
                 move(null,node);
