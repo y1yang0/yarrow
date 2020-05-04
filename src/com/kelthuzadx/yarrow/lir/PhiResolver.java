@@ -78,13 +78,8 @@ public class PhiResolver {
 
         if (operand.isVirtualRegister()) {
             int vregId = ((VirtualRegister) operand).getVirtualRegisterId();
-            vregMap.put(vregId, null);
-            resolveNode = vregMap.get(vregId);
-
-            if (resolveNode == null) {
-                resolveNode = new ResolveNode(operand);
-                vregMap.put(vregId, resolveNode);
-            }
+            resolveNode = new ResolveNode(operand);
+            vregMap.put(vregId, resolveNode);
 
             if (isSource && !virtualOperand.contains(resolveNode)) {
                 virtualOperand.add(resolveNode);

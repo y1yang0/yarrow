@@ -48,9 +48,9 @@ public class LirGenTest {
     public static int lirGen2(int n) {
         int k = n + 1;
         if (k > 20) {
-            k = 12;
+            k =1;
         } else {
-            k = 14;
+            k = 3;
         }
         return k;
     }

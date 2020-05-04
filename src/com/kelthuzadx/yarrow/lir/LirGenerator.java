@@ -12,6 +12,8 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaType;
 import jdk.vm.ci.meta.JavaKind;
 
+import java.util.concurrent.locks.Condition;
+
 import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.TraceLIRGeneration;
 
 
@@ -29,6 +31,10 @@ public class LirGenerator {
 
     public void setCurrentBlockId(int currentBlockId) {
         this.currentBlockId = currentBlockId;
+    }
+
+    public void emitCmp(LirOperand left, LirOperand right, Cond cond){
+        appendToList(new Op2Instr(Mnemonic.CMP,cond,LirOperand.illegal,left,right));
     }
 
     public void emitCheckCast(LirOperand result, LirOperand object, HotSpotResolvedJavaType klassType, ClassCastExStub stub) {
@@ -120,11 +126,15 @@ public class LirGenerator {
     }
 
     public void emitJmp(BlockStartInstr block) {
-        appendToList(new JmpInstr(Cond.Always, block));
+        appendToList(new BranchInstr(Cond.Always, block));
     }
 
     public void emitJmp(RuntimeStub stub) {
-        appendToList(new JmpInstr(Cond.Always, stub));
+        appendToList(new BranchInstr(Cond.Always, stub));
+    }
+
+    public void emitBranch(Cond condition, JavaKind type, BlockStartInstr block){
+        appendToList(new BranchInstr(condition,type,block));
     }
 
     public void emitReturn(LirOperand ret) {

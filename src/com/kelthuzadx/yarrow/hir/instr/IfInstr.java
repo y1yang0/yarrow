@@ -23,6 +23,18 @@ public class IfInstr extends BlockEndInstr {
         this.cond = cond;
     }
 
+    public Cond getCond() {
+        return cond;
+    }
+
+    public HirInstr getLeft() {
+        return left;
+    }
+
+    public HirInstr getRight() {
+        return right;
+    }
+
     @Override
     public HirInstr ideal() {
         if (left instanceof ConstantInstr && right instanceof ConstantInstr) {

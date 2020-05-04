@@ -250,11 +250,9 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         if (instr.getFlag() == BlockFlag.NormalEntry) {
             gen.emitNormalEntry();
             YarrowError.guarantee(instr.getBlockEnd().getSuccessor().size() == 1, "Expect one successor");
-            gen.emitJmp(instr.getBlockEnd().getSuccessor().get(0));
         } else if (instr.getFlag() == BlockFlag.OsrEntry) {
             gen.emitOsrEntry();
             YarrowError.guarantee(instr.getBlockEnd().getSuccessor().size() == 1, "Expect one successor");
-            gen.emitJmp(instr.getBlockEnd().getSuccessor().get(0));
         }
     }
 
@@ -406,7 +404,13 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitIfInstr(IfInstr instr) {
+        var left = instr.getLeft().loadOperandToReg(this,gen);
+        var right = instr.getRight().loadOperandToReg(this,gen);
+        instr.storeOperand(null);
+        gen.emitCmp(left,right,instr.getCond());
+        new PhiResolver(gen).resolve(instr.getSuccessor(),instr.getVmState());
 
+        gen.emitBranch(instr.getCond(), instr.getRight().type(),instr.getSuccessor().get(0));
     }
 
     @Override

@@ -17,10 +17,11 @@ public enum Mnemonic {
     TypeCast,
     InstanceOf,
     CheckCast,
+    Branch,
 
     // 1 operand opcode
     MOV,
-    JMP,
+    BRANCH,
     RETURN,
 
     // 2 operands opcode
@@ -38,6 +39,7 @@ public enum Mnemonic {
     NEG,
     FCMP,
     FCMPU,
-    LCMP
+    LCMP,
+    CMP
     // 3 operand opcode
 }
