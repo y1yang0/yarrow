@@ -7,8 +7,8 @@ import jdk.vm.ci.meta.JavaKind;
 
 public class VirtualRegister extends LirOperand {
     private static final int VREGID_BASE = YarrowRuntime.arch.getRegisters().size() + 1;
-    private static Register.RegisterCategory virtual = new Register.RegisterCategory("Virtual");
-    private Register register;
+    private static final Register.RegisterCategory virtual = new Register.RegisterCategory("Virtual");
+    private final Register register;
     private JavaKind type;
 
     public VirtualRegister(JavaKind type) {
@@ -21,7 +21,7 @@ public class VirtualRegister extends LirOperand {
         this.register = register;
     }
 
-    public int getVirtualRegisterId(){
+    public int getVirtualRegisterId() {
         return register.number;
     }
 

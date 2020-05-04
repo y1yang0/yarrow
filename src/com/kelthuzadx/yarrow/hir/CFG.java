@@ -24,11 +24,11 @@ public class CFG implements Phase {
     public final HotSpotResolvedJavaMethod method;
     private BlockStartInstr entryBlock;
     private int nextBlockId;
-    private byte[] code;
-    private ExHandler[] exHandler;
-    private BlockStartInstr[] bciToBlockMapping;
+    private final byte[] code;
+    private final ExHandler[] exHandler;
+    private final BlockStartInstr[] bciToBlockMapping;
     private BlockStartInstr[] blocks;
-    private HashMap<Integer, Integer> loopMap;
+    private final HashMap<Integer, Integer> loopMap;
     private int nextLoopIndex;
 
 

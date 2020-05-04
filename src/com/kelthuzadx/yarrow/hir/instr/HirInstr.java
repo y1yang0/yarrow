@@ -49,7 +49,7 @@ public abstract class HirInstr implements Visitable {
         this.next = next;
     }
 
-    public LirOperand loadOperandRaw(){
+    public LirOperand loadOperandRaw() {
         return operand;
     }
 

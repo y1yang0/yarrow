@@ -5,8 +5,8 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 
 public class NewTypeArrayInstr extends StateInstr {
-    private HirInstr len;
-    private JavaKind elemType;
+    private final HirInstr len;
+    private final JavaKind elemType;
 
     public NewTypeArrayInstr(VmState stateBefore, HirInstr len, JavaKind elemType) {
         super(JavaKind.Object, stateBefore);

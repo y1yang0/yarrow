@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class PhiInstr extends HirInstr {
-    private int index; // negate number for stack, and positive number for local
-    private BlockStartInstr block;
+    private final int index; // negate number for stack, and positive number for local
+    private final BlockStartInstr block;
 
     public PhiInstr(JavaKind type, int index, BlockStartInstr block) {
         super(type);

@@ -7,8 +7,8 @@ import jdk.vm.ci.meta.JavaKind;
 import java.util.List;
 
 public class LookupSwitchInstr extends BlockEndInstr {
-    private HirInstr index;
-    private int[] key;
+    private final HirInstr index;
+    private final int[] key;
 
     public LookupSwitchInstr(VmState stateBefore, List<BlockStartInstr> successor, HirInstr index, int[] key) {
         super(JavaKind.Illegal, stateBefore, successor);

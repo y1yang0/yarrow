@@ -3,9 +3,9 @@ package com.kelthuzadx.yarrow.test;
 import java.util.Objects;
 
 public class LVNTest {
-    private double d1 = 3.14;
+    private final double d1 = 3.14;
     private double d2 = 2.218;
-    private long[] arr = new long[]{3, 4, 5};
+    private final long[] arr = new long[]{3, 4, 5};
     private float[] arr2;
 
     public static void main(String[] args) {

@@ -7,8 +7,8 @@ import jdk.vm.ci.meta.JavaKind;
 import java.util.List;
 
 public class TableSwitchInstr extends BlockEndInstr {
-    private HirInstr index;
-    private int lowKey;
+    private final HirInstr index;
+    private final int lowKey;
 
     public TableSwitchInstr(VmState stateBefore, List<BlockStartInstr> successor, HirInstr index, int lowKey) {
         super(JavaKind.Illegal, stateBefore, successor);

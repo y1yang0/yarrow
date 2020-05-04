@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class LVN {
-    private Set<HirInstr> valueSet;
+    private final Set<HirInstr> valueSet;
     private HirInstr replacement;
 
     public LVN() {

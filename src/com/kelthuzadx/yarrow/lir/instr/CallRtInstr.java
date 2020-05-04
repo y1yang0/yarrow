@@ -6,8 +6,8 @@ import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.util.Logger;
 
 public class CallRtInstr extends LirInstr {
-    private Address routine;
-    private LirOperand[] argument;
+    private final Address routine;
+    private final LirOperand[] argument;
 
     public CallRtInstr(LirOperand result, Address routine, LirOperand[] argument) {
         super(Mnemonic.CallRt, result);

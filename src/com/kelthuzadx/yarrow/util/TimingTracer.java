@@ -2,8 +2,8 @@ package com.kelthuzadx.yarrow.util;
 
 
 public class TimingTracer implements AutoCloseable {
-    private String name;
-    private long startTimeMillis;
+    private final String name;
+    private final long startTimeMillis;
 
     public TimingTracer(String name) {
         this.name = name;

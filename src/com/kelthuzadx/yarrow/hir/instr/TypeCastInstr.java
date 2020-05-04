@@ -5,9 +5,9 @@ import jdk.vm.ci.meta.JavaKind;
 
 public class TypeCastInstr extends HirInstr {
     // TypeCastInstr is similar to C1's Convert instruciton
-    private int opcode;
-    private HirInstr from;
-    private JavaKind toType;
+    private final int opcode;
+    private final HirInstr from;
+    private final JavaKind toType;
 
     public TypeCastInstr(int opcode, HirInstr from, JavaKind toType) {
         super(toType);

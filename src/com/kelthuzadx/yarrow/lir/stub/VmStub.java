@@ -105,9 +105,9 @@ public enum VmStub {
 
     StubJavatimenanos("os::javaTimeNanos", YarrowRuntime.access.getAddress("os::javaTimeNanos"));
 
-    private String name;
+    private final String name;
 
-    private long stubAddress;
+    private final long stubAddress;
 
     VmStub(String name, long stubAddress) {
         this.name = name;

@@ -7,8 +7,8 @@ import jdk.vm.ci.meta.JavaConstant;
 import jdk.vm.ci.meta.JavaKind;
 
 public class InstanceOfInstr extends StateInstr {
-    private HotSpotResolvedJavaType klass;
-    private HirInstr object;
+    private final HotSpotResolvedJavaType klass;
+    private final HirInstr object;
 
     public InstanceOfInstr(VmState stateBefore, HotSpotResolvedJavaType klass, HirInstr object) {
         super(JavaKind.Int, stateBefore);

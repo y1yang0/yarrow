@@ -31,9 +31,9 @@ public class HirBuilder implements Phase {
     // The final result:)
     private Hir hir;
     // Target method to be compiled
-    private HotSpotResolvedJavaMethod method;
+    private final HotSpotResolvedJavaMethod method;
     // Control flow graph for method
-    private CFG cfg;
+    private final CFG cfg;
     // Last visited instruction
     private HirInstr lastInstr;
     // Work list to support BFS on CFG

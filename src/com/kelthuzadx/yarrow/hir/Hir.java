@@ -12,8 +12,8 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public class Hir {
-    private HotSpotResolvedJavaMethod method;
-    private BlockStartInstr entry;
+    private final HotSpotResolvedJavaMethod method;
+    private final BlockStartInstr entry;
     private boolean writeFinal;
     private boolean writeVolatile;
 

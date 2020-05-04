@@ -4,9 +4,9 @@ import com.kelthuzadx.yarrow.lir.operand.VirtualRegister;
 import jdk.vm.ci.hotspot.HotSpotResolvedObjectType;
 
 public class NewInstanceStub extends RuntimeStub {
-    private HotSpotResolvedObjectType klassType;
-    private VirtualRegister klass;
-    private VirtualRegister ret;
+    private final HotSpotResolvedObjectType klassType;
+    private final VirtualRegister klass;
+    private final VirtualRegister ret;
 
     public NewInstanceStub(HotSpotResolvedObjectType klassType, VirtualRegister klass, VirtualRegister ret) {
         super(VmStub.StubNewInstance);

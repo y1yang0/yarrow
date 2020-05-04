@@ -7,7 +7,7 @@ import jdk.vm.ci.meta.JavaKind;
 import java.util.Objects;
 
 public class NegateInstr extends HirInstr {
-    private HirInstr value;
+    private final HirInstr value;
 
     public NegateInstr(HirInstr value) {
         super(value.type());

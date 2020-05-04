@@ -7,7 +7,7 @@ import java.util.List;
 
 public class BlockEndInstr extends StateInstr {
     private BlockStartInstr start;
-    private List<BlockStartInstr> successor;
+    private final List<BlockStartInstr> successor;
 
     public BlockEndInstr(JavaKind type, VmState stateBefore, List<BlockStartInstr> successor) {
         super(type, stateBefore);

@@ -6,8 +6,8 @@ import jdk.vm.ci.meta.JavaKind;
 import jdk.vm.ci.meta.JavaType;
 
 public class NewObjectArrayInstr extends StateInstr {
-    private HirInstr len;
-    private JavaType klass;
+    private final HirInstr len;
+    private final JavaType klass;
 
     public NewObjectArrayInstr(VmState stateBefore, HirInstr len, JavaType klass) {
         super(JavaKind.Object, stateBefore);

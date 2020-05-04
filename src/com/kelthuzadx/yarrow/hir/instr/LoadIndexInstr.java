@@ -6,9 +6,9 @@ import jdk.vm.ci.meta.JavaKind;
 import java.util.Objects;
 
 public class LoadIndexInstr extends AccessArrayInstr {
-    private HirInstr index;
-    private HirInstr length;
-    private JavaKind elementType;
+    private final HirInstr index;
+    private final HirInstr length;
+    private final JavaKind elementType;
 
     public LoadIndexInstr(HirInstr array, HirInstr index, HirInstr length, JavaKind elementType) {
         super(elementType, array);

@@ -4,7 +4,7 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 
 public class MonitorExitInstr extends StateInstr {
-    private HirInstr lock;
+    private final HirInstr lock;
 
     public MonitorExitInstr(HirInstr lock) {
         super(JavaKind.Illegal, null);

@@ -3,11 +3,11 @@ package com.kelthuzadx.yarrow.lir.operand;
 import jdk.vm.ci.meta.JavaKind;
 
 public class Address extends LirOperand {
-    private LirOperand base;
-    private LirOperand index;
-    private int scale;
-    private int displacement;
-    private JavaKind type;
+    private final LirOperand base;
+    private final LirOperand index;
+    private final int scale;
+    private final int displacement;
+    private final JavaKind type;
 
     // displacement[base+index*scale]
     public Address(LirOperand base, LirOperand index, int scale, int displacement, JavaKind type) {

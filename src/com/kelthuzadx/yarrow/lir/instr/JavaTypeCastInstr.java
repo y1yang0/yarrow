@@ -5,7 +5,7 @@ import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.util.Logger;
 
 public class JavaTypeCastInstr extends Op1Instr {
-    private int bytecode;
+    private final int bytecode;
 
     public JavaTypeCastInstr(LirOperand result, LirOperand operand, int bytecode) {
         super(Mnemonic.TypeCast, result, operand);

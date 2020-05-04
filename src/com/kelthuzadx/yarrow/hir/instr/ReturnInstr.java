@@ -6,7 +6,7 @@ import jdk.vm.ci.meta.JavaKind;
 import java.util.ArrayList;
 
 public class ReturnInstr extends BlockEndInstr {
-    private HirInstr returnValue;
+    private final HirInstr returnValue;
 
     public ReturnInstr(HirInstr returnValue) {
         super(returnValue == null ? JavaKind.Void : returnValue.type,

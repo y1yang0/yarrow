@@ -6,11 +6,11 @@ import jdk.vm.ci.meta.JavaType;
 
 public class ExHandler {
     //[startBci,endBci)
-    private int startBci;
-    private int endBci;
-    private JavaType catchType;
-    private boolean isCatchAll;
-    private BlockStartInstr catchEntry;
+    private final int startBci;
+    private final int endBci;
+    private final JavaType catchType;
+    private final boolean isCatchAll;
+    private final BlockStartInstr catchEntry;
 
     public ExHandler(ExceptionHandler handler, BlockStartInstr catchEntry) {
         startBci = handler.getStartBCI();

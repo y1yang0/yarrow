@@ -5,7 +5,7 @@ import jdk.vm.ci.code.MemoryBarriers;
 import jdk.vm.ci.meta.JavaKind;
 
 public class MemBarrierInstr extends HirInstr {
-    private int barrierType;
+    private final int barrierType;
 
     public MemBarrierInstr(int barrierType) {
         super(JavaKind.Illegal);

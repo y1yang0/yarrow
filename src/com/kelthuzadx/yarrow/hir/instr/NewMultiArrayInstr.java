@@ -6,9 +6,9 @@ import jdk.vm.ci.meta.JavaKind;
 import jdk.vm.ci.meta.JavaType;
 
 public class NewMultiArrayInstr extends StateInstr {
-    private JavaType klass;
-    private HirInstr[] sizeArray;
-    private HirInstr len;
+    private final JavaType klass;
+    private final HirInstr[] sizeArray;
+    private final HirInstr len;
 
     public NewMultiArrayInstr(VmState stateBefore, JavaType klass, HirInstr[] sizeArray) {
         super(JavaKind.Object, stateBefore);

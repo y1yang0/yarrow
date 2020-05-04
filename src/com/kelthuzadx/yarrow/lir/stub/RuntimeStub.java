@@ -5,8 +5,8 @@ import com.kelthuzadx.yarrow.lir.instr.LabelInstr;
 @SuppressWarnings("unused")
 public class RuntimeStub {
     protected VmStub stub;
-    private LabelInstr trampoline;
-    private LabelInstr continuation;
+    private final LabelInstr trampoline;
+    private final LabelInstr continuation;
 
     public RuntimeStub(VmStub stub) {
         this.stub = stub;

@@ -3,7 +3,7 @@ package com.kelthuzadx.yarrow.util;
 import java.util.HashMap;
 
 public class Increment {
-    private static HashMap<Class<?>, Integer> state = new HashMap<>();
+    private static final HashMap<Class<?>, Integer> state = new HashMap<>();
 
     public static int next(Class<?> klass) {
         if (!state.containsKey(klass)) {

@@ -8,7 +8,7 @@ import jdk.vm.ci.meta.JavaKind;
 import java.util.Objects;
 
 public class ConstantInstr extends HirInstr {
-    private JavaConstant constant;
+    private final JavaConstant constant;
 
     public ConstantInstr(JavaConstant constant) {
         super(constant.getJavaKind());

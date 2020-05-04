@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public class VmState {
     private final int maxStackSize;
-    private Stack<HirInstr> stack;
-    private HirInstr[] local;
-    private List<HirInstr> lock;
+    private final Stack<HirInstr> stack;
+    private final HirInstr[] local;
+    private final List<HirInstr> lock;
 
     public VmState(int maxStackSize, int localSize) {
         stack = new Stack<>();
@@ -157,7 +157,7 @@ public class VmState {
             if (instr instanceof ParamInstr) {
                 return instr.toString();
             } else {
-                if(instr instanceof PhiInstr){
+                if (instr instanceof PhiInstr) {
                     return instr.toString();
                 }
                 return "i" + instr.id();
@@ -166,8 +166,8 @@ public class VmState {
         String lx = lock.stream().map(instr ->
                 instr == null ?
                         "null" :
-                        (instr instanceof PhiInstr?
-                                ((PhiInstr)instr).toString():
+                        (instr instanceof PhiInstr ?
+                                instr.toString() :
                                 ("i" + instr.id())
                         )
         ).collect(Collectors.joining(","));

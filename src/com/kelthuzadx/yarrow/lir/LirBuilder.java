@@ -45,7 +45,6 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     private final Hir hir;
     private final Lir lir;
     private final LirGenerator gen;
-    private PhiResolver phiResolver;
 
 
     public LirBuilder(Hir hir) {
@@ -53,7 +52,6 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         this.hir = hir;
         this.lir = new Lir();
         this.gen = new LirGenerator(lir);
-        this.phiResolver = new PhiResolver(gen);
     }
 
     private void transformBlock(BlockStartInstr block) {
@@ -472,36 +470,36 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     @Override
     public void visitCallInstr(CallInstr instr) {
         Signature sig = instr.getSignature();
-        JavaKind[] paramKinds  = sig.toParameterKinds(instr.hasReceiver());
+        JavaKind[] paramKinds = sig.toParameterKinds(instr.hasReceiver());
         JavaType[] paramTypes = new JavaType[paramKinds.length];
-        for(int i=0;i<paramKinds.length;i++){
-            paramTypes[i] = sig.getParameterType(i,null);
+        for (int i = 0; i < paramKinds.length; i++) {
+            paramTypes[i] = sig.getParameterType(i, null);
         }
 
-        HirInstr[] param  = new HirInstr[instr.argumentCount()+(instr.hasReceiver()?1:0)];
-        int i=0;
-        if(param.length>0){
-            if(instr.hasReceiver()){
-                param[i++]= instr.getReceiver();
+        HirInstr[] param = new HirInstr[instr.argumentCount() + (instr.hasReceiver() ? 1 : 0)];
+        int i = 0;
+        if (param.length > 0) {
+            if (instr.hasReceiver()) {
+                param[i++] = instr.getReceiver();
             }
-            for(int j=0;i<param.length;i++,j++){
-                param[i]=instr.getArguments(j);
+            for (int j = 0; i < param.length; i++, j++) {
+                param[i] = instr.getArguments(j);
             }
         }
 
         CallingConvention cc = YarrowRuntime.regConfig.getCallingConvention(
-                HotSpotCallingConventionType.JavaCall, sig.getReturnType(null),paramTypes,valueFactory);
+                HotSpotCallingConventionType.JavaCall, sig.getReturnType(null), paramTypes, valueFactory);
         LirOperand receiver = LirOperand.illegal;
         LirOperand result = LirOperand.illegal;
-        if(instr.getSignature().getReturnKind()!=JavaKind.Void){
+        if (instr.getSignature().getReturnKind() != JavaKind.Void) {
             result = new VirtualRegister(YarrowRuntime.regConfig.getReturnRegister(instr.getSignature().getReturnKind()));
         }
         AllocatableValue[] args = cc.getArguments();
-        for(i=0;i<param.length;i++){
-            if(args[i] instanceof RegisterValue){
-                param[i].loadOperandToReg(this,gen,new VirtualRegister(((RegisterValue)args[i]).getRegister()));
-            }else{
-               // TODO
+        for (i = 0; i < param.length; i++) {
+            if (args[i] instanceof RegisterValue) {
+                param[i].loadOperandToReg(this, gen, new VirtualRegister(((RegisterValue) args[i]).getRegister()));
+            } else {
+                // TODO
             }
         }
     }
@@ -509,7 +507,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     @Override
     public void visitGotoInstr(GotoInstr instr) {
         instr.storeOperand(LirOperand.illegal);
-        phiResolver.resolve(instr.getSuccessor(),instr.getVmState());
+        new PhiResolver(gen).resolve(instr.getSuccessor(), instr.getVmState());
         gen.emitJmp(instr.getSuccessor().get(0));
     }
 

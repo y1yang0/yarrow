@@ -9,9 +9,9 @@ import com.kelthuzadx.yarrow.util.Logger;
 
 
 public class JmpInstr extends Op0Instr {
-    private Cond condition;
+    private final Cond condition;
     private RuntimeStub stub;
-    private BlockStartInstr block;
+    private final BlockStartInstr block;
 
     public JmpInstr(Cond condition, BlockStartInstr block) {
         super(Mnemonic.JMP, LirOperand.illegal);

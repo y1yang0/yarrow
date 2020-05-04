@@ -9,9 +9,9 @@ import jdk.vm.ci.meta.JavaKind;
 import java.util.ArrayList;
 
 public class IfInstr extends BlockEndInstr {
-    private HirInstr left;
-    private HirInstr right;
-    private Cond cond;
+    private final HirInstr left;
+    private final HirInstr right;
+    private final Cond cond;
 
     public IfInstr(VmState stateBefore, BlockStartInstr trueBlock, BlockStartInstr falseBlock, HirInstr left, HirInstr right, Cond cond) {
         super(JavaKind.Illegal, stateBefore, new ArrayList<>() {{

@@ -5,9 +5,9 @@ import jdk.vm.ci.meta.JavaKind;
 import jdk.vm.ci.meta.JavaMethod;
 
 public class ParamInstr extends HirInstr {
-    private boolean isReceiver;
-    private int index;
-    private JavaMethod method;
+    private final boolean isReceiver;
+    private final int index;
+    private final JavaMethod method;
 
     public ParamInstr(JavaKind type, JavaMethod method, boolean isReceiver, int index) {
         super(type);

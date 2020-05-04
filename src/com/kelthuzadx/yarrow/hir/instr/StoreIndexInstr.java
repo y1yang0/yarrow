@@ -4,10 +4,10 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 
 public class StoreIndexInstr extends AccessArrayInstr {
-    private HirInstr index;
-    private HirInstr length;
-    private JavaKind elementType;
-    private HirInstr value;
+    private final HirInstr index;
+    private final HirInstr length;
+    private final JavaKind elementType;
+    private final HirInstr value;
 
     public StoreIndexInstr(HirInstr array, HirInstr index, HirInstr length, JavaKind elementType, HirInstr value) {
         super(elementType, array);

@@ -7,9 +7,9 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaType;
 
 public class JavaCheckCastInstr extends LirInstr {
-    private LirOperand object;
-    private HotSpotResolvedJavaType klassType;
-    private ClassCastExStub stub;
+    private final LirOperand object;
+    private final HotSpotResolvedJavaType klassType;
+    private final ClassCastExStub stub;
 
     public JavaCheckCastInstr(LirOperand result, LirOperand object, HotSpotResolvedJavaType klassType, ClassCastExStub stub) {
         super(Mnemonic.CheckCast, result);

@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Lir {
-    private HashMap<Integer, List<LirInstr>> instructions;
+    private final HashMap<Integer, List<LirInstr>> instructions;
 
     public Lir() {
         this.instructions = new HashMap<>();

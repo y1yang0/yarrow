@@ -7,7 +7,7 @@ import jdk.vm.ci.meta.JavaKind;
 import java.util.List;
 
 public class ThrowInstr extends BlockEndInstr {
-    private HirInstr exception;
+    private final HirInstr exception;
 
     public ThrowInstr(VmState stateBefore, List<BlockStartInstr> successor, HirInstr exception) {
         super(JavaKind.Illegal, stateBefore, successor);

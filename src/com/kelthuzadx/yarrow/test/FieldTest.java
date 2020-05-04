@@ -4,7 +4,7 @@ public class FieldTest {
     private final Object special;
     private Object field1;
     private int field2;
-    private Object[] arr = new Object[2];
+    private final Object[] arr = new Object[2];
 
     public FieldTest() {
         special = new Object();

@@ -7,14 +7,14 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaKind;
 
 public class AllocateArrayInstr extends LirInstr {
-    private NewArrayStub stub;
-    private LirOperand klassReg;
-    private LirOperand len;
-    private LirOperand temp1;
-    private LirOperand temp2;
-    private LirOperand temp3;
-    private LirOperand temp4;
-    private JavaKind elementType;
+    private final NewArrayStub stub;
+    private final LirOperand klassReg;
+    private final LirOperand len;
+    private final LirOperand temp1;
+    private final LirOperand temp2;
+    private final LirOperand temp3;
+    private final LirOperand temp4;
+    private final JavaKind elementType;
 
     public AllocateArrayInstr(NewArrayStub stub, LirOperand klassReg, LirOperand dest, LirOperand len, LirOperand temp1, LirOperand temp2, LirOperand temp3, LirOperand temp4, JavaKind elementType) {
         super(Mnemonic.AllocateArray, dest);

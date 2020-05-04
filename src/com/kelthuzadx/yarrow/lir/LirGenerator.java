@@ -19,7 +19,7 @@ import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.TraceLIRGenerati
  * Stateful low level IR generator
  */
 public class LirGenerator {
-    private Lir lir;
+    private final Lir lir;
     private int currentBlockId;
 
     public LirGenerator(Lir lir) {

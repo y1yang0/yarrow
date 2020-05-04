@@ -1,7 +1,7 @@
 package com.kelthuzadx.yarrow.test;
 
 public class CastTest {
-    private static int val = 45;
+    private static final int val = 45;
 
     public static void yarrow_typeCast(int val) {
         double d = val + 2;

@@ -1,8 +1,8 @@
 package com.kelthuzadx.yarrow.test;
 
 public class IdealTest {
-    private float f = 12.0f;
-    private double[] arr = new double[]{3, 35, 5};
+    private final float f = 12.0f;
+    private final double[] arr = new double[]{3, 35, 5};
 
     public static void ideal1(int cond) {
         long v1 = 12;

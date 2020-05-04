@@ -6,8 +6,8 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaType;
 
 public class JavaInstanceOfInstr extends LirInstr {
-    private LirOperand object;
-    private HotSpotResolvedJavaType klassType;
+    private final LirOperand object;
+    private final HotSpotResolvedJavaType klassType;
 
     public JavaInstanceOfInstr(LirOperand result, LirOperand object, HotSpotResolvedJavaType klassType) {
         super(Mnemonic.InstanceOf, result);
