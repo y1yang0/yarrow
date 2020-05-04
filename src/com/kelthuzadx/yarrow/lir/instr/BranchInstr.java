@@ -39,7 +39,7 @@ public class BranchInstr extends Op0Instr {
     @Override
     public String toString() {
         if(condition==Cond.Always){
-            return Logger.format("i{}: jmp {}", super.id, block == null ? stub.toString() : block.id());
+            return Logger.format("i{}: jmp i{}", super.id, block == null ? stub.toString() : block.id());
         }else {
             return Logger.format("i{}: branch_{} i{}", super.id, condition.name().toLowerCase()
                     , block == null ? stub.toString() : block.id());

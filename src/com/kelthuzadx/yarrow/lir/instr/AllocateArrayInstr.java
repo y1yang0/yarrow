@@ -17,7 +17,7 @@ public class AllocateArrayInstr extends LirInstr {
     private final JavaKind elementType;
 
     public AllocateArrayInstr(NewArrayStub stub, LirOperand klassReg, LirOperand dest, LirOperand len, LirOperand temp1, LirOperand temp2, LirOperand temp3, LirOperand temp4, JavaKind elementType) {
-        super(Mnemonic.AllocateArray, dest);
+        super(Mnemonic.ALLOCATE_ARRAY, dest);
         this.stub = stub;
         this.klassReg = klassReg;
         this.len = len;

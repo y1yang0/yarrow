@@ -12,13 +12,13 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaType;
 import jdk.vm.ci.meta.JavaKind;
 
-import java.util.concurrent.locks.Condition;
-
 import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.TraceLIRGeneration;
 
 
 /**
  * Stateful low level IR generator
+ *
+ * @author kelthuzadx
  */
 public class LirGenerator {
     private final Lir lir;
@@ -143,11 +143,11 @@ public class LirGenerator {
 
 
     public void emitNormalEntry() {
-        appendToList(new Op0Instr(Mnemonic.NormalEntry, LirOperand.illegal));
+        appendToList(new Op0Instr(Mnemonic.NORMAL_ENTRY, LirOperand.illegal));
     }
 
     public void emitOsrEntry() {
-        appendToList(new Op0Instr(Mnemonic.OsrEntry, LirOperand.illegal));
+        appendToList(new Op0Instr(Mnemonic.OSR_ENTRY, LirOperand.illegal));
     }
 
     private void appendToList(LirInstr instr) {

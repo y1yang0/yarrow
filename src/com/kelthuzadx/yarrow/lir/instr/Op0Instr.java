@@ -13,23 +13,23 @@ public class Op0Instr extends LirInstr {
     @Override
     public String toString() {
         switch (mnemonic) {
-            case Membar:
+            case MEMBAR:
                 return Logger.format("i{}: membar full", super.id);
-            case MembarLoadLoad:
+            case MEMBAR_LOAD_LOAD:
                 return Logger.format("i{}: membar LoadLoad", super.id);
-            case MembarLoadStore:
+            case MEMBAR_LOAD_STORE:
                 return Logger.format("i{}: membar LoadStore", super.id);
-            case MembarStoreLoad:
+            case MEMBAR_STORE_LOAD:
                 return Logger.format("i{}: membar StoreLoad", super.id);
-            case MembarStoreStore:
+            case MEMBAR_STORE_STORE:
                 return Logger.format("i{}: membar StoreStore", super.id);
-            case MembarAcquire:
+            case MEMBAR_ACQUIRE:
                 return Logger.format("i{}: membar Acquire", super.id);
-            case MembarRelease:
+            case MEMBAR_RELEASE:
                 return Logger.format("i{}: membar Release", super.id);
-            case OsrEntry:
+            case OSR_ENTRY:
                 return Logger.format("i{}: osr_entry", super.id);
-            case NormalEntry:
+            case NORMAL_ENTRY:
                 return Logger.format("i{}: normal_entry", super.id);
             default:
                 break;

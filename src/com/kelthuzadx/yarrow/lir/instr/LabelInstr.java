@@ -6,7 +6,7 @@ import com.kelthuzadx.yarrow.util.Logger;
 
 public class LabelInstr extends Op0Instr {
     public LabelInstr() {
-        super(Mnemonic.Label, LirOperand.illegal);
+        super(Mnemonic.LABEL, LirOperand.illegal);
     }
 
     @Override

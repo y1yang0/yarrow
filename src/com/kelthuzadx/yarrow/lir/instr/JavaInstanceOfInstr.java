@@ -10,7 +10,7 @@ public class JavaInstanceOfInstr extends LirInstr {
     private final HotSpotResolvedJavaType klassType;
 
     public JavaInstanceOfInstr(LirOperand result, LirOperand object, HotSpotResolvedJavaType klassType) {
-        super(Mnemonic.InstanceOf, result);
+        super(Mnemonic.INSTANCE_OF, result);
         this.object = object;
         this.klassType = klassType;
     }

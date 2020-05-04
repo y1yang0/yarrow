@@ -8,7 +8,7 @@ public class JavaTypeCastInstr extends Op1Instr {
     private final int bytecode;
 
     public JavaTypeCastInstr(LirOperand result, LirOperand operand, int bytecode) {
-        super(Mnemonic.TypeCast, result, operand);
+        super(Mnemonic.TYPE_CAST, result, operand);
         this.bytecode = bytecode;
     }
 

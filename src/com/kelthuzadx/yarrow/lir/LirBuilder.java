@@ -100,15 +100,15 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     public void visitMemBarrierInstr(MemBarrierInstr instr) {
         switch (instr.getBarrierType()) {
             case MemoryBarriers.STORE_STORE:
-                gen.emitMembar(Mnemonic.MembarStoreStore);
+                gen.emitMembar(Mnemonic.MEMBAR_STORE_STORE);
             case MemoryBarriers.LOAD_LOAD:
-                gen.emitMembar(Mnemonic.MembarLoadLoad);
+                gen.emitMembar(Mnemonic.MEMBAR_LOAD_LOAD);
                 return;
             case MemoryBarriers.LOAD_STORE:
-                gen.emitMembar(Mnemonic.MembarLoadStore);
+                gen.emitMembar(Mnemonic.MEMBAR_LOAD_STORE);
                 return;
             case MemoryBarriers.STORE_LOAD:
-                gen.emitMembar(Mnemonic.MembarStoreStore);
+                gen.emitMembar(Mnemonic.MEMBAR_STORE_STORE);
                 return;
             default:
                 YarrowError.unimplemented();

@@ -12,7 +12,7 @@ public class JavaCheckCastInstr extends LirInstr {
     private final ClassCastExStub stub;
 
     public JavaCheckCastInstr(LirOperand result, LirOperand object, HotSpotResolvedJavaType klassType, ClassCastExStub stub) {
-        super(Mnemonic.CheckCast, result);
+        super(Mnemonic.CHECK_CAST, result);
         this.object = object;
         this.klassType = klassType;
         this.stub = stub;

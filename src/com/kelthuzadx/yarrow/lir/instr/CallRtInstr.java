@@ -10,7 +10,7 @@ public class CallRtInstr extends LirInstr {
     private final LirOperand[] argument;
 
     public CallRtInstr(LirOperand result, Address routine, LirOperand[] argument) {
-        super(Mnemonic.CallRt, result);
+        super(Mnemonic.CALL_RT, result);
         this.routine = routine;
         this.argument = argument;
     }
