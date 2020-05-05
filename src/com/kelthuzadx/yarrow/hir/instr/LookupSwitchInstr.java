@@ -16,6 +16,18 @@ public class LookupSwitchInstr extends BlockEndInstr {
         this.key = key;
     }
 
+    public HirInstr getIndex() {
+        return index;
+    }
+
+    public int[] getKey() {
+        return key;
+    }
+
+    public int getLength(){
+        return getSuccessor().size() -1;
+    }
+
     @Override
     public String toString() {
         String caseStr = "";

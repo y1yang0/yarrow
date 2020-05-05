@@ -65,6 +65,19 @@ public class LirGenTest {
             default:
                 k+=-1;
         }
+        switch (k){
+            case 132:
+                k+=13;
+                break;
+            case 23:
+                k+=23;
+                break;
+            case 32:
+                k+=33;
+                break;
+            default:
+                k+=-13;
+        }
         return k;
     }
 

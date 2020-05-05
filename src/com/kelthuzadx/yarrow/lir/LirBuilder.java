@@ -407,7 +407,14 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitLookupSwitchInstr(LookupSwitchInstr instr) {
-
+        instr.storeOperand(null);
+        var index = instr.getIndex().loadOperandToReg(this,gen);
+        new PhiResolver(gen).resolve(instr.getSuccessor(),instr.getVmState());
+        for(int i=0;i<instr.getLength();i++){
+            gen.emitCmp(index,instr.getKey()[i],Cond.EQ);
+            gen.emitBranch(Cond.EQ,JavaKind.Int,instr.getSuccessor().get(i));
+        }
+        gen.emitJmp(instr.getSuccessor().get(instr.getSuccessor().size()-1));
     }
 
     @Override
