@@ -34,7 +34,7 @@ public class Lir {
     public void printLir() {
         Logger.logf("=====Phase: Low level IR=====>");
         instructions.forEach((id, list) -> {
-            Logger.logf("#" + id);
+            Logger.logf("L" + id);
             for (LirInstr instr : list) {
                 Logger.logf("{}", instr.toString());
             }

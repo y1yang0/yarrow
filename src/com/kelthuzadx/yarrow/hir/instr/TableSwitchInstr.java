@@ -16,6 +16,18 @@ public class TableSwitchInstr extends BlockEndInstr {
         this.lowKey = lowKey;
     }
 
+    public HirInstr getIndex() {
+        return index;
+    }
+
+    public int getLowKey() {
+        return lowKey;
+    }
+
+    public int getLength(){
+        return getSuccessor().size()-1;
+    }
+
     @Override
     public String toString() {
         String caseStr = "";

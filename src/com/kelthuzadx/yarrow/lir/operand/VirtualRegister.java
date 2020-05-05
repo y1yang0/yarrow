@@ -52,9 +52,8 @@ public class VirtualRegister extends LirOperand {
 
     @Override
     public String toString() {
-        if (register.getRegisterCategory().equals(virtual)
-        ) {
-            return "V" + register.number;
+        if (register.getRegisterCategory().equals(virtual)) {
+            return "v" + register.number;
         }
         return register.toString();
     }

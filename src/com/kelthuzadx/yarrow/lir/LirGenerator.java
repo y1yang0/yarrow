@@ -4,12 +4,14 @@ import com.kelthuzadx.yarrow.hir.Cond;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.lir.instr.*;
 import com.kelthuzadx.yarrow.lir.operand.Address;
+import com.kelthuzadx.yarrow.lir.operand.ConstValue;
 import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.lir.stub.ClassCastExStub;
 import com.kelthuzadx.yarrow.lir.stub.NewArrayStub;
 import com.kelthuzadx.yarrow.lir.stub.RuntimeStub;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaType;
+import jdk.vm.ci.meta.JavaConstant;
 import jdk.vm.ci.meta.JavaKind;
 
 import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.TraceLIRGeneration;
@@ -31,6 +33,10 @@ public class LirGenerator {
 
     public void setCurrentBlockId(int currentBlockId) {
         this.currentBlockId = currentBlockId;
+    }
+
+    public void emitCmp(LirOperand left, int right, Cond cond){
+        appendToList(new Op2Instr(Mnemonic.CMP,cond,LirOperand.illegal,left,new ConstValue(JavaConstant.forInt(right))));
     }
 
     public void emitCmp(LirOperand left, LirOperand right, Cond cond){

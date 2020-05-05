@@ -5,6 +5,7 @@ import com.kelthuzadx.yarrow.core.YarrowConfigAccess;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.core.YarrowRuntime;
 import com.kelthuzadx.yarrow.hir.BlockFlag;
+import com.kelthuzadx.yarrow.hir.Cond;
 import com.kelthuzadx.yarrow.hir.Hir;
 import com.kelthuzadx.yarrow.hir.instr.*;
 import com.kelthuzadx.yarrow.lir.operand.*;
@@ -303,7 +304,14 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitTableSwitchInstr(TableSwitchInstr instr) {
-
+        instr.storeOperand(null);
+        var index = instr.getIndex().loadOperandToReg(this,gen);
+        new PhiResolver(gen).resolve(instr.getSuccessor(),instr.getVmState());
+        for(int i=0;i<instr.getLength();i++){
+            gen.emitCmp(index,i+instr.getLowKey(),Cond.EQ);
+            gen.emitBranch(Cond.EQ,JavaKind.Int,instr.getSuccessor().get(i));
+        }
+        gen.emitJmp(instr.getSuccessor().get(instr.getSuccessor().size()-1));
     }
 
     @Override
@@ -411,6 +419,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         new PhiResolver(gen).resolve(instr.getSuccessor(),instr.getVmState());
 
         gen.emitBranch(instr.getCond(), instr.getRight().type(),instr.getSuccessor().get(0));
+        gen.emitJmp(instr.getSuccessor().get(1));
     }
 
     @Override
