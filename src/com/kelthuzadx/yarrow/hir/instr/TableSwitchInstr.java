@@ -24,8 +24,8 @@ public class TableSwitchInstr extends BlockEndInstr {
         return lowKey;
     }
 
-    public int getLength(){
-        return getSuccessor().size()-1;
+    public int getLength() {
+        return getSuccessor().size() - 1;
     }
 
     @Override

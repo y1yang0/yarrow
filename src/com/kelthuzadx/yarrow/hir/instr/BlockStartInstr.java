@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 public class BlockStartInstr extends StateInstr {
     // For constructing control flow graph
     private final int blockId;
+    private final List<BlockStartInstr> predecessor;
     private int startBci;
     private int endBci;
     // Successor of this block, when HIR construction accomplish, it will be cleared
@@ -23,10 +24,8 @@ public class BlockStartInstr extends StateInstr {
     private boolean loopHeader;
     private ExceptionHandler exHandler;
     private BlockFlag flag;
-
     // For instruction itself
     private BlockEndInstr blockEnd;
-    private final List<BlockStartInstr> predecessor;
 
     public BlockStartInstr(int blockId, int bci) {
         super(JavaKind.Illegal, null);

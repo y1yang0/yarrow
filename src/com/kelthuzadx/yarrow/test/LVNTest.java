@@ -4,8 +4,8 @@ import java.util.Objects;
 
 public class LVNTest {
     private final double d1 = 3.14;
-    private double d2 = 2.218;
     private final long[] arr = new long[]{3, 4, 5};
+    private double d2 = 2.218;
     private float[] arr2;
 
     public static void main(String[] args) {

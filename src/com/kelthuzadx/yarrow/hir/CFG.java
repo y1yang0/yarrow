@@ -22,13 +22,13 @@ import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.*;
  */
 public class CFG implements Phase {
     public final HotSpotResolvedJavaMethod method;
-    private BlockStartInstr entryBlock;
-    private int nextBlockId;
     private final byte[] code;
     private final ExHandler[] exHandler;
     private final BlockStartInstr[] bciToBlockMapping;
-    private BlockStartInstr[] blocks;
     private final HashMap<Integer, Integer> loopMap;
+    private BlockStartInstr entryBlock;
+    private int nextBlockId;
+    private BlockStartInstr[] blocks;
     private int nextLoopIndex;
 
 

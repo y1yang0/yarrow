@@ -48,35 +48,35 @@ public class LirGenTest {
     public static int lirGen2(int n) {
         int k = n + 1;
         if (k > 20) {
-            k =1+k;
+            k = 1 + k;
         } else {
-            k = 3*k;
+            k = 3 * k;
         }
-        switch (k){
+        switch (k) {
             case 1:
-                k+=1;
+                k += 1;
                 break;
             case 2:
-                k+=2;
+                k += 2;
                 break;
             case 3:
-                k+=3;
+                k += 3;
                 break;
             default:
-                k+=-1;
+                k += -1;
         }
-        switch (k){
+        switch (k) {
             case 132:
-                k+=13;
+                k += 13;
                 break;
             case 23:
-                k+=23;
+                k += 23;
                 break;
             case 32:
-                k+=33;
+                k += 33;
                 break;
             default:
-                k+=-13;
+                k += -13;
         }
         return k;
     }

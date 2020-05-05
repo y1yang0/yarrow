@@ -2,9 +2,9 @@ package com.kelthuzadx.yarrow.test;
 
 public class FieldTest {
     private final Object special;
+    private final Object[] arr = new Object[2];
     private Object field1;
     private int field2;
-    private final Object[] arr = new Object[2];
 
     public FieldTest() {
         special = new Object();

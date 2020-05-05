@@ -9,11 +9,11 @@ import jdk.vm.ci.meta.Signature;
 
 
 public class CallInstr extends StateInstr {
-    private HirInstr receiver;
     private final HirInstr[] args;
     private final JavaMethod target;
     private final Signature signature;
     private final int opcode;
+    private HirInstr receiver;
 
     public CallInstr(JavaKind type, VmState stateBefore, HirInstr receiver, HirInstr[] args, JavaMethod target, Signature signature, int opcode) {
         super(type, stateBefore);

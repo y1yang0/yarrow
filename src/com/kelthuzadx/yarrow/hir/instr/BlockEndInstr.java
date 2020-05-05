@@ -6,8 +6,8 @@ import jdk.vm.ci.meta.JavaKind;
 import java.util.List;
 
 public class BlockEndInstr extends StateInstr {
-    private BlockStartInstr start;
     private final List<BlockStartInstr> successor;
+    private BlockStartInstr start;
 
     public BlockEndInstr(JavaKind type, VmState stateBefore, List<BlockStartInstr> successor) {
         super(type, stateBefore);

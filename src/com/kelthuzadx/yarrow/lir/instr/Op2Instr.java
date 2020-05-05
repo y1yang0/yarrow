@@ -26,7 +26,7 @@ public class Op2Instr extends LirInstr {
 
     @Override
     public String toString() {
-        switch (mnemonic){
+        switch (mnemonic) {
             case CMP:
                 return Logger.format("i{}: cmp_{} {},{}", super.id, cond.name().toLowerCase(),
                         leftOperand.toString(), rightOperand.toString());

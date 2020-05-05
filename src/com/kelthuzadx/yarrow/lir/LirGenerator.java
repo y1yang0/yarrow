@@ -35,12 +35,12 @@ public class LirGenerator {
         this.currentBlockId = currentBlockId;
     }
 
-    public void emitCmp(LirOperand left, int right, Cond cond){
-        appendToList(new Op2Instr(Mnemonic.CMP,cond,LirOperand.illegal,left,new ConstValue(JavaConstant.forInt(right))));
+    public void emitCmp(LirOperand left, int right, Cond cond) {
+        appendToList(new Op2Instr(Mnemonic.CMP, cond, LirOperand.illegal, left, new ConstValue(JavaConstant.forInt(right))));
     }
 
-    public void emitCmp(LirOperand left, LirOperand right, Cond cond){
-        appendToList(new Op2Instr(Mnemonic.CMP,cond,LirOperand.illegal,left,right));
+    public void emitCmp(LirOperand left, LirOperand right, Cond cond) {
+        appendToList(new Op2Instr(Mnemonic.CMP, cond, LirOperand.illegal, left, right));
     }
 
     public void emitCheckCast(LirOperand result, LirOperand object, HotSpotResolvedJavaType klassType, ClassCastExStub stub) {
@@ -139,8 +139,8 @@ public class LirGenerator {
         appendToList(new BranchInstr(Cond.Always, stub));
     }
 
-    public void emitBranch(Cond condition, JavaKind type, BlockStartInstr block){
-        appendToList(new BranchInstr(condition,type,block));
+    public void emitBranch(Cond condition, JavaKind type, BlockStartInstr block) {
+        appendToList(new BranchInstr(condition, type, block));
     }
 
     public void emitReturn(LirOperand ret) {

@@ -24,8 +24,8 @@ public class LookupSwitchInstr extends BlockEndInstr {
         return key;
     }
 
-    public int getLength(){
-        return getSuccessor().size() -1;
+    public int getLength() {
+        return getSuccessor().size() - 1;
     }
 
     @Override

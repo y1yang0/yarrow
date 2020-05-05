@@ -14,9 +14,9 @@ public class Op1Instr extends LirInstr {
 
     @Override
     public String toString() {
-        switch (mnemonic){
+        switch (mnemonic) {
             case RETURN:
-                return Logger.format("i{}: return {}", super.id, operand==null?"":
+                return Logger.format("i{}: return {}", super.id, operand == null ? "" :
                         operand.toString());
         }
         return Logger.format("i{}: {} {},{}", super.id, mnemonic.name().toLowerCase(), result.toString(),

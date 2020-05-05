@@ -10,10 +10,10 @@ import jdk.vm.ci.meta.JavaKind;
 
 
 public class BranchInstr extends Op0Instr {
-    private Cond condition;
-    private JavaKind type;
-    private RuntimeStub stub;
-    private BlockStartInstr block;
+    private final Cond condition;
+    private final JavaKind type;
+    private final RuntimeStub stub;
+    private final BlockStartInstr block;
 
     public BranchInstr(Mnemonic mnemonic, LirOperand result, Cond condition, JavaKind type, RuntimeStub stub, BlockStartInstr block) {
         super(mnemonic, result);
@@ -23,24 +23,24 @@ public class BranchInstr extends Op0Instr {
         this.block = block;
     }
 
-    public BranchInstr(Cond condition, JavaKind type, BlockStartInstr block){
-        this(Mnemonic.BRANCH, LirOperand.illegal,condition,type,null,block);
+    public BranchInstr(Cond condition, JavaKind type, BlockStartInstr block) {
+        this(Mnemonic.BRANCH, LirOperand.illegal, condition, type, null, block);
     }
 
     public BranchInstr(Cond condition, BlockStartInstr block) {
-        this(Mnemonic.BRANCH, LirOperand.illegal,condition,null,null,block);
+        this(Mnemonic.BRANCH, LirOperand.illegal, condition, null, null, block);
     }
 
     public BranchInstr(Cond condition, RuntimeStub stub) {
-        this(Mnemonic.BRANCH, LirOperand.illegal,condition,null,stub,null);
+        this(Mnemonic.BRANCH, LirOperand.illegal, condition, null, stub, null);
     }
 
 
     @Override
     public String toString() {
-        if(condition==Cond.Always){
+        if (condition == Cond.Always) {
             return Logger.format("i{}: jmp L{}", super.id, block == null ? stub.toString() : block.id());
-        }else {
+        } else {
             return Logger.format("i{}: branch_{} L{}", super.id, condition.name().toLowerCase()
                     , block == null ? stub.toString() : block.id());
         }

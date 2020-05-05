@@ -305,13 +305,13 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     @Override
     public void visitTableSwitchInstr(TableSwitchInstr instr) {
         instr.storeOperand(null);
-        var index = instr.getIndex().loadOperandToReg(this,gen);
-        new PhiResolver(gen).resolve(instr.getSuccessor(),instr.getVmState());
-        for(int i=0;i<instr.getLength();i++){
-            gen.emitCmp(index,i+instr.getLowKey(),Cond.EQ);
-            gen.emitBranch(Cond.EQ,JavaKind.Int,instr.getSuccessor().get(i));
+        var index = instr.getIndex().loadOperandToReg(this, gen);
+        new PhiResolver(gen).resolve(instr.getSuccessor(), instr.getVmState());
+        for (int i = 0; i < instr.getLength(); i++) {
+            gen.emitCmp(index, i + instr.getLowKey(), Cond.EQ);
+            gen.emitBranch(Cond.EQ, JavaKind.Int, instr.getSuccessor().get(i));
         }
-        gen.emitJmp(instr.getSuccessor().get(instr.getSuccessor().size()-1));
+        gen.emitJmp(instr.getSuccessor().get(instr.getSuccessor().size() - 1));
     }
 
     @Override
@@ -408,24 +408,24 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     @Override
     public void visitLookupSwitchInstr(LookupSwitchInstr instr) {
         instr.storeOperand(null);
-        var index = instr.getIndex().loadOperandToReg(this,gen);
-        new PhiResolver(gen).resolve(instr.getSuccessor(),instr.getVmState());
-        for(int i=0;i<instr.getLength();i++){
-            gen.emitCmp(index,instr.getKey()[i],Cond.EQ);
-            gen.emitBranch(Cond.EQ,JavaKind.Int,instr.getSuccessor().get(i));
+        var index = instr.getIndex().loadOperandToReg(this, gen);
+        new PhiResolver(gen).resolve(instr.getSuccessor(), instr.getVmState());
+        for (int i = 0; i < instr.getLength(); i++) {
+            gen.emitCmp(index, instr.getKey()[i], Cond.EQ);
+            gen.emitBranch(Cond.EQ, JavaKind.Int, instr.getSuccessor().get(i));
         }
-        gen.emitJmp(instr.getSuccessor().get(instr.getSuccessor().size()-1));
+        gen.emitJmp(instr.getSuccessor().get(instr.getSuccessor().size() - 1));
     }
 
     @Override
     public void visitIfInstr(IfInstr instr) {
-        var left = instr.getLeft().loadOperandToReg(this,gen);
-        var right = instr.getRight().loadOperandToReg(this,gen);
+        var left = instr.getLeft().loadOperandToReg(this, gen);
+        var right = instr.getRight().loadOperandToReg(this, gen);
         instr.storeOperand(null);
-        gen.emitCmp(left,right,instr.getCond());
-        new PhiResolver(gen).resolve(instr.getSuccessor(),instr.getVmState());
+        gen.emitCmp(left, right, instr.getCond());
+        new PhiResolver(gen).resolve(instr.getSuccessor(), instr.getVmState());
 
-        gen.emitBranch(instr.getCond(), instr.getRight().type(),instr.getSuccessor().get(0));
+        gen.emitBranch(instr.getCond(), instr.getRight().type(), instr.getSuccessor().get(0));
         gen.emitJmp(instr.getSuccessor().get(1));
     }
 

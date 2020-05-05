@@ -28,12 +28,12 @@ import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.*;
  * @author kelthuzadx
  */
 public class HirBuilder implements Phase {
-    // The final result:)
-    private Hir hir;
     // Target method to be compiled
     private final HotSpotResolvedJavaMethod method;
     // Control flow graph for method
     private final CFG cfg;
+    // The final result:)
+    private Hir hir;
     // Last visited instruction
     private HirInstr lastInstr;
     // Work list to support BFS on CFG
