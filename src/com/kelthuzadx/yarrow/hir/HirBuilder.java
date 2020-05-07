@@ -999,7 +999,7 @@ public class HirBuilder implements Phase {
         ConstantInstr holder = null;
         HotSpotResolvedJavaField field = (HotSpotResolvedJavaField) method.getConstantPool().lookupField(index, method, opcode);
         if (opcode == Bytecode.PUTSTATIC || opcode == Bytecode.GETSTATIC) {
-            holder = new ConstantInstr(YarrowRuntime.constReflection.asJavaClass((ResolvedJavaType) field.getType()));
+            holder = new ConstantInstr(YarrowRuntime.constReflection.asJavaClass(field.getDeclaringClass()));
             appendToBlock(holder);
         }
 

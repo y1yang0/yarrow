@@ -82,11 +82,19 @@ public class LirGenTest {
     }
 
     private static int k = 0;
+    private static int[] arr = new int[3];
 
     public static void lirGen3(int i){
         if(i>3){
             k = 32; // Store
             int t = k+1; // Load
+        }else{
+            arr[0] = 1;
+            arr[1] = 2;
+            arr[2]  =3;
+            int t =arr[0];
+            t=arr[1];
+            t=arr[2];
         }
 
     }
