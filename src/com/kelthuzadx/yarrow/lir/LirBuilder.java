@@ -155,6 +155,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitBlockEndInstr(BlockEndInstr instr) {
+        YarrowError.shouldNotReachHere();
     }
 
     @Override
@@ -259,7 +260,13 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitLoadFieldInstr(LoadFieldInstr instr) {
-
+        var base = instr.getObject().loadOperandToReg(this,gen);
+        var result = new VirtualRegister(instr.getField().getJavaKind());
+        instr.storeOperand(result);
+        var offset = new ConstValue(JavaConstant.forInt(instr.getOffset()));
+        var address = new Address(base,offset,instr.getField().getJavaKind());
+        gen.emitMov(result,address);
+        // FIXME: ADD GC BARRIER IF NEEDED
     }
 
     @Override
@@ -552,7 +559,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitThrowInstr(ThrowInstr instr) {
-
+        YarrowError.unimplemented("unsupported");
     }
 
     @Override

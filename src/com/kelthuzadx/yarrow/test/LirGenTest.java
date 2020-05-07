@@ -81,11 +81,22 @@ public class LirGenTest {
         return k;
     }
 
+    private static int k = 0;
+
+    public static void lirGen3(int i){
+        if(i>3){
+            k = 32; // Store
+            int t = k+1; // Load
+        }
+
+    }
+
 
     public static void main(String[] args) {
         for (int i = 0; i < 100000; i++) {
             lirGen1(i);
             lirGen2(i);
+            lirGen3(i);
         }
     }
 }
