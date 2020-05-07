@@ -25,6 +25,10 @@ public class LoadIndexInstr extends AccessArrayInstr {
         return elementType;
     }
 
+    public HirInstr getLength() {
+        return length;
+    }
+
     @Override
     public String toString() {
         return Logger.format("i{}: i{}[i{}] [{}]", super.id, super.array.id, index.id, elementType.getJavaName());

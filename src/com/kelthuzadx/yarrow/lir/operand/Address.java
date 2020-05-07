@@ -1,5 +1,6 @@
 package com.kelthuzadx.yarrow.lir.operand;
 
+import com.kelthuzadx.yarrow.core.YarrowError;
 import jdk.vm.ci.meta.JavaKind;
 
 public class Address extends LirOperand {
@@ -79,5 +80,25 @@ public class Address extends LirOperand {
         result.append("]");
 
         return result.toString();
+    }
+
+    public static int scaleFor(JavaKind type){
+        switch (type){
+            case Boolean:
+            case Byte:
+                return 1;
+            case Char:
+            case Short:
+                return 2;
+            case Float:
+            case Int:
+                return 4;
+            case Double:
+            case Long:
+            case Object:
+                return 8;
+            default:
+                YarrowError.shouldNotReachHere();
+        }
     }
 }

@@ -347,7 +347,20 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitLoadIndexInstr(LoadIndexInstr instr) {
-
+        var array = instr.getArray().loadOperandToReg(this,gen);
+        var index = instr.getIndex().loadOperandToReg(this,gen);
+        LirOperand length = null;
+        if(instr.getLength()!=null){
+            length = instr.getLength().loadOperandToReg(this,gen);
+        }
+        var result = new VirtualRegister(instr.getElementType());
+        Address address;
+        if(index.isConstValue()){
+            address = new Address(array,index,instr.getElementType());
+        }else{
+            address = new Address(array,index,Address.scaleFor(instr.getElementType()),/*base offset in bytes*/,instr.getElementType());
+        }
+        gen.emitMov(result,address);
     }
 
     @Override
