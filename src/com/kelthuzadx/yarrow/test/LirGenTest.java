@@ -84,6 +84,7 @@ public class LirGenTest {
 
     public static void main(String[] args) {
         for (int i = 0; i < 100000; i++) {
+            lirGen1(i);
             lirGen2(i);
         }
     }
