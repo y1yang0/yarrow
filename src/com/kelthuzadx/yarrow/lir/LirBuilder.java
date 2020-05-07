@@ -238,7 +238,12 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitStoreFieldInstr(StoreFieldInstr instr) {
-
+        var base = instr.getObject().loadOperandToReg(this,gen);
+        var storeValue = instr.getStoreValue().loadOperandToReg(this,gen);
+        instr.storeOperand(null);
+        var offset = new ConstValue(JavaConstant.forInt(instr.getOffset()));
+        var address = new Address(base,offset,instr.getField().getJavaKind());
+        gen.emitMov(address,storeValue);
     }
 
     @Override
