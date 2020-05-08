@@ -3,6 +3,9 @@ package com.kelthuzadx.yarrow.test;
 import java.util.ArrayList;
 
 public class LirGenTest {
+    private static int k = 0;
+    private static final int[] arr = new int[3];
+
     public static int lirGen1(int n) {
         int a = n;
         int b = a + 1;
@@ -81,22 +84,20 @@ public class LirGenTest {
         return k;
     }
 
-    private static int k = 0;
-    private static int[] arr = new int[3];
-
-    public static void lirGen3(int i){
-        if(i>3){
+    public static int lirGen3(int i) {
+        int t;
+        if (i > 3) {
             k = 32; // Store
-            int t = k+1; // Load
-        }else{
+            t = k + 1; // Load
+        } else {
             arr[0] = 1;
             arr[1] = 2;
-            arr[2]  =3;
-            int t =arr[0];
-            t=arr[1];
-            t=arr[2];
+            arr[2] = 3;
+            t = arr[0];
+            t = arr[1];
+            t = arr[2];
         }
-
+        return t;
     }
 
 

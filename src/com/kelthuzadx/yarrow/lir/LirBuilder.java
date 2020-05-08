@@ -233,17 +233,26 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitStoreIndexInstr(StoreIndexInstr instr) {
-
+        var array = instr.getArray().loadOperandToReg(this, gen);
+        var index = instr.getIndex().loadOperandToReg(this, gen);
+        var storeValue = instr.getStoreValue().loadOperandToReg(this, gen);
+        Address address;
+        if (index.isConstValue()) {
+            address = new Address(array, index, instr.getElementType());
+        } else {
+            address = new Address(array, index, Address.scaleFor(instr.getElementType()), YarrowConfigAccess.access().arrayClassElementOffset, instr.getElementType());
+        }
+        gen.emitMov(address, storeValue);
     }
 
     @Override
     public void visitStoreFieldInstr(StoreFieldInstr instr) {
-        var base = instr.getObject().loadOperandToReg(this,gen);
-        var storeValue = instr.getStoreValue().loadOperandToReg(this,gen);
+        var base = instr.getObject().loadOperandToReg(this, gen);
+        var storeValue = instr.getStoreValue().loadOperandToReg(this, gen);
         instr.storeOperand(null);
         var offset = new ConstValue(JavaConstant.forInt(instr.getOffset()));
-        var address = new Address(base,offset,instr.getField().getJavaKind());
-        gen.emitMov(address,storeValue);
+        var address = new Address(base, offset, instr.getField().getJavaKind());
+        gen.emitMov(address, storeValue);
     }
 
     @Override
@@ -265,12 +274,12 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitLoadFieldInstr(LoadFieldInstr instr) {
-        var base = instr.getObject().loadOperandToReg(this,gen);
+        var base = instr.getObject().loadOperandToReg(this, gen);
         var result = new VirtualRegister(instr.getField().getJavaKind());
         instr.storeOperand(result);
         var offset = new ConstValue(JavaConstant.forInt(instr.getOffset()));
-        var address = new Address(base,offset,instr.getField().getJavaKind());
-        gen.emitMov(result,address);
+        var address = new Address(base, offset, instr.getField().getJavaKind());
+        gen.emitMov(result, address);
         // FIXME: ADD GC BARRIER IF NEEDED
     }
 
@@ -347,20 +356,16 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitLoadIndexInstr(LoadIndexInstr instr) {
-        var array = instr.getArray().loadOperandToReg(this,gen);
-        var index = instr.getIndex().loadOperandToReg(this,gen);
-        LirOperand length = null;
-        if(instr.getLength()!=null){
-            length = instr.getLength().loadOperandToReg(this,gen);
-        }
+        var array = instr.getArray().loadOperandToReg(this, gen);
+        var index = instr.getIndex().loadOperandToReg(this, gen);
         var result = new VirtualRegister(instr.getElementType());
         Address address;
-        if(index.isConstValue()){
-            address = new Address(array,index,instr.getElementType());
-        }else{
-            address = new Address(array,index,Address.scaleFor(instr.getElementType()),/*base offset in bytes*/,instr.getElementType());
+        if (index.isConstValue()) {
+            address = new Address(array, index, instr.getElementType());
+        } else {
+            address = new Address(array, index, Address.scaleFor(instr.getElementType()), YarrowConfigAccess.access().arrayClassElementOffset, instr.getElementType());
         }
-        gen.emitMov(result,address);
+        gen.emitMov(result, address);
     }
 
     @Override

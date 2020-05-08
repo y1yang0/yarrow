@@ -63,6 +63,11 @@ public class PhiResolver {
             PhiInstr phi = (PhiInstr) sux;
             if (cur != null && cur != phi) {
                 LirOperand source = cur.loadOperandRaw();
+                if (source == null) {
+                    cur.storeOperand(new VirtualRegister(cur.type()));
+                    source = cur.loadOperandRaw();
+
+                }
                 LirOperand dest = phi.loadOperandRaw();
                 if (dest == null) {
                     phi.storeOperand(new VirtualRegister(phi.type()));

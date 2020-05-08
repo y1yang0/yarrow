@@ -7,14 +7,22 @@ public class StoreIndexInstr extends AccessArrayInstr {
     private final HirInstr index;
     private final HirInstr length;
     private final JavaKind elementType;
-    private final HirInstr value;
+    private final HirInstr storeValue;
 
-    public StoreIndexInstr(HirInstr array, HirInstr index, HirInstr length, JavaKind elementType, HirInstr value) {
+    public StoreIndexInstr(HirInstr array, HirInstr index, HirInstr length, JavaKind elementType, HirInstr storeValue) {
         super(elementType, array);
         this.index = index;
         this.length = length;
         this.elementType = elementType;
-        this.value = value;
+        this.storeValue = storeValue;
+    }
+
+    public HirInstr getStoreValue() {
+        return storeValue;
+    }
+
+    public HirInstr getLength() {
+        return length;
     }
 
     public HirInstr getIndex() {
@@ -27,6 +35,6 @@ public class StoreIndexInstr extends AccessArrayInstr {
 
     @Override
     public String toString() {
-        return Logger.format("i{}: i{}[i{}] = i{} [{}]", super.id, super.array.id, index.id, value.id, elementType.getJavaName());
+        return Logger.format("i{}: i{}[i{}] = i{} [{}]", super.id, super.array.id, index.id, storeValue.id, elementType.getJavaName());
     }
 }

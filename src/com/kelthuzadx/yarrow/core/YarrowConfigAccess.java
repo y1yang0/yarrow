@@ -19,6 +19,7 @@ public class YarrowConfigAccess extends HotSpotVMConfigAccess {
 
     public final int klassOffset = getFieldOffset("oopDesc::_metadata._klass", Integer.class, "Klass*");
 
+    public final int arrayClassElementOffset = getFieldOffset("ObjArrayKlass::_element_klass", Integer.class, "Klass*");
 
     private YarrowConfigAccess(HotSpotVMConfigStore store) {
         super(store);
