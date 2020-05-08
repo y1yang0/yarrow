@@ -26,11 +26,7 @@ public class ConstantInstr extends HirInstr {
             if (constant.isNull()) {
                 return Logger.format("i{}: nullptr", super.id);
             } else {
-                if (constant instanceof HotSpotObjectConstant && ((HotSpotObjectConstant) constant).isInternedString()) {
-                    return Logger.format("i{}: '{}'", super.id, constant.toValueString());
-                } else {
-                    return Logger.format("i{}: {}", super.id, constant.toValueString());
-                }
+                return Logger.format("i{}: {}", super.id, constant.toValueString());
             }
         }
         return "";

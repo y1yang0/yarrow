@@ -1081,7 +1081,7 @@ public class HirBuilder implements Phase {
         HirInstr[] arguments = new HirInstr[argc];
         HirInstr receiver = null;
         for (int i = argc - 1; i >= 0; i--) {
-            arguments[i] = state.pop(sig.getParameterKind(i));
+            arguments[i] = state.pop(TypeUtil.decayType(sig.getParameterKind(i)));
         }
         if (hasReceiver) {
             receiver = state.pop(JavaKind.Object);

@@ -20,6 +20,7 @@ import jdk.vm.ci.amd64.AMD64;
 import jdk.vm.ci.code.CallingConvention;
 import jdk.vm.ci.code.MemoryBarriers;
 import jdk.vm.ci.code.RegisterValue;
+import jdk.vm.ci.code.StackSlot;
 import jdk.vm.ci.hotspot.HotSpotCallingConventionType;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaType;
 import jdk.vm.ci.hotspot.HotSpotResolvedObjectType;
@@ -521,7 +522,6 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         for (int i = 0; i < paramKinds.length; i++) {
             paramTypes[i] = sig.getParameterType(i, null);
         }
-
         HirInstr[] param = new HirInstr[instr.argumentCount() + (instr.hasReceiver() ? 1 : 0)];
         int i = 0;
         if (param.length > 0) {
@@ -544,8 +544,11 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         for (i = 0; i < param.length; i++) {
             if (args[i] instanceof RegisterValue) {
                 param[i].loadOperandToReg(this, gen, new VirtualRegister(((RegisterValue) args[i]).getRegister()));
-            } else {
+            } else if(args[i] instanceof StackSlot){
                 // TODO
+                StackSlot slot = (StackSlot)args[i];
+            }else{
+                YarrowError.shouldNotReachHere();
             }
         }
     }
