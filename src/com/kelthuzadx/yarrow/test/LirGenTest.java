@@ -3,8 +3,8 @@ package com.kelthuzadx.yarrow.test;
 import java.util.ArrayList;
 
 public class LirGenTest {
-    private static int k = 0;
     private static final int[] arr = new int[3];
+    private static int k = 0;
 
     public static int lirGen1(int n) {
         int a = n;
@@ -96,6 +96,10 @@ public class LirGenTest {
             t = arr[0];
             t = arr[1];
             t = arr[2];
+            t = 6 - t;
+            t = 6 * t;
+            t = t / 12;
+            t = 6 % t;
         }
         return t;
     }

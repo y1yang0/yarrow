@@ -15,20 +15,16 @@ import com.kelthuzadx.yarrow.lir.stub.NewInstanceStub;
 import com.kelthuzadx.yarrow.lir.stub.VmStub;
 import com.kelthuzadx.yarrow.optimize.InstructionVisitor;
 import com.kelthuzadx.yarrow.optimize.Phase;
-import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.amd64.AMD64;
 import jdk.vm.ci.code.CallingConvention;
 import jdk.vm.ci.code.MemoryBarriers;
 import jdk.vm.ci.code.RegisterValue;
 import jdk.vm.ci.hotspot.HotSpotCallingConventionType;
-import jdk.vm.ci.hotspot.HotSpotJVMCIRuntime;
 import jdk.vm.ci.hotspot.HotSpotResolvedJavaType;
 import jdk.vm.ci.hotspot.HotSpotResolvedObjectType;
 import jdk.vm.ci.meta.*;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.HashSet;
 
@@ -210,7 +206,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         }
 
         VirtualRegister klass = new VirtualRegister(AMD64.rbx);
-        gen.emitMov(klass, new ConstValue(JavaConstant.forLong(getKlassPointer((HotSpotResolvedJavaType) instr.getKlass()))));
+        gen.emitMov(klass, new ConstValue(JavaConstant.forLong(YarrowRuntime.getKlassPointer((HotSpotResolvedJavaType) instr.getKlass()))));
 
         LirOperand rank = new VirtualRegister(AMD64.rbx);
         gen.emitMov(rank, new ConstValue(JavaConstant.forInt(sizeArray.length)));
@@ -359,6 +355,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         var array = instr.getArray().loadOperandToReg(this, gen);
         var index = instr.getIndex().loadOperandToReg(this, gen);
         var result = new VirtualRegister(instr.getElementType());
+        instr.storeOperand(result);
         Address address;
         if (index.isConstValue()) {
             address = new Address(array, index, instr.getElementType());
@@ -371,7 +368,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     @Override
     public void visitArithmeticInstr(ArithmeticInstr instr) {
         LirOperand left = instr.getLeft().loadOperandToReg(this, gen);
-        LirOperand right = instr.getRight().loadOperand(this);
+        LirOperand right = instr.getRight().loadOperandToReg(this, gen);
         LirOperand result = new VirtualRegister(instr.type());
         instr.storeOperand(result);
         if (left != result) {
@@ -399,7 +396,6 @@ public class LirBuilder extends InstructionVisitor implements Phase {
                 break;
             case Bytecode.IDIV:
             case Bytecode.LDIV:
-                CompilerErrors.bailOut();
             case Bytecode.FDIV:
             case Bytecode.DDIV:
                 gen.emitDiv(result, left, right);
@@ -462,7 +458,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     @Override
     public void visitNewInstr(NewInstr instr) {
         VirtualRegister retReg = new VirtualRegister(YarrowRuntime.regConfig.getReturnRegister(instr.type()));
-        var klassPointer = getKlassPointer((HotSpotResolvedJavaType) instr.getKlass());
+        var klassPointer = YarrowRuntime.getKlassPointer((HotSpotResolvedJavaType) instr.getKlass());
 
         VirtualRegister metadataReg = new VirtualRegister(AMD64.rdx);
         gen.emitMov(metadataReg, new ConstValue(JavaConstant.forLong(klassPointer)));
@@ -508,7 +504,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         VirtualRegister temp3 = new VirtualRegister(AMD64.rdi);
         VirtualRegister temp4 = retReg;
         VirtualRegister klassReg = new VirtualRegister(AMD64.rdx);
-        var klassPointer = getKlassPointer((HotSpotResolvedJavaType) instr.getKlass());
+        var klassPointer = YarrowRuntime.getKlassPointer((HotSpotResolvedJavaType) instr.getKlass());
         gen.emitMov(klassReg, new ConstValue(JavaConstant.forLong(klassPointer)));
         var stub = new NewArrayStub(length, klassReg, retReg);
         gen.emitAllocateArray(stub, klassReg, retReg, length, temp1, temp2, temp3, temp4, JavaKind.Object);
@@ -595,7 +591,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         VirtualRegister temp3 = new VirtualRegister(AMD64.rdi);
         VirtualRegister temp4 = retReg;
         VirtualRegister klassReg = new VirtualRegister(AMD64.rdx);
-        var klassPointer = getKlassPointer(instr.getElemementType().toJavaClass());
+        var klassPointer = YarrowRuntime.getKlassPointer(instr.getElemementType().toJavaClass());
         gen.emitMov(klassReg, new ConstValue(JavaConstant.forLong(klassPointer)));
         var stub = new NewArrayStub(length, klassReg, retReg);
         gen.emitAllocateArray(stub, klassReg, retReg, length, temp1, temp2, temp3, temp4, instr.getElemementType());
@@ -604,24 +600,4 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         instr.storeOperand(result);
     }
 
-    private long getKlassPointer(HotSpotResolvedJavaType klass) {
-        Class<?> javaClass = null;
-
-        try {
-            Method m = klass.getClass().getMethod("mirror");
-            m.setAccessible(true);
-            javaClass = (Class<?>) m.invoke(klass);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        return getKlassPointer(javaClass);
-    }
-
-    private long getKlassPointer(Class<?> javaClass) {
-        int klassOffset = YarrowRuntime.access.getFieldValue("java_lang_Class::_klass_offset", Integer.class, "int");
-        if (HotSpotJVMCIRuntime.getHostWordKind() == JavaKind.Long) {
-            return YarrowRuntime.unsafe.getLong(javaClass, klassOffset);
-        }
-        return YarrowRuntime.unsafe.getInt(javaClass, klassOffset) & 0xFFFFFFFFL;
-    }
 }
