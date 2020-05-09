@@ -10,17 +10,25 @@ import jdk.vm.ci.meta.Signature;
 
 public class CallInstr extends StateInstr {
     private final HirInstr[] args;
-    private final JavaMethod target;
+    private final JavaMethod method;
     private final Signature signature;
     private final int opcode;
     private HirInstr receiver;
 
-    public CallInstr(JavaKind type, VmState stateBefore, HirInstr receiver, HirInstr[] args, JavaMethod target, Signature signature, int opcode) {
+    public CallInstr(JavaKind type, VmState stateBefore, HirInstr receiver, HirInstr[] args, JavaMethod method, Signature signature, int opcode) {
         super(type, stateBefore);
         this.args = args;
-        this.target = target;
+        this.method = method;
         this.signature = signature;
         this.opcode = opcode;
+    }
+
+    public JavaMethod getMethod() {
+        return method;
+    }
+
+    public int getOpcode() {
+        return opcode;
     }
 
     public boolean hasReceiver() {
@@ -45,6 +53,6 @@ public class CallInstr extends StateInstr {
 
     @Override
     public String toString() {
-        return Logger.format("i{}: {} {}.{}", super.id, Bytecode.forName(opcode), target.getDeclaringClass().getUnqualifiedName(), target.getName());
+        return Logger.format("i{}: {} {}.{}", super.id, Bytecode.forName(opcode), method.getDeclaringClass().getUnqualifiedName(), method.getName());
     }
 }

@@ -2,11 +2,12 @@ package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.lir.LirGenerator;
-import com.kelthuzadx.yarrow.lir.operand.LirOperand;
+import com.kelthuzadx.yarrow.lir.operand.ConstValue;
 import com.kelthuzadx.yarrow.lir.operand.VirtualRegister;
 import com.kelthuzadx.yarrow.optimize.InstructionVisitor;
 import com.kelthuzadx.yarrow.optimize.Visitable;
 import com.kelthuzadx.yarrow.util.Increment;
+import jdk.vm.ci.meta.AllocatableValue;
 import jdk.vm.ci.meta.JavaKind;
 
 /**
@@ -21,7 +22,7 @@ public abstract class HirInstr implements Visitable {
     protected JavaKind type;
 
     // Low level IR
-    protected LirOperand operand;
+    protected AllocatableValue operand;
 
     HirInstr(JavaKind type) {
         this.id = Increment.next(HirInstr.class);
@@ -49,7 +50,7 @@ public abstract class HirInstr implements Visitable {
         this.next = next;
     }
 
-    public LirOperand loadOperandRaw() {
+    public AllocatableValue loadOperandRaw() {
         return operand;
     }
 
@@ -59,7 +60,7 @@ public abstract class HirInstr implements Visitable {
      * @param visitor if operand is null, visitor this instruction by visitor
      * @return operand
      */
-    public LirOperand loadOperand(InstructionVisitor visitor) {
+    public AllocatableValue loadOperand(InstructionVisitor visitor) {
         if (operand == null) {
             this.visit(visitor);
         }
@@ -75,13 +76,13 @@ public abstract class HirInstr implements Visitable {
      * @param gen     generate move instruction if needed
      * @return operand
      */
-    public LirOperand loadOperandToReg(InstructionVisitor visitor, LirGenerator gen) {
+    public AllocatableValue loadOperandToReg(InstructionVisitor visitor, LirGenerator gen) {
         if (operand == null) {
             this.visit(visitor);
         }
         YarrowError.guarantee(operand != null, "Must be not null");
 
-        if (!operand.isVirtualRegister()) {
+        if (!(operand instanceof VirtualRegister)) {
             VirtualRegister register = new VirtualRegister(type);
             gen.emitMov(register, operand);
 //            if (!operand.isConstValue()) {
@@ -89,7 +90,7 @@ public abstract class HirInstr implements Visitable {
 //            }
             operand = register;
         }
-        YarrowError.guarantee(operand.isConstValue() || operand.isVirtualRegister(), "Operand should retain in virtual register");
+        YarrowError.guarantee(operand instanceof ConstValue || operand instanceof VirtualRegister, "Operand should retain in virtual register");
 
         return operand;
     }
@@ -102,7 +103,7 @@ public abstract class HirInstr implements Visitable {
      * @param register specific register
      * @return operand
      */
-    public LirOperand loadOperandToReg(InstructionVisitor visitor, LirGenerator gen, VirtualRegister register) {
+    public AllocatableValue loadOperandToReg(InstructionVisitor visitor, LirGenerator gen, VirtualRegister register) {
         if (operand == null) {
             this.visit(visitor);
         }
@@ -112,12 +113,12 @@ public abstract class HirInstr implements Visitable {
             gen.emitMov(register, operand);
             operand = register;
         }
-        YarrowError.guarantee(operand.isVirtualRegister(), "Operand should retain in virtual register");
+        YarrowError.guarantee(operand instanceof VirtualRegister, "Operand should retain in virtual register");
 
         return operand;
     }
 
-    public void storeOperand(LirOperand operand) {
+    public void storeOperand(AllocatableValue operand) {
         YarrowError.guarantee(this.operand == null, "The first installation");
         this.operand = operand;
     }

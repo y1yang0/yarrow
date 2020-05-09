@@ -4,8 +4,9 @@ import com.kelthuzadx.yarrow.hir.VmState;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.hir.instr.HirInstr;
 import com.kelthuzadx.yarrow.hir.instr.PhiInstr;
-import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.lir.operand.VirtualRegister;
+import jdk.vm.ci.meta.AllocatableValue;
+import jdk.vm.ci.meta.JavaKind;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +25,7 @@ public class PhiResolver {
     private final List<ResolveNode> otherOperand;
 
     private ResolveNode loop;
-    private LirOperand temp;
+    private AllocatableValue temp;
 
     public PhiResolver(LirGenerator gen) {
         this.gen = gen;
@@ -62,35 +63,35 @@ public class PhiResolver {
         if (sux instanceof PhiInstr) {
             PhiInstr phi = (PhiInstr) sux;
             if (cur != null && cur != phi) {
-                LirOperand source = cur.loadOperandRaw();
+                AllocatableValue source = cur.loadOperandRaw();
                 if (source == null) {
                     cur.storeOperand(new VirtualRegister(cur.type()));
                     source = cur.loadOperandRaw();
 
                 }
-                LirOperand dest = phi.loadOperandRaw();
+                AllocatableValue dest = phi.loadOperandRaw();
                 if (dest == null) {
                     phi.storeOperand(new VirtualRegister(phi.type()));
                     dest = phi.loadOperandRaw();
                 }
-                createResolveNode(source, true).append(createResolveNode(dest, false));
+                createResolveNode(cur.type(), source, true).append(createResolveNode(sux.type(), dest, false));
             }
         }
     }
 
-    private ResolveNode createResolveNode(LirOperand operand, boolean isSource) {
+    private ResolveNode createResolveNode(JavaKind type, AllocatableValue operand, boolean isSource) {
         ResolveNode resolveNode;
 
-        if (operand.isVirtualRegister()) {
+        if (operand instanceof VirtualRegister) {
             int vregId = ((VirtualRegister) operand).getVirtualRegisterId();
-            resolveNode = new ResolveNode(operand);
+            resolveNode = new ResolveNode(type, operand);
             vregMap.put(vregId, resolveNode);
 
             if (isSource && !virtualOperand.contains(resolveNode)) {
                 virtualOperand.add(resolveNode);
             }
         } else {
-            resolveNode = new ResolveNode(operand);
+            resolveNode = new ResolveNode(type, operand);
             otherOperand.add(resolveNode);
         }
         return resolveNode;
@@ -119,14 +120,14 @@ public class PhiResolver {
             }
         } else if (!dest.isStartNode()) {
             loop = dest;
-            temp = new VirtualRegister(src.operand().getJavaKind());
+            temp = new VirtualRegister(src.getType());
             gen.emitMov(temp, src.operand());
             return;
         }
 
         if (!dest.isAssigned()) {
             if (loop == dest) {
-                temp = new VirtualRegister(src.operand().getJavaKind());
+                temp = new VirtualRegister(src.getType());
                 gen.emitMov(temp, src.operand());
                 dest.setAssigned(true);
             } else if (src != null) {
@@ -137,18 +138,24 @@ public class PhiResolver {
     }
 
     static class ResolveNode {
-        private final LirOperand operand;
+        private final JavaKind type;
+        private final AllocatableValue operand;
         private final List<ResolveNode> destinations;
         private boolean visited;
         private boolean assigned;
         private boolean startNode;
 
-        public ResolveNode(LirOperand operand) {
+        public ResolveNode(JavaKind type, AllocatableValue operand) {
+            this.type = type;
             destinations = new ArrayList<>();
             this.operand = operand;
         }
 
-        public LirOperand operand() {
+        public JavaKind getType() {
+            return type;
+        }
+
+        public AllocatableValue operand() {
             return operand;
         }
 

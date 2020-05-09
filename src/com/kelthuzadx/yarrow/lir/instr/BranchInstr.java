@@ -3,9 +3,9 @@ package com.kelthuzadx.yarrow.lir.instr;
 import com.kelthuzadx.yarrow.hir.Cond;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.lir.Mnemonic;
-import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.lir.stub.RuntimeStub;
 import com.kelthuzadx.yarrow.util.Logger;
+import jdk.vm.ci.meta.AllocatableValue;
 import jdk.vm.ci.meta.JavaKind;
 
 
@@ -15,7 +15,7 @@ public class BranchInstr extends Op0Instr {
     private final RuntimeStub stub;
     private final BlockStartInstr block;
 
-    public BranchInstr(Mnemonic mnemonic, LirOperand result, Cond condition, JavaKind type, RuntimeStub stub, BlockStartInstr block) {
+    public BranchInstr(Mnemonic mnemonic, AllocatableValue result, Cond condition, JavaKind type, RuntimeStub stub, BlockStartInstr block) {
         super(mnemonic, result);
         this.condition = condition;
         this.type = type;
@@ -24,15 +24,15 @@ public class BranchInstr extends Op0Instr {
     }
 
     public BranchInstr(Cond condition, JavaKind type, BlockStartInstr block) {
-        this(Mnemonic.BRANCH, LirOperand.illegal, condition, type, null, block);
+        this(Mnemonic.BRANCH, AllocatableValue.ILLEGAL, condition, type, null, block);
     }
 
     public BranchInstr(Cond condition, BlockStartInstr block) {
-        this(Mnemonic.BRANCH, LirOperand.illegal, condition, null, null, block);
+        this(Mnemonic.BRANCH, AllocatableValue.ILLEGAL, condition, null, null, block);
     }
 
     public BranchInstr(Cond condition, RuntimeStub stub) {
-        this(Mnemonic.BRANCH, LirOperand.illegal, condition, null, stub, null);
+        this(Mnemonic.BRANCH, AllocatableValue.ILLEGAL, condition, null, stub, null);
     }
 
 

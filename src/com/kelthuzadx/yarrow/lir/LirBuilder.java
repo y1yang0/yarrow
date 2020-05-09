@@ -8,7 +8,10 @@ import com.kelthuzadx.yarrow.hir.BlockFlag;
 import com.kelthuzadx.yarrow.hir.Cond;
 import com.kelthuzadx.yarrow.hir.Hir;
 import com.kelthuzadx.yarrow.hir.instr.*;
-import com.kelthuzadx.yarrow.lir.operand.*;
+import com.kelthuzadx.yarrow.lir.operand.Address;
+import com.kelthuzadx.yarrow.lir.operand.ConstValue;
+import com.kelthuzadx.yarrow.lir.operand.LirValueKindFactory;
+import com.kelthuzadx.yarrow.lir.operand.VirtualRegister;
 import com.kelthuzadx.yarrow.lir.stub.ClassCastExStub;
 import com.kelthuzadx.yarrow.lir.stub.NewArrayStub;
 import com.kelthuzadx.yarrow.lir.stub.NewInstanceStub;
@@ -115,23 +118,23 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitInstanceOfInstr(InstanceOfInstr instr) {
-        LirOperand object = instr.getObject().loadOperandToReg(this, gen);
-        LirOperand result = new VirtualRegister(instr.type());
+        AllocatableValue object = instr.getObject().loadOperandToReg(this, gen);
+        AllocatableValue result = new VirtualRegister(instr.type());
         instr.storeOperand(result);
         gen.emitInstanceOf(result, object, instr.getKlass());
     }
 
     @Override
     public void visitShiftInstr(ShiftInstr instr) {
-        LirOperand count;
+        AllocatableValue count;
         if (!(instr.getRight() instanceof ConstantInstr) || instr.getLeft().isType(JavaKind.Long)) {
             VirtualRegister rcx = new VirtualRegister(AMD64.rcx);
             count = instr.getRight().loadOperandToReg(this, gen, rcx);
         } else {
             count = instr.getRight().loadOperand(this);
         }
-        LirOperand value = instr.getLeft().loadOperandToReg(this, gen);
-        LirOperand result = new VirtualRegister(instr.type());
+        AllocatableValue value = instr.getLeft().loadOperandToReg(this, gen);
+        AllocatableValue result = new VirtualRegister(instr.type());
         instr.storeOperand(result);
 
         switch (instr.getOpcode()) {
@@ -162,14 +165,14 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitLogicInstr(LogicInstr instr) {
-        LirOperand left = instr.getLeft().loadOperandToReg(this, gen);
-        LirOperand right;
+        AllocatableValue left = instr.getLeft().loadOperandToReg(this, gen);
+        AllocatableValue right;
         if (!(instr.getRight() instanceof ConstantInstr)) {
             right = instr.getRight().loadOperandToReg(this, gen);
         } else {
             right = instr.getRight().loadOperand(this);
         }
-        LirOperand result = new VirtualRegister(instr.type());
+        AllocatableValue result = new VirtualRegister(instr.type());
         instr.storeOperand(result);
         if (left != result) {
             gen.emitMov(result, left);
@@ -197,11 +200,11 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     public void visitNewMultiArrayInstr(NewMultiArrayInstr instr) {
         HirInstr[] sizeArray = instr.getSizeArray();
         for (int i = 0; i < sizeArray.length; i++) {
-            LirOperand size = sizeArray[i].loadOperand(this);
-            if (!size.isConstValue()) {
+            AllocatableValue size = sizeArray[i].loadOperand(this);
+            if (!(size instanceof ConstValue)) {
                 size = sizeArray[i].loadOperandToReg(this, gen);
                 JavaKind type = sizeArray[i].type();
-                Address addr = new Address(new VirtualRegister(AMD64.rsp), LirOperand.illegal, 1, i * 4, type);
+                Address addr = new Address(new VirtualRegister(AMD64.rsp), AllocatableValue.ILLEGAL, 1, i * 4, type);
                 gen.emitMov(size, addr);
             }
         }
@@ -209,21 +212,21 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         VirtualRegister klass = new VirtualRegister(AMD64.rbx);
         gen.emitMov(klass, new ConstValue(JavaConstant.forLong(YarrowRuntime.getKlassPointer((HotSpotResolvedJavaType) instr.getKlass()))));
 
-        LirOperand rank = new VirtualRegister(AMD64.rbx);
+        AllocatableValue rank = new VirtualRegister(AMD64.rbx);
         gen.emitMov(rank, new ConstValue(JavaConstant.forInt(sizeArray.length)));
 
         VirtualRegister varArgs = new VirtualRegister(AMD64.rcx);
         gen.emitMov(varArgs, new VirtualRegister(AMD64.rsp));
 
-        LirOperand[] args = new LirOperand[3];
+        AllocatableValue[] args = new AllocatableValue[3];
         args[0] = klass;
         args[1] = rank;
         args[2] = varArgs;
 
-        LirOperand ret = new VirtualRegister(YarrowRuntime.regConfig.getReturnRegister(instr.type()));
-        Address stubAddr = new Address(new ConstValue(JavaConstant.forLong(VmStub.StubNewArray.getStubAddress())), LirOperand.illegal, 1, 0, JavaKind.Int);
+        AllocatableValue ret = new VirtualRegister(YarrowRuntime.regConfig.getReturnRegister(instr.type()));
+        Address stubAddr = new Address(new ConstValue(JavaConstant.forLong(VmStub.StubNewArray.getStubAddress())), AllocatableValue.ILLEGAL, 1, 0, JavaKind.Int);
         gen.emitCallRt(ret, stubAddr, args);
-        LirOperand result = new VirtualRegister(instr.type());
+        AllocatableValue result = new VirtualRegister(instr.type());
         gen.emitMov(result, ret);
         instr.storeOperand(result);
     }
@@ -234,7 +237,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         var index = instr.getIndex().loadOperandToReg(this, gen);
         var storeValue = instr.getStoreValue().loadOperandToReg(this, gen);
         Address address;
-        if (index.isConstValue()) {
+        if (index instanceof ConstValue) {
             address = new Address(array, index, instr.getElementType());
         } else {
             address = new Address(array, index, Address.scaleFor(instr.getElementType()), YarrowConfigAccess.access().arrayClassElementOffset, instr.getElementType());
@@ -246,7 +249,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     public void visitStoreFieldInstr(StoreFieldInstr instr) {
         var base = instr.getObject().loadOperandToReg(this, gen);
         var storeValue = instr.getStoreValue().loadOperandToReg(this, gen);
-        instr.storeOperand(null);
+        instr.storeOperand(AllocatableValue.ILLEGAL);
         var offset = new ConstValue(JavaConstant.forInt(instr.getOffset()));
         var address = new Address(base, offset, instr.getField().getJavaKind());
         gen.emitMov(address, storeValue);
@@ -283,14 +286,14 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     @Override
     public void visitCompareInstr(CompareInstr instr) {
         //FIXME: remove redundant mov instruction for constant value
-        LirOperand left = instr.getLeft().loadOperandToReg(this, gen);
+        AllocatableValue left = instr.getLeft().loadOperandToReg(this, gen);
 
-        LirOperand right = instr.getRight().loadOperandToReg(this, gen);
-        LirOperand result = new VirtualRegister(instr.type());
+        AllocatableValue right = instr.getRight().loadOperandToReg(this, gen);
+        AllocatableValue result = new VirtualRegister(instr.type());
         instr.storeOperand(result);
         if (instr.getLeft().isType(JavaKind.Long)) {
-            if (left.isVirtualRegister()) {
-                LirOperand t = new VirtualRegister(instr.getLeft().type());
+            if (left instanceof VirtualRegister) {
+                AllocatableValue t = new VirtualRegister(instr.getLeft().type());
                 gen.emitMov(t, left);
                 left = t;
             }
@@ -304,13 +307,13 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitNegateInstr(NegateInstr instr) {
-        LirOperand value = instr.getValue().loadOperandToReg(this, gen);
-        if (value.isVirtualRegister()) {
-            LirOperand newValue = new VirtualRegister(instr.getValue().type());
+        AllocatableValue value = instr.getValue().loadOperandToReg(this, gen);
+        if (value instanceof VirtualRegister) {
+            AllocatableValue newValue = new VirtualRegister(instr.getValue().type());
             gen.emitMov(newValue, value);
             value = newValue;
         }
-        LirOperand result = new VirtualRegister(instr.type());
+        AllocatableValue result = new VirtualRegister(instr.type());
         instr.storeOperand(result);
         gen.emitNeg(value, result);
     }
@@ -322,7 +325,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitTableSwitchInstr(TableSwitchInstr instr) {
-        instr.storeOperand(null);
+        instr.storeOperand(AllocatableValue.ILLEGAL);
         var index = instr.getIndex().loadOperandToReg(this, gen);
         new PhiResolver(gen).resolve(instr.getSuccessor(), instr.getVmState());
         for (int i = 0; i < instr.getLength(); i++) {
@@ -334,8 +337,8 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitCheckCastInstr(CheckCastInstr instr) {
-        LirOperand object = instr.getObject().loadOperandToReg(this, gen);
-        LirOperand result = new VirtualRegister(instr.type());
+        AllocatableValue object = instr.getObject().loadOperandToReg(this, gen);
+        AllocatableValue result = new VirtualRegister(instr.type());
         instr.storeOperand(result);
         var stub = new ClassCastExStub(object);
         gen.emitCheckCast(result, object, (HotSpotResolvedJavaType) instr.getKlass(), stub);
@@ -358,7 +361,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         var result = new VirtualRegister(instr.getElementType());
         instr.storeOperand(result);
         Address address;
-        if (index.isConstValue()) {
+        if (index instanceof ConstValue) {
             address = new Address(array, index, instr.getElementType());
         } else {
             address = new Address(array, index, Address.scaleFor(instr.getElementType()), YarrowConfigAccess.access().arrayClassElementOffset, instr.getElementType());
@@ -368,9 +371,9 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitArithmeticInstr(ArithmeticInstr instr) {
-        LirOperand left = instr.getLeft().loadOperandToReg(this, gen);
-        LirOperand right = instr.getRight().loadOperandToReg(this, gen);
-        LirOperand result = new VirtualRegister(instr.type());
+        AllocatableValue left = instr.getLeft().loadOperandToReg(this, gen);
+        AllocatableValue right = instr.getRight().loadOperandToReg(this, gen);
+        AllocatableValue result = new VirtualRegister(instr.type());
         instr.storeOperand(result);
         if (left != result) {
             gen.emitMov(result, left);
@@ -415,10 +418,10 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitArrayLenInstr(ArrayLenInstr instr) {
-        LirOperand array = instr.getArray().loadOperandToReg(this, gen);
-        LirOperand result = new VirtualRegister(instr.type());
+        AllocatableValue array = instr.getArray().loadOperandToReg(this, gen);
+        AllocatableValue result = new VirtualRegister(instr.type());
         instr.storeOperand(result);
-        Address addr = new Address(array, LirOperand.illegal, 1, YarrowConfigAccess.access().getArrayLengthOffset(), JavaKind.Int);
+        Address addr = new Address(array, AllocatableValue.ILLEGAL, 1, YarrowConfigAccess.access().getArrayLengthOffset(), JavaKind.Int);
         gen.emitMov(result, addr);
     }
 
@@ -434,7 +437,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitLookupSwitchInstr(LookupSwitchInstr instr) {
-        instr.storeOperand(null);
+        instr.storeOperand(AllocatableValue.ILLEGAL);
         var index = instr.getIndex().loadOperandToReg(this, gen);
         new PhiResolver(gen).resolve(instr.getSuccessor(), instr.getVmState());
         for (int i = 0; i < instr.getLength(); i++) {
@@ -448,7 +451,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     public void visitIfInstr(IfInstr instr) {
         var left = instr.getLeft().loadOperandToReg(this, gen);
         var right = instr.getRight().loadOperandToReg(this, gen);
-        instr.storeOperand(null);
+        instr.storeOperand(AllocatableValue.ILLEGAL);
         gen.emitCmp(left, right, instr.getCond());
         new PhiResolver(gen).resolve(instr.getSuccessor(), instr.getVmState());
 
@@ -473,12 +476,12 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
     @Override
     public void visitTypeCastInstr(TypeCastInstr instr) {
-        LirOperand fromOperand = instr.getFrom().loadOperandToReg(this, gen);
-        LirOperand fromResult = new VirtualRegister(instr.type());
+        AllocatableValue fromOperand = instr.getFrom().loadOperandToReg(this, gen);
+        AllocatableValue fromResult = new VirtualRegister(instr.type());
         instr.storeOperand(fromResult);
 
-        LirOperand toOperand = fromOperand;
-        LirOperand toResult = fromResult;
+        AllocatableValue toOperand = fromOperand;
+        AllocatableValue toResult = fromResult;
 
         gen.emitJavaCast(toResult, toOperand, instr.getOpcode());
 
@@ -509,7 +512,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         gen.emitMov(klassReg, new ConstValue(JavaConstant.forLong(klassPointer)));
         var stub = new NewArrayStub(length, klassReg, retReg);
         gen.emitAllocateArray(stub, klassReg, retReg, length, temp1, temp2, temp3, temp4, JavaKind.Object);
-        LirOperand result = new VirtualRegister(instr.type());
+        AllocatableValue result = new VirtualRegister(instr.type());
         gen.emitMov(result, retReg);
         instr.storeOperand(result);
     }
@@ -535,27 +538,55 @@ public class LirBuilder extends InstructionVisitor implements Phase {
 
         CallingConvention cc = YarrowRuntime.regConfig.getCallingConvention(
                 HotSpotCallingConventionType.JavaCall, sig.getReturnType(null), paramTypes, valueFactory);
-        LirOperand receiver = LirOperand.illegal;
-        LirOperand result = LirOperand.illegal;
+        AllocatableValue receiver = AllocatableValue.ILLEGAL;
+        AllocatableValue resultRegister = AllocatableValue.ILLEGAL;
         if (instr.getSignature().getReturnKind() != JavaKind.Void) {
-            result = new VirtualRegister(YarrowRuntime.regConfig.getReturnRegister(instr.getSignature().getReturnKind()));
+            resultRegister = new VirtualRegister(YarrowRuntime.regConfig.getReturnRegister(instr.getSignature().getReturnKind()));
         }
         AllocatableValue[] args = cc.getArguments();
         for (i = 0; i < param.length; i++) {
             if (args[i] instanceof RegisterValue) {
                 param[i].loadOperandToReg(this, gen, new VirtualRegister(((RegisterValue) args[i]).getRegister()));
-            } else if(args[i] instanceof StackSlot){
-                // TODO
-                StackSlot slot = (StackSlot)args[i];
-            }else{
+            } else if (args[i] instanceof StackSlot) {
+                StackSlot slot = (StackSlot) args[i];
+                gen.emitMov(slot, param[i].loadOperandRaw());
+            } else {
                 YarrowError.shouldNotReachHere();
             }
+        }
+        if (instr.hasReceiver()) {
+            YarrowError.unimplemented();
+        }
+        switch (instr.getOpcode()) {
+
+            case Bytecode.INVOKESTATIC:
+                gen.emitJavaCall(Mnemonic.CALL_STATIC, resultRegister, instr.getMethod(), AllocatableValue.ILLEGAL, args);
+                break;
+            case Bytecode.INVOKEINTERFACE:
+            case Bytecode.INVOKESPECIAL:
+            case Bytecode.INVOKEVIRTUAL: {
+                if (instr.getOpcode() == Bytecode.INVOKESPECIAL) {
+                    gen.emitJavaCall(Mnemonic.CALL_OPTVIRTUAL, resultRegister, instr.getMethod(), receiver, args);
+                }
+                break;
+            }
+            case Bytecode.INVOKEDYNAMIC:
+                gen.emitJavaCall(Mnemonic.CALL_DYNAMIC, resultRegister, instr.getMethod(), receiver, args);
+                break;
+            default:
+                YarrowError.unimplemented();
+        }
+
+        if (resultRegister != AllocatableValue.ILLEGAL) {
+            AllocatableValue result = new VirtualRegister(instr.type());
+            instr.storeOperand(result);
+            gen.emitMov(result, resultRegister);
         }
     }
 
     @Override
     public void visitGotoInstr(GotoInstr instr) {
-        instr.storeOperand(LirOperand.illegal);
+        instr.storeOperand(AllocatableValue.ILLEGAL);
         new PhiResolver(gen).resolve(instr.getSuccessor(), instr.getVmState());
         gen.emitJmp(instr.getSuccessor().get(0));
     }
@@ -563,15 +594,15 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     @Override
     public void visitReturnInstr(ReturnInstr instr) {
         if (instr.isType(JavaKind.Void)) {
-            gen.emitReturn(LirOperand.illegal);
-            instr.storeOperand(null); // ReturnInstr has no operand result
+            gen.emitReturn(AllocatableValue.ILLEGAL);
+            instr.storeOperand(AllocatableValue.ILLEGAL); // ReturnInstr has no operand result
             return;
         }
 
         VirtualRegister retReg = new VirtualRegister(YarrowRuntime.regConfig.getReturnRegister(instr.type()));
-        LirOperand left = instr.getReturnValue().loadOperandToReg(this, gen, retReg);
+        AllocatableValue left = instr.getReturnValue().loadOperandToReg(this, gen, retReg);
         gen.emitReturn(left);
-        instr.storeOperand(null); // ReturnInstr has no operand result
+        instr.storeOperand(AllocatableValue.ILLEGAL); // ReturnInstr has no operand result
     }
 
     @Override
@@ -598,7 +629,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         gen.emitMov(klassReg, new ConstValue(JavaConstant.forLong(klassPointer)));
         var stub = new NewArrayStub(length, klassReg, retReg);
         gen.emitAllocateArray(stub, klassReg, retReg, length, temp1, temp2, temp3, temp4, instr.getElemementType());
-        LirOperand result = new VirtualRegister(instr.type());
+        AllocatableValue result = new VirtualRegister(instr.type());
         gen.emitMov(result, retReg);
         instr.storeOperand(result);
     }

@@ -1,7 +1,6 @@
 package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.util.Logger;
-import jdk.vm.ci.hotspot.HotSpotObjectConstant;
 import jdk.vm.ci.meta.JavaConstant;
 import jdk.vm.ci.meta.JavaKind;
 

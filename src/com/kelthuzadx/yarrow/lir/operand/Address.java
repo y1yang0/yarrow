@@ -1,17 +1,19 @@
 package com.kelthuzadx.yarrow.lir.operand;
 
 import com.kelthuzadx.yarrow.core.YarrowError;
+import jdk.vm.ci.meta.AllocatableValue;
 import jdk.vm.ci.meta.JavaKind;
 
-public class Address extends LirOperand {
-    private final LirOperand base;
-    private final LirOperand index;
+public class Address extends AllocatableValue {
+    private final AllocatableValue base;
+    private final AllocatableValue index;
     private final int scale;
     private final int displacement;
     private final JavaKind type;
 
     // displacement[base+index*scale]
-    public Address(LirOperand base, LirOperand index, int scale, int displacement, JavaKind type) {
+    public Address(AllocatableValue base, AllocatableValue index, int scale, int displacement, JavaKind type) {
+        super(new LirValueKindFactory().getValueKind(type));
         this.base = base;
         this.index = index;
         this.scale = scale;
@@ -20,23 +22,23 @@ public class Address extends LirOperand {
     }
 
     // displacement[base+index*1]
-    public Address(LirOperand base, LirOperand index, int displacement, JavaKind type) {
+    public Address(AllocatableValue base, AllocatableValue index, int displacement, JavaKind type) {
         this(base, index, 1, displacement, type);
     }
 
     // [base+index*1]
-    public Address(LirOperand base, LirOperand index, JavaKind type) {
+    public Address(AllocatableValue base, AllocatableValue index, JavaKind type) {
         this(base, index, 1, 0, type);
     }
 
     // displacement[base]
-    public Address(LirOperand base, int displacement, JavaKind type) {
-        this(base, LirOperand.illegal, 1, displacement, type);
+    public Address(AllocatableValue base, int displacement, JavaKind type) {
+        this(base, AllocatableValue.ILLEGAL, 1, displacement, type);
     }
 
     // [base]
-    public Address(LirOperand base, JavaKind type) {
-        this(base, LirOperand.illegal, 1, 0, type);
+    public Address(AllocatableValue base, JavaKind type) {
+        this(base, AllocatableValue.ILLEGAL, 1, 0, type);
     }
 
     public static int scaleFor(JavaKind type) {
@@ -60,30 +62,6 @@ public class Address extends LirOperand {
         return Integer.MAX_VALUE;
     }
 
-    @Override
-    public JavaKind getJavaKind() {
-        return type;
-    }
-
-    @Override
-    public boolean isConstValue() {
-        return false;
-    }
-
-    @Override
-    public boolean isVirtualRegister() {
-        return false;
-    }
-
-    @Override
-    public boolean isStackVar() {
-        return false;
-    }
-
-    @Override
-    public boolean isAddress() {
-        return true;
-    }
 
     @Override
     public String toString() {
@@ -92,7 +70,7 @@ public class Address extends LirOperand {
             result.append(displacement);
         }
         result.append("[").append(base);
-        if (index != illegal) {
+        if (index != ILLEGAL) {
             result.append("+" + index);
             if (scale != 1) {
                 result.append("*" + scale);

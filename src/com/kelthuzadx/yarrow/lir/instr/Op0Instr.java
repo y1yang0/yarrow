@@ -1,12 +1,12 @@
 package com.kelthuzadx.yarrow.lir.instr;
 
 import com.kelthuzadx.yarrow.lir.Mnemonic;
-import com.kelthuzadx.yarrow.lir.operand.LirOperand;
 import com.kelthuzadx.yarrow.util.Logger;
+import jdk.vm.ci.meta.AllocatableValue;
 
 public class Op0Instr extends LirInstr {
 
-    public Op0Instr(Mnemonic mnemonic, LirOperand result) {
+    public Op0Instr(Mnemonic mnemonic, AllocatableValue result) {
         super(mnemonic, result);
     }
 
@@ -34,7 +34,8 @@ public class Op0Instr extends LirInstr {
             default:
                 break;
         }
-        return Logger.format("i{}: {} {}", super.id, mnemonic.name().toLowerCase(), result.toString());
+
+        return Logger.format("i{}: {} {}", super.id, mnemonic.name().toLowerCase(), stringify(result));
 
     }
 }

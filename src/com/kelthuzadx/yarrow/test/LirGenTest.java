@@ -104,12 +104,15 @@ public class LirGenTest {
         return t;
     }
 
-    public static void foo(String a, String b,int k,double d,char c,byte bb,String p1,String p2, String p3){}
+    public static void foo(String a, String b, int k, double d, char c, byte bb, String p1, String p2, Object p3) {
+    }
 
-    public static void lirGen4(int i){
-        int k = i+2;
-        if(k>100){
-            foo("hello","world",k,6.28,'s',(byte)5,"ss","ss","aa");
+    public static void lirGen4(int i) {
+        int k = i + 2;
+        if (k > 100) {
+            String s = "sss";
+            Object obj = new Object();
+            foo("hello", "world", k, 6.28, 's', (byte) 5, "ss", s, obj);
         }
     }
 

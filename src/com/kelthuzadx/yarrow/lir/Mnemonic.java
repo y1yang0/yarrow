@@ -17,6 +17,11 @@ public enum Mnemonic {
     TYPE_CAST,
     INSTANCE_OF,
     CHECK_CAST,
+    CALL_STATIC,
+    CALL_VIRTUAL,
+    CALL_OPTVIRTUAL,
+    CALL_ICVIRTUAL,
+    CALL_DYNAMIC,
 
     // 1 operand opcode
     MOV,
