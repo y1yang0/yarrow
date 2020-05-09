@@ -525,14 +525,14 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         for (int i = 0; i < paramKinds.length; i++) {
             paramTypes[i] = sig.getParameterType(i, null);
         }
-        HirInstr[] param = new HirInstr[instr.argumentCount() + (instr.hasReceiver() ? 1 : 0)];
+        HirInstr[] param = new HirInstr[instr.getArguments().length + (instr.hasReceiver() ? 1 : 0)];
         int i = 0;
         if (param.length > 0) {
             if (instr.hasReceiver()) {
                 param[i++] = instr.getReceiver();
             }
             for (int j = 0; i < param.length; i++, j++) {
-                param[i] = instr.getArguments(j);
+                param[i] = instr.getArguments()[j];
             }
         }
 
