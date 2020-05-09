@@ -18,7 +18,7 @@ public class LirInstr {
 
     public static String stringify(AllocatableValue value) {
         if (value instanceof StackSlot) {
-            return "[rbp+" + ((StackSlot) value).getRawOffset() + "]";
+            return "[rbp-" + ((StackSlot) value).getRawOffset() + "]";
         }
         return value.toString();
     }

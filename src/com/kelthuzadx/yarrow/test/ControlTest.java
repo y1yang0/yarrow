@@ -73,6 +73,25 @@ public class ControlTest {
         }
     }
 
+    public static long iincSwitch(int i) {
+        long result = 12;
+        switch (i) {
+            case 1232532:
+                result += 43534666666L;
+                break;
+            case 3242:
+                return 436476;
+            case -46437457:
+                result *= -1111111;
+                break;
+            case (int) 438690280395952L:
+                result += 496898230523L;
+            case 0:
+                return -0;
+        }
+        return result;
+    }
+
     public static void main(String[] args) {
         for (int i = 0; i < 99999; i++) {
             yarrow_whileLoop(i);
@@ -80,6 +99,7 @@ public class ControlTest {
             yarrow_forLoop2(i);
             yarrow_forLoopWithIf(i);
             yarrow_complex(i);
+            iincSwitch(i);
         }
     }
 }

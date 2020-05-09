@@ -567,6 +567,8 @@ public class LirBuilder extends InstructionVisitor implements Phase {
             case Bytecode.INVOKEVIRTUAL: {
                 if (instr.getOpcode() == Bytecode.INVOKESPECIAL) {
                     gen.emitJavaCall(Mnemonic.CALL_OPTVIRTUAL, resultRegister, instr.getMethod(), receiver, args);
+                } else {
+                    gen.emitJavaCall(Mnemonic.CALL_ICVIRTUAL, resultRegister, instr.getMethod(), receiver, args);
                 }
                 break;
             }

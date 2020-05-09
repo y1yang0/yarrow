@@ -40,7 +40,7 @@ public class PhiInstr extends HirInstr {
     @Override
     public String toString() {
         String str = IntStream.range(0, operandCount())
-                .mapToObj(i -> "i" + operand(i).id)
+                .mapToObj(i -> (operand(i) != null) ? "i" + operand(i).id : "null")
                 .collect(Collectors.joining(","));
 
         return Logger.format("i{}: phi [{}]", super.id, str);
