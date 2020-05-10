@@ -17,6 +17,13 @@ public class LirInstr implements Visitable {
         this.result = result;
     }
 
+    public static String stringify(AllocatableValue value) {
+        if (value instanceof StackSlot) {
+            return "[rbp-" + ((StackSlot) value).getRawOffset() + "]";
+        }
+        return value.toString();
+    }
+
     public int getId() {
         return id;
     }
@@ -25,15 +32,8 @@ public class LirInstr implements Visitable {
         return result;
     }
 
-    public Mnemonic getMnemonic(){
+    public Mnemonic getMnemonic() {
         return mnemonic;
-    }
-
-    public static String stringify(AllocatableValue value) {
-        if (value instanceof StackSlot) {
-            return "[rbp-" + ((StackSlot) value).getRawOffset() + "]";
-        }
-        return value.toString();
     }
 
     public void resetId(int id) {

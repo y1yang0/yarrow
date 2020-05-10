@@ -24,6 +24,14 @@ public class Op2Instr extends LirInstr {
         this.rightOperand = rightOperand;
     }
 
+    public AllocatableValue operand1() {
+        return leftOperand;
+    }
+
+    public AllocatableValue operand2() {
+        return rightOperand;
+    }
+
     @Override
     public String toString() {
         switch (mnemonic) {

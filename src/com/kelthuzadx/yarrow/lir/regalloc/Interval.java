@@ -4,9 +4,8 @@ import jdk.vm.ci.meta.JavaKind;
 
 public class Interval {
     private final int virtualRegisterNum;
-    private int physicalRegisterNum;
     private final JavaKind type;
-
+    private int physicalRegisterNum;
     private int from;  //inclusive
     private int to;    // exclusive
 

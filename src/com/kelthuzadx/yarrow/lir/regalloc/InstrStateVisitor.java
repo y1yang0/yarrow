@@ -4,7 +4,6 @@ import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.lir.instr.*;
 import com.kelthuzadx.yarrow.lir.operand.VirtualRegister;
 import com.kelthuzadx.yarrow.optimize.LirInstrVisitor;
-import com.kelthuzadx.yarrow.util.Logger;
 
 import java.util.ArrayList;
 
@@ -56,7 +55,7 @@ public class InstrStateVisitor extends LirInstrVisitor {
 
     @Override
     public void visitJavaCheckCastInstr(JavaCheckCastInstr instr) {
-
+        
     }
 
     @Override
@@ -66,7 +65,12 @@ public class InstrStateVisitor extends LirInstrVisitor {
 
     @Override
     public void visitJavaTypeCastInstr(JavaTypeCastInstr instr) {
-
+        if (instr.operand1() instanceof VirtualRegister) {
+            input.add((VirtualRegister) instr.operand1());
+        }
+        if (instr.operandResult() instanceof VirtualRegister) {
+            output.add((VirtualRegister) instr.operandResult());
+        }
     }
 
     @Override
@@ -80,7 +84,7 @@ public class InstrStateVisitor extends LirInstrVisitor {
 
     @Override
     public void visitOp0Instr(Op0Instr instr) {
-        switch (instr.getMnemonic()){
+        switch (instr.getMnemonic()) {
             case BRANCH:
             case LABEL:
                 // Nothing need to do
@@ -94,8 +98,8 @@ public class InstrStateVisitor extends LirInstrVisitor {
             case MEMBAR_RELEASE:
             case OSR_ENTRY:
             case NORMAL_ENTRY:
-                if(instr.operandResult() instanceof VirtualRegister){
-                    output.add((VirtualRegister)instr.operandResult());
+                if (instr.operandResult() instanceof VirtualRegister) {
+                    output.add((VirtualRegister) instr.operandResult());
                 }
                 break;
             default:
@@ -105,13 +109,14 @@ public class InstrStateVisitor extends LirInstrVisitor {
 
     @Override
     public void visitOp1Instr(Op1Instr instr) {
-        switch (instr.getMnemonic()){
-            case TYPE_CAST:
-                if(instr.operand1() instanceof VirtualRegister){
+        switch (instr.getMnemonic()) {
+            case MOV:
+            case RETURN:
+                if (instr.operand1() instanceof VirtualRegister) {
                     input.add((VirtualRegister) instr.operand1());
                 }
-                if(instr.operandResult() instanceof VirtualRegister){
-                    output.add((VirtualRegister)instr.operandResult());
+                if (instr.operandResult() instanceof VirtualRegister) {
+                    output.add((VirtualRegister) instr.operandResult());
                 }
                 break;
             default:
@@ -121,6 +126,35 @@ public class InstrStateVisitor extends LirInstrVisitor {
 
     @Override
     public void visitOp2Instr(Op2Instr instr) {
-
+        switch (instr.getMnemonic()){
+            case ADD:
+            case SUB:
+            case MUL:
+            case DIV:
+            case REM:
+            case SHL:
+            case SHR:
+            case USHR:
+            case AND:
+            case OR:
+            case XOR:
+            case NEG:
+            case FCMP:
+            case FCMPU:
+            case LCMP:
+            case CMP:
+                if(instr.operand1() instanceof  VirtualRegister){
+                    input.add((VirtualRegister)instr.operand1());
+                }
+                if(instr.operand2() instanceof VirtualRegister){
+                    input.add((VirtualRegister)instr.operand2());
+                }
+                if(instr.operandResult() instanceof VirtualRegister){
+                    output.add((VirtualRegister) instr.operandResult());
+                }
+                break;
+            default:
+                break;
+        }
     }
 }
