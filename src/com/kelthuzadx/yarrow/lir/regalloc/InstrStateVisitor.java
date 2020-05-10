@@ -87,6 +87,8 @@ public class InstrStateVisitor extends LirInstrVisitor {
         switch (instr.getMnemonic()) {
             case BRANCH:
             case LABEL:
+            case OSR_ENTRY:
+            case NORMAL_ENTRY:
                 // Nothing need to do
                 break;
             case MEMBAR:
@@ -96,8 +98,6 @@ public class InstrStateVisitor extends LirInstrVisitor {
             case MEMBAR_STORE_STORE:
             case MEMBAR_ACQUIRE:
             case MEMBAR_RELEASE:
-            case OSR_ENTRY:
-            case NORMAL_ENTRY:
                 if (instr.operandResult() instanceof VirtualRegister) {
                     output.add((VirtualRegister) instr.operandResult());
                 }

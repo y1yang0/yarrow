@@ -11,17 +11,24 @@ public class VirtualRegister extends AllocatableValue {
     private static final Register.RegisterCategory virtual = new Register.RegisterCategory("Virtual");
     private final Register register;
     private JavaKind type;
+    private boolean isVirtual;
 
     public VirtualRegister(JavaKind type) {
         super(new LirValueKindFactory().getValueKind(type));
         this.type = type;
-        final int regId = VREGID_BASE + Increment.next(VirtualRegister.class);
+        int regId = VREGID_BASE + Increment.next(VirtualRegister.class);
         this.register = new Register(regId, regId, "vreg" + regId, virtual);
+        this.isVirtual = true;
     }
 
     public VirtualRegister(Register register) {
         super(null);
         this.register = register;
+        this.isVirtual = false;
+    }
+
+    public boolean isVirtualRegister() {
+        return isVirtual;
     }
 
     public int getVirtualRegisterId() {

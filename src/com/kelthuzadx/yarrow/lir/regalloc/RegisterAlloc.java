@@ -67,15 +67,23 @@ public class RegisterAlloc implements Phase {
                 LirInstr instr = lir.getAllLirInstr(id).get(i);
                 instr.visit(visitor);
                 for (VirtualRegister value : visitor.getInput()) {
-                    if (!block.liveKill().contains(value.getVirtualRegisterId())) {
+                    if (value.isVirtualRegister() &&
+                            !block.liveKill().contains(value.getVirtualRegisterId())) {
                         block.liveGen().add(value.getVirtualRegisterId());
                     }
                 }
                 for (VirtualRegister value : visitor.getTemp()) {
-                    block.liveKill().add(value.getVirtualRegisterId());
+                    if (value.isVirtualRegister() &&
+                            !block.liveKill().contains(value.getVirtualRegisterId())) {
+                        block.liveKill().add(value.getVirtualRegisterId());
+                    }
                 }
                 for (VirtualRegister value : visitor.getOutput()) {
-                    block.liveKill().add(value.getVirtualRegisterId());
+                    if (value.isVirtualRegister() &&
+                            !block.liveKill().contains(value.getVirtualRegisterId())) {
+                        block.liveKill().add(value.getVirtualRegisterId());
+
+                    }
                 }
             }
             if (TraceRegisterAllocation) {
@@ -88,6 +96,12 @@ public class RegisterAlloc implements Phase {
     }
 
     private void computeGlobalLiveSet() {
+        /*
+         * The live_out set of a block is the union of the live_in sets of all successors. Because no
+         * value can be generated at a control flow edge, all operands that live at the beginning of a
+         * successors must also be live at the end of the current block. The live_in set is then calculated
+         * from the live_out set using live_kill and live_gen.
+         */
         boolean changed = false;
         int iterCount = 0;
         do {
@@ -99,10 +113,10 @@ public class RegisterAlloc implements Phase {
                 for (BlockStartInstr succ : block.getBlockEnd().getSuccessor()) {
                     block.liveOut().addAll(succ.livenIn());
                 }
-                if(!oldLiveOut.equals(block.liveOut())){
+                if (!oldLiveOut.equals(block.liveOut())) {
                     changed = true;
                 }
-                if(iterCount==0||changed){
+                if (iterCount == 0 || changed) {
                     var temp = new HashSet<>(block.liveOut());
                     temp.removeAll(block.liveKill());
                     temp.addAll(block.liveGen());

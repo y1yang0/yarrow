@@ -15,6 +15,11 @@ public class BlockStartInstr extends StateInstr {
     // For constructing control flow graph
     private final int blockId;
     private final List<BlockStartInstr> predecessor;
+    // Register Allocation
+    private final Set<Integer> liveGen;
+    private final Set<Integer> liveKill;
+    private final Set<Integer> livenIn;
+    private final Set<Integer> liveOut;
     private int startBci;
     private int endBci;
     // Successor of this block, when HIR construction accomplish, it will be cleared
@@ -24,12 +29,6 @@ public class BlockStartInstr extends StateInstr {
     private BlockFlag flag;
     // For instruction itself
     private BlockEndInstr blockEnd;
-
-    // Register Allocation
-    private final Set<Integer> liveGen;
-    private final Set<Integer> liveKill;
-    private final Set<Integer> livenIn;
-    private final Set<Integer> liveOut;
 
     public BlockStartInstr(int blockId, int bci) {
         super(JavaKind.Illegal, null);
