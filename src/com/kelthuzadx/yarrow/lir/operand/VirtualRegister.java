@@ -10,8 +10,8 @@ public class VirtualRegister extends AllocatableValue {
     private static final int VREGID_BASE = YarrowRuntime.arch.getRegisters().size() + 1;
     private static final Register.RegisterCategory virtual = new Register.RegisterCategory("Virtual");
     private final Register register;
+    private final boolean isVirtual;
     private JavaKind type;
-    private boolean isVirtual;
 
     public VirtualRegister(JavaKind type) {
         super(new LirValueKindFactory().getValueKind(type));

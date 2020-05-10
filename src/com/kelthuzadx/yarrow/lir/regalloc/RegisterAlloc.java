@@ -73,14 +73,12 @@ public class RegisterAlloc implements Phase {
                     }
                 }
                 for (VirtualRegister value : visitor.getTemp()) {
-                    if (value.isVirtualRegister() &&
-                            !block.liveKill().contains(value.getVirtualRegisterId())) {
+                    if (value.isVirtualRegister()) {
                         block.liveKill().add(value.getVirtualRegisterId());
                     }
                 }
                 for (VirtualRegister value : visitor.getOutput()) {
-                    if (value.isVirtualRegister() &&
-                            !block.liveKill().contains(value.getVirtualRegisterId())) {
+                    if (value.isVirtualRegister()) {
                         block.liveKill().add(value.getVirtualRegisterId());
 
                     }
@@ -102,7 +100,7 @@ public class RegisterAlloc implements Phase {
          * successors must also be live at the end of the current block. The live_in set is then calculated
          * from the live_out set using live_kill and live_gen.
          */
-        boolean changed = false;
+        boolean changed;
         int iterCount = 0;
         do {
             changed = false;

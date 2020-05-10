@@ -1,10 +1,10 @@
 # yarrow 
 
 ## Preface
-This is my graduation project, it still work in progress. I intend to write an optimizing JIT compiler for HotSpot VM. 
+This is my graduation project, it still works in progress. I intend to write an optimizing JIT compiler for HotSpot VM. 
 Thanks to [JEP243](http://openjdk.java.net/jeps/243) JVMCI, I can easily plug a compiler into
 JVM at runtime with `-XX:+EnableJVMCI -XX:+UseJVMCICompiler -Djvmci.Compiler=yarrow` options.
-Since JVMCI is an experimental feature and it only exposes its services to Graal compiler backend, 
+Since JVMCI is an experimental feature, it only exposes its services to Graal compiler backend, 
 which is a default implementation of JVMCI, I have to hack it so that JVMCI services can be exported 
 to my yarrow module. For the sake of the simplicity, I just modify the `module-info.java` from JVMCI 
 module and rebuild entire JDK. Back to my project, yarrow is highly inspired by Client Compiler for 
@@ -13,11 +13,11 @@ programmer wrote to what the machine understands. Intermediate representations m
 gap. Yarrow uses a two-tiered control flow graph containing basic blocks (tier 1) of SSA
 instructions(tier 2) HIR.
 
-The whole compilation is divided into two parts. yarrow parses Java bytecode to HIR as soon as yarrow
-polls a compilation task from compile queue. In order to achieve transformation, compiler finds leader
-instructions and creates a control flow graph within bytecode, the minimal component of control flow grpah
-is basic block, it connects to other blocks by `successors` field. 
-ontrol flow graph becomes 1-Tier of HIR, you can dump the final graph by switching `-Dyarrow.Debug.PrintIRToFile=true`,
+The whole compilation is being divided into two parts. Yarrow parses Java bytecode to HIR as soon as yarrow
+polls a compilation task from the compile queue. In order to achieve transformation, compiler finds leader
+instructions and creates a control flow graph within bytecode, the minimal component of control flow graph
+is the basic block, it connects to other blocks by `successors` and `predecessors` fields. 
+Control flow graph becomes 1-Tier of HIR, you can dump the final graph by switching `-Dyarrow.Debug.PrintIRToFile=true` on,
 You can understand what compiler's internal does by the following demo:
 
 **Example 1: Source Code**
@@ -172,9 +172,9 @@ Since I only care about method *sum*, I can tell JVM my intention:
 -XX:CompileCommand=compileonly,*SumTest.sum
 ```
 Yarrow would output its internal intermediate representation. Furthermore, yarrow can
-dump IR to `*.dot` file which can be used by [graphviz](http://www.graphviz.org/), this 
-facilitates knowing what happens inside optimizing compiler.
-The following firgure shows the frist step compiler does, it finds leader instructions which 
+dump IR to `*.dot` files which can be used by [graphviz](http://www.graphviz.org/), this 
+facilitates knowing what happens inside the optimizing compiler.
+The following figure shows the first step of compilation process, it finds leader instructions which 
 can split control flow and builds the complete control flow graph
 
 ![](doc/SumTest_sum_phase1.png)
