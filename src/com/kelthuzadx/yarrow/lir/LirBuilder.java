@@ -266,7 +266,7 @@ public class LirBuilder extends HirInstrVisitor implements Phase {
 
     @Override
     public void visitBlockStartInstr(BlockStartInstr instr) {
-        gen.setCurrentBlockId(instr.id());
+        gen.setCurrentBlockId(instr);
         if (instr.getFlag() == BlockFlag.NormalEntry) {
             gen.emitNormalEntry();
             YarrowError.guarantee(instr.getBlockEnd().getSuccessor().size() == 1, "Expect one successor");

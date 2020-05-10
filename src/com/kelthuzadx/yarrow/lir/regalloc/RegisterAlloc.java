@@ -1,5 +1,6 @@
 package com.kelthuzadx.yarrow.lir.regalloc;
 
+import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.lir.Lir;
 import com.kelthuzadx.yarrow.lir.instr.LirInstr;
 import com.kelthuzadx.yarrow.optimize.Phase;
@@ -34,10 +35,9 @@ public class RegisterAlloc implements Phase {
          * is inserted at a single position, the inserted operations must be ordered such that no register
          * is overwritten.
          */
-        Iterator<Integer> iter = lir.getAllBlockId().iterator();
         int opId = 0;
-        while (iter.hasNext()){
-            int id = iter.next();
+        for(BlockStartInstr block:lir.getBlocks()){
+            int id = block.id();
             for(int i = 0; i<lir.getAllLirInstr(id).size(); i++){
                 LirInstr instr = lir.getAllLirInstr(id).get(i);
                 instr.resetId(opId);
@@ -49,13 +49,12 @@ public class RegisterAlloc implements Phase {
 
     private void computeLocalLiveSet(){
         var visitor = new InstrStateVisitor();
-        Iterator<Integer> iter = lir.getAllBlockId().iterator();
-        while (iter.hasNext()){
-            int id = iter.next();
+        for(BlockStartInstr block:lir.getBlocks()){
+
+            int id = block.id();
             for(int i = 0; i<lir.getAllLirInstr(id).size(); i++){
                 LirInstr instr = lir.getAllLirInstr(id).get(i);
                 instr.visit(visitor);
-
             }
         }
     }

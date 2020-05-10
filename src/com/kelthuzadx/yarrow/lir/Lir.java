@@ -1,8 +1,10 @@
 package com.kelthuzadx.yarrow.lir;
 
+import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.lir.instr.LirInstr;
 import com.kelthuzadx.yarrow.util.Logger;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,9 +12,15 @@ import java.util.Set;
 
 public class Lir {
     private final HashMap<Integer, List<LirInstr>> instructions;
+    private final ArrayList<BlockStartInstr> blocks;
 
     public Lir() {
         this.instructions = new HashMap<>();
+        this.blocks = new ArrayList<>();
+    }
+
+    public ArrayList<BlockStartInstr> getBlocks() {
+        return blocks;
     }
 
     public Set<Integer> getAllBlockId(){
@@ -34,6 +42,10 @@ public class Lir {
         } else {
             instrs.add(instr);
         }
+    }
+
+    public void appendBlock(BlockStartInstr instr){
+        blocks.add(instr);
     }
 
     public void printLir() {

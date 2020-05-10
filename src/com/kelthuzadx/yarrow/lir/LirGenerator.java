@@ -25,6 +25,7 @@ import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.TraceLIRGenerati
  */
 public class LirGenerator {
     private final Lir lir;
+    private BlockStartInstr currentBlock;
     private int currentBlockId;
 
     public LirGenerator(Lir lir) {
@@ -32,8 +33,10 @@ public class LirGenerator {
         this.currentBlockId = -1;
     }
 
-    public void setCurrentBlockId(int currentBlockId) {
-        this.currentBlockId = currentBlockId;
+    public void setCurrentBlockId(BlockStartInstr instr) {
+        this.currentBlock = instr;
+        this.currentBlockId = instr.id();
+        lir.appendBlock(instr);
     }
 
     public void emitCmp(AllocatableValue left, int right, Cond cond) {
