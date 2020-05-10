@@ -6,8 +6,8 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaConstant;
 import jdk.vm.ci.meta.JavaKind;
 
-public class LogicHirInstr extends Op2HirInstr {
-    public LogicHirInstr(int opcode, HirInstr left, HirInstr right) {
+public class LogicInstr extends Op2HirInstr {
+    public LogicInstr(int opcode, HirInstr left, HirInstr right) {
         super(left.type, opcode, left, right);
         if (!right.isType(left.type())) {
             throw new YarrowError("Incompatible operand type");

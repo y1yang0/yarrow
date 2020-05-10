@@ -5,9 +5,12 @@ import com.kelthuzadx.yarrow.lir.Lir;
 import com.kelthuzadx.yarrow.lir.instr.LirInstr;
 import com.kelthuzadx.yarrow.lir.operand.VirtualRegister;
 import com.kelthuzadx.yarrow.optimize.Phase;
+import com.kelthuzadx.yarrow.util.Logger;
 
 import java.util.HashSet;
-import java.util.Set;
+
+import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.TraceRegisterAllocation;
+
 
 /**
  * Implementation of Linear Scan Register Allocation
@@ -26,6 +29,7 @@ public class RegisterAlloc implements Phase {
     public Phase build() {
         numberingLirInstr();
         computeLocalLiveSet();
+        computeGlobalLiveSet();
         return null;
     }
 
@@ -46,7 +50,6 @@ public class RegisterAlloc implements Phase {
                 opId += 2;
             }
         }
-        lir.printLir();
     }
 
     private void computeLocalLiveSet() {
@@ -57,8 +60,6 @@ public class RegisterAlloc implements Phase {
          */
         var visitor = new InstrStateVisitor();
         for (BlockStartInstr block : lir.getBlocks()) {
-            Set<Integer> liveGen = new HashSet<>();
-            Set<Integer> liveKill = new HashSet<>();
 
             int id = block.id();
             for (int i = 0; i < lir.getAllLirInstr(id).size(); i++) {
@@ -66,20 +67,57 @@ public class RegisterAlloc implements Phase {
                 LirInstr instr = lir.getAllLirInstr(id).get(i);
                 instr.visit(visitor);
                 for (VirtualRegister value : visitor.getInput()) {
-                    if (!liveKill.contains(value.getVirtualRegisterId())) {
-                        liveGen.add(value.getVirtualRegisterId());
+                    if (!block.liveKill().contains(value.getVirtualRegisterId())) {
+                        block.liveGen().add(value.getVirtualRegisterId());
                     }
                 }
                 for (VirtualRegister value : visitor.getTemp()) {
-                    liveKill.add(value.getVirtualRegisterId());
+                    block.liveKill().add(value.getVirtualRegisterId());
                 }
                 for (VirtualRegister value : visitor.getOutput()) {
-                    liveKill.add(value.getVirtualRegisterId());
+                    block.liveKill().add(value.getVirtualRegisterId());
                 }
             }
-            block.setLiveGen(liveGen);
-            block.setLiveKill(liveKill);
+            if (TraceRegisterAllocation) {
+                Logger.logf("=====Block {} live_gen {}, liven_kill {}",
+                        String.valueOf(block.id()),
+                        block.liveGen().toString(),
+                        block.liveKill().toString());
+            }
         }
+    }
+
+    private void computeGlobalLiveSet() {
+        boolean changed = false;
+        int iterCount = 0;
+        do {
+            changed = false;
+            var blocks = lir.getBlocks();
+            for (int i = blocks.size() - 1; i >= 0; i--) {
+                var block = blocks.get(i);
+                var oldLiveOut = new HashSet<>(block.liveOut());
+                for (BlockStartInstr succ : block.getBlockEnd().getSuccessor()) {
+                    block.liveOut().addAll(succ.livenIn());
+                }
+                if(!oldLiveOut.equals(block.liveOut())){
+                    changed = true;
+                }
+                if(iterCount==0||changed){
+                    var temp = new HashSet<>(block.liveOut());
+                    temp.removeAll(block.liveKill());
+                    temp.addAll(block.liveGen());
+                    block.livenIn().clear();
+                    block.livenIn().addAll(temp);
+                    if (TraceRegisterAllocation) {
+                        Logger.logf("=====Block {} live_in {}, liven_out {}",
+                                String.valueOf(block.id()),
+                                block.livenIn().toString(),
+                                block.liveOut().toString());
+                    }
+                }
+            }
+            iterCount++;
+        } while (changed);
     }
 
     @Override

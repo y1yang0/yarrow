@@ -50,5 +50,6 @@ public class YarrowProperties {
         public static boolean PrintLVN = false;
         public static boolean TraceHIRGeneration = true;
         public static boolean TraceLIRGeneration = true;
+        public static boolean TraceRegisterAllocation = true;
     }
 }

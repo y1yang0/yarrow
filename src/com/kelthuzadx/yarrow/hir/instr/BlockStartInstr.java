@@ -8,10 +8,7 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.ExceptionHandler;
 import jdk.vm.ci.meta.JavaKind;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class BlockStartInstr extends StateInstr {
@@ -29,8 +26,10 @@ public class BlockStartInstr extends StateInstr {
     private BlockEndInstr blockEnd;
 
     // Register Allocation
-    private Set<Integer> liveGen;
-    private Set<Integer> liveKill;
+    private final Set<Integer> liveGen;
+    private final Set<Integer> liveKill;
+    private final Set<Integer> livenIn;
+    private final Set<Integer> liveOut;
 
     public BlockStartInstr(int blockId, int bci) {
         super(JavaKind.Illegal, null);
@@ -40,14 +39,26 @@ public class BlockStartInstr extends StateInstr {
         this.predecessor = new ArrayList<>();
         this.loopHeader = false;
         this.blockEnd = null;
+        this.liveGen = new HashSet<>();
+        this.liveKill = new HashSet<>();
+        this.livenIn = new HashSet<>();
+        this.liveOut = new HashSet<>();
     }
 
-    public void setLiveKill(Set<Integer> liveKill) {
-        this.liveKill = liveKill;
+    public Set<Integer> liveGen() {
+        return liveGen;
     }
 
-    public void setLiveGen(Set<Integer> liveGen) {
-        this.liveGen = liveGen;
+    public Set<Integer> liveKill() {
+        return liveKill;
+    }
+
+    public Set<Integer> livenIn() {
+        return livenIn;
+    }
+
+    public Set<Integer> liveOut() {
+        return liveOut;
     }
 
     public int getEndBci() {
@@ -231,7 +242,6 @@ public class BlockStartInstr extends StateInstr {
                 " => " +
                 successorString;
     }
-
 
     @Override
     public String toString() {

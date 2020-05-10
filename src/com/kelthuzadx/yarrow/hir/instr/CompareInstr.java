@@ -6,8 +6,8 @@ import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.meta.JavaConstant;
 import jdk.vm.ci.meta.JavaKind;
 
-public class CompareHirInstr extends Op2HirInstr {
-    public CompareHirInstr(int opcode, HirInstr left, HirInstr right) {
+public class CompareInstr extends Op2HirInstr {
+    public CompareInstr(int opcode, HirInstr left, HirInstr right) {
         super(JavaKind.Int, opcode, left, right);
     }
 

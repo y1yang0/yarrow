@@ -129,7 +129,7 @@ public class LirBuilder extends HirInstrVisitor implements Phase {
     }
 
     @Override
-    public void visitShiftInstr(ShiftHirInstr instr) {
+    public void visitShiftInstr(ShiftInstr instr) {
         AllocatableValue count;
         if (!(instr.getRight() instanceof ConstantInstr) || instr.getLeft().isType(JavaKind.Long)) {
             VirtualRegister rcx = new VirtualRegister(AMD64.rcx);
@@ -168,7 +168,7 @@ public class LirBuilder extends HirInstrVisitor implements Phase {
     }
 
     @Override
-    public void visitLogicInstr(LogicHirInstr instr) {
+    public void visitLogicInstr(LogicInstr instr) {
         AllocatableValue left = instr.getLeft().loadOperandToReg(this, gen);
         AllocatableValue right;
         if (!(instr.getRight() instanceof ConstantInstr)) {
@@ -288,7 +288,7 @@ public class LirBuilder extends HirInstrVisitor implements Phase {
     }
 
     @Override
-    public void visitCompareInstr(CompareHirInstr instr) {
+    public void visitCompareInstr(CompareInstr instr) {
         //FIXME: remove redundant mov instruction for constant value
         AllocatableValue left = instr.getLeft().loadOperandToReg(this, gen);
 
@@ -374,7 +374,7 @@ public class LirBuilder extends HirInstrVisitor implements Phase {
     }
 
     @Override
-    public void visitArithmeticInstr(ArithmeticHirInstr instr) {
+    public void visitArithmeticInstr(ArithmeticInstr instr) {
         AllocatableValue left = instr.getLeft().loadOperandToReg(this, gen);
         AllocatableValue right = instr.getRight().loadOperandToReg(this, gen);
         AllocatableValue result = new VirtualRegister(instr.type());

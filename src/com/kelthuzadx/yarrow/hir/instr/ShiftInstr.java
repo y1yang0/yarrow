@@ -4,8 +4,8 @@ import com.kelthuzadx.yarrow.bytecode.Bytecode;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.util.Logger;
 
-public class ShiftHirInstr extends Op2HirInstr {
-    public ShiftHirInstr(int opcode, HirInstr left, HirInstr right) {
+public class ShiftInstr extends Op2HirInstr {
+    public ShiftInstr(int opcode, HirInstr left, HirInstr right) {
         super(left.type, opcode, left, right);
     }
 

@@ -8,13 +8,13 @@ public abstract class HirInstrVisitor {
 
     public abstract void visitInstanceOfInstr(InstanceOfInstr instr);
 
-    public abstract void visitShiftInstr(ShiftHirInstr instr);
+    public abstract void visitShiftInstr(ShiftInstr instr);
 
     public abstract void visitBlockEndInstr(BlockEndInstr instr);
 
     public abstract void visitParamInstr(ParamInstr instr);
 
-    public abstract void visitLogicInstr(LogicHirInstr instr);
+    public abstract void visitLogicInstr(LogicInstr instr);
 
     public abstract void visitNewMultiArrayInstr(NewMultiArrayInstr instr);
 
@@ -28,7 +28,7 @@ public abstract class HirInstrVisitor {
 
     public abstract void visitLoadFieldInstr(LoadFieldInstr instr);
 
-    public abstract void visitCompareInstr(CompareHirInstr instr);
+    public abstract void visitCompareInstr(CompareInstr instr);
 
     public abstract void visitNegateInstr(NegateInstr instr);
 
@@ -44,7 +44,7 @@ public abstract class HirInstrVisitor {
 
     public abstract void visitLoadIndexInstr(LoadIndexInstr instr);
 
-    public abstract void visitArithmeticInstr(ArithmeticHirInstr instr);
+    public abstract void visitArithmeticInstr(ArithmeticInstr instr);
 
     public abstract void visitArrayLenInstr(ArrayLenInstr instr);
 
