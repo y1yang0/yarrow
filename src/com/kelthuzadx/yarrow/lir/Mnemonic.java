@@ -18,7 +18,6 @@ public enum Mnemonic {
     INSTANCE_OF,
     CHECK_CAST,
     CALL_STATIC,
-    CALL_VIRTUAL,
     CALL_OPTVIRTUAL,
     CALL_ICVIRTUAL,
     CALL_DYNAMIC,
@@ -45,5 +44,4 @@ public enum Mnemonic {
     FCMPU,
     LCMP,
     CMP
-    // 3 operand opcode
 }

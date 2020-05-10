@@ -4,7 +4,6 @@ import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.lir.instr.LirInstr;
 import com.kelthuzadx.yarrow.util.Logger;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +22,7 @@ public class Lir {
         return blocks;
     }
 
-    public Set<Integer> getAllBlockId(){
+    public Set<Integer> getAllBlockId() {
         return instructions.keySet();
     }
 
@@ -44,7 +43,7 @@ public class Lir {
         }
     }
 
-    public void appendBlock(BlockStartInstr instr){
+    public void appendBlock(BlockStartInstr instr) {
         blocks.add(instr);
     }
 

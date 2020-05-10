@@ -11,6 +11,7 @@ import jdk.vm.ci.meta.JavaKind;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class BlockStartInstr extends StateInstr {
@@ -27,6 +28,10 @@ public class BlockStartInstr extends StateInstr {
     // For instruction itself
     private BlockEndInstr blockEnd;
 
+    // Register Allocation
+    private Set<Integer> liveGen;
+    private Set<Integer> liveKill;
+
     public BlockStartInstr(int blockId, int bci) {
         super(JavaKind.Illegal, null);
         this.blockId = blockId;
@@ -35,6 +40,14 @@ public class BlockStartInstr extends StateInstr {
         this.predecessor = new ArrayList<>();
         this.loopHeader = false;
         this.blockEnd = null;
+    }
+
+    public void setLiveKill(Set<Integer> liveKill) {
+        this.liveKill = liveKill;
+    }
+
+    public void setLiveGen(Set<Integer> liveGen) {
+        this.liveGen = liveGen;
     }
 
     public int getEndBci() {

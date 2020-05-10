@@ -12,6 +12,10 @@ public class Op1Instr extends LirInstr {
         this.operand = operand;
     }
 
+    public AllocatableValue operand1() {
+        return operand;
+    }
+
     @Override
     public String toString() {
         switch (mnemonic) {

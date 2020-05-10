@@ -11,17 +11,22 @@ public class LirInstr implements Visitable {
     protected Mnemonic mnemonic;
     protected AllocatableValue result;
 
-    private int regAllocId;
-
     public LirInstr(Mnemonic mnemonic, AllocatableValue result) {
         this.id = Increment.next(LirInstr.class);
         this.mnemonic = mnemonic;
         this.result = result;
-        this.regAllocId = -1;
     }
 
-    public void resetId(int id) {
-        this.id = id;
+    public int getId() {
+        return id;
+    }
+
+    public AllocatableValue operandResult() {
+        return result;
+    }
+
+    public Mnemonic getMnemonic(){
+        return mnemonic;
     }
 
     public static String stringify(AllocatableValue value) {
@@ -29,5 +34,9 @@ public class LirInstr implements Visitable {
             return "[rbp-" + ((StackSlot) value).getRawOffset() + "]";
         }
         return value.toString();
+    }
+
+    public void resetId(int id) {
+        this.id = id;
     }
 }
