@@ -16,7 +16,7 @@ import com.kelthuzadx.yarrow.lir.stub.ClassCastExStub;
 import com.kelthuzadx.yarrow.lir.stub.NewArrayStub;
 import com.kelthuzadx.yarrow.lir.stub.NewInstanceStub;
 import com.kelthuzadx.yarrow.lir.stub.VmStub;
-import com.kelthuzadx.yarrow.optimize.InstructionVisitor;
+import com.kelthuzadx.yarrow.optimize.HirInstrVisitor;
 import com.kelthuzadx.yarrow.optimize.Phase;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.amd64.AMD64;
@@ -41,7 +41,7 @@ import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.TraceLIRGenerati
  *
  * @author kelthuzadx
  */
-public class LirBuilder extends InstructionVisitor implements Phase {
+public class LirBuilder extends HirInstrVisitor implements Phase {
     private final LirValueKindFactory valueFactory;
     private final Hir hir;
     private final Lir lir;
@@ -53,6 +53,10 @@ public class LirBuilder extends InstructionVisitor implements Phase {
         this.hir = hir;
         this.lir = new Lir();
         this.gen = new LirGenerator(lir);
+    }
+
+    public Lir getLir() {
+        return lir;
     }
 
     private void transformBlock(BlockStartInstr block) {
@@ -125,7 +129,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     }
 
     @Override
-    public void visitShiftInstr(ShiftInstr instr) {
+    public void visitShiftInstr(ShiftHirInstr instr) {
         AllocatableValue count;
         if (!(instr.getRight() instanceof ConstantInstr) || instr.getLeft().isType(JavaKind.Long)) {
             VirtualRegister rcx = new VirtualRegister(AMD64.rcx);
@@ -164,7 +168,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     }
 
     @Override
-    public void visitLogicInstr(LogicInstr instr) {
+    public void visitLogicInstr(LogicHirInstr instr) {
         AllocatableValue left = instr.getLeft().loadOperandToReg(this, gen);
         AllocatableValue right;
         if (!(instr.getRight() instanceof ConstantInstr)) {
@@ -284,7 +288,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     }
 
     @Override
-    public void visitCompareInstr(CompareInstr instr) {
+    public void visitCompareInstr(CompareHirInstr instr) {
         //FIXME: remove redundant mov instruction for constant value
         AllocatableValue left = instr.getLeft().loadOperandToReg(this, gen);
 
@@ -370,7 +374,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     }
 
     @Override
-    public void visitArithmeticInstr(ArithmeticInstr instr) {
+    public void visitArithmeticInstr(ArithmeticHirInstr instr) {
         AllocatableValue left = instr.getLeft().loadOperandToReg(this, gen);
         AllocatableValue right = instr.getRight().loadOperandToReg(this, gen);
         AllocatableValue result = new VirtualRegister(instr.type());
@@ -608,7 +612,7 @@ public class LirBuilder extends InstructionVisitor implements Phase {
     }
 
     @Override
-    public void visitOp2Instr(Op2Instr instr) {
+    public void visitOp2Instr(Op2HirInstr instr) {
         YarrowError.shouldNotReachHere();
     }
 

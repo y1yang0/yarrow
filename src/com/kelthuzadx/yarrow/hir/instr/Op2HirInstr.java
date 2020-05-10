@@ -4,12 +4,12 @@ import jdk.vm.ci.meta.JavaKind;
 
 import java.util.Objects;
 
-public abstract class Op2Instr extends HirInstr {
+public abstract class Op2HirInstr extends HirInstr {
     protected int opcode;
     protected HirInstr left;
     protected HirInstr right;
 
-    public Op2Instr(JavaKind type, int opcode, HirInstr left, HirInstr right) {
+    public Op2HirInstr(JavaKind type, int opcode, HirInstr left, HirInstr right) {
         super(type);
         this.opcode = opcode;
         this.left = left;
@@ -31,8 +31,8 @@ public abstract class Op2Instr extends HirInstr {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Op2Instr)) return false;
-        var that = (Op2Instr) o;
+        if (!(o instanceof Op2HirInstr)) return false;
+        var that = (Op2HirInstr) o;
         return opcode == that.opcode && left.equals(that.left) && right.equals(that.right);
     }
 

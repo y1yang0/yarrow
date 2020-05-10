@@ -4,7 +4,7 @@ import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.lir.LirGenerator;
 import com.kelthuzadx.yarrow.lir.operand.ConstValue;
 import com.kelthuzadx.yarrow.lir.operand.VirtualRegister;
-import com.kelthuzadx.yarrow.optimize.InstructionVisitor;
+import com.kelthuzadx.yarrow.optimize.HirInstrVisitor;
 import com.kelthuzadx.yarrow.optimize.Visitable;
 import com.kelthuzadx.yarrow.util.Increment;
 import jdk.vm.ci.meta.AllocatableValue;
@@ -60,7 +60,7 @@ public abstract class HirInstr implements Visitable {
      * @param visitor if operand is null, visitor this instruction by visitor
      * @return operand
      */
-    public AllocatableValue loadOperand(InstructionVisitor visitor) {
+    public AllocatableValue loadOperand(HirInstrVisitor visitor) {
         if (operand == null) {
             this.visit(visitor);
         }
@@ -76,7 +76,7 @@ public abstract class HirInstr implements Visitable {
      * @param gen     generate move instruction if needed
      * @return operand
      */
-    public AllocatableValue loadOperandToReg(InstructionVisitor visitor, LirGenerator gen) {
+    public AllocatableValue loadOperandToReg(HirInstrVisitor visitor, LirGenerator gen) {
         if (operand == null) {
             this.visit(visitor);
         }
@@ -85,9 +85,6 @@ public abstract class HirInstr implements Visitable {
         if (!(operand instanceof VirtualRegister)) {
             VirtualRegister register = new VirtualRegister(type);
             gen.emitMov(register, operand);
-//            if (!operand.isConstValue()) {
-//                operand = register;
-//            }
             operand = register;
         }
         YarrowError.guarantee(operand instanceof ConstValue || operand instanceof VirtualRegister, "Operand should retain in virtual register");
@@ -103,7 +100,7 @@ public abstract class HirInstr implements Visitable {
      * @param register specific register
      * @return operand
      */
-    public AllocatableValue loadOperandToReg(InstructionVisitor visitor, LirGenerator gen, VirtualRegister register) {
+    public AllocatableValue loadOperandToReg(HirInstrVisitor visitor, LirGenerator gen, VirtualRegister register) {
         if (operand == null) {
             this.visit(visitor);
         }

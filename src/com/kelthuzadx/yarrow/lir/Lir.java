@@ -6,6 +6,7 @@ import com.kelthuzadx.yarrow.util.Logger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 public class Lir {
     private final HashMap<Integer, List<LirInstr>> instructions;
@@ -14,7 +15,11 @@ public class Lir {
         this.instructions = new HashMap<>();
     }
 
-    public List<LirInstr> getLirList(int blockStartId) {
+    public Set<Integer> getAllBlockId(){
+        return instructions.keySet();
+    }
+
+    public List<LirInstr> getAllLirInstr(int blockStartId) {
         return instructions.get(blockStartId);
     }
 

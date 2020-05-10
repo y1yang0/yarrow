@@ -826,7 +826,7 @@ public class HirBuilder implements Phase {
     private void arithmetic(JavaKind type, int opcode) {
         HirInstr right = state.pop(type);
         HirInstr left = state.pop(type);
-        ArithmeticInstr instr = new ArithmeticInstr(opcode, left, right);
+        ArithmeticHirInstr instr = new ArithmeticHirInstr(opcode, left, right);
         state.push(type, appendToBlock(instr));
     }
 
@@ -839,14 +839,14 @@ public class HirBuilder implements Phase {
     private void shift(JavaKind type, int opcode) {
         HirInstr right = state.pop(JavaKind.Int);
         HirInstr left = state.pop(type);
-        ShiftInstr instr = new ShiftInstr(opcode, left, right);
+        ShiftHirInstr instr = new ShiftHirInstr(opcode, left, right);
         state.push(type, appendToBlock(instr));
     }
 
     private void logic(JavaKind type, int opcode) {
         HirInstr right = state.pop(type);
         HirInstr left = state.pop(type);
-        LogicInstr instr = new LogicInstr(opcode, left, right);
+        LogicHirInstr instr = new LogicHirInstr(opcode, left, right);
         state.push(type, appendToBlock(instr));
     }
 
@@ -878,7 +878,7 @@ public class HirBuilder implements Phase {
     private void compare(JavaKind type, int opcode) {
         HirInstr right = state.pop(type);
         HirInstr left = state.pop(type);
-        CompareInstr instr = new CompareInstr(opcode, left, right);
+        CompareHirInstr instr = new CompareHirInstr(opcode, left, right);
         // left > right => push 1
         // left == right => push 0
         // left < right => push -1
@@ -961,7 +961,7 @@ public class HirBuilder implements Phase {
             case Byte: {
                 HirInstr mask = new ConstantInstr(JavaConstant.forInt(0xff));
                 mask = appendToBlock(mask);
-                LogicInstr t = new LogicInstr(Bytecode.IAND, mask, val);
+                LogicHirInstr t = new LogicHirInstr(Bytecode.IAND, mask, val);
                 val = appendToBlock(t);
                 break;
             }
@@ -969,14 +969,14 @@ public class HirBuilder implements Phase {
             case Char: {
                 HirInstr mask = new ConstantInstr(JavaConstant.forInt(0xFFFF));
                 mask = appendToBlock(mask);
-                LogicInstr t = new LogicInstr(Bytecode.IAND, mask, val);
+                LogicHirInstr t = new LogicHirInstr(Bytecode.IAND, mask, val);
                 val = appendToBlock(t);
                 break;
             }
             case Boolean: {
                 HirInstr mask = new ConstantInstr(JavaConstant.INT_1);
                 mask = appendToBlock(mask);
-                LogicInstr t = new LogicInstr(Bytecode.IAND, mask, val);
+                LogicHirInstr t = new LogicHirInstr(Bytecode.IAND, mask, val);
                 val = appendToBlock(t);
                 break;
             }

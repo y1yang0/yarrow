@@ -4,6 +4,7 @@ package com.kelthuzadx.yarrow.core;
 import com.kelthuzadx.yarrow.hir.CFG;
 import com.kelthuzadx.yarrow.hir.HirBuilder;
 import com.kelthuzadx.yarrow.lir.LirBuilder;
+import com.kelthuzadx.yarrow.lir.regalloc.RegisterAlloc;
 import com.kelthuzadx.yarrow.util.Logger;
 import jdk.vm.ci.code.CompilationRequest;
 import jdk.vm.ci.code.CompilationRequestResult;
@@ -38,6 +39,9 @@ public class YarrowCompiler implements JVMCICompiler {
                 .map(LirBuilder::new)
                 .map(LirBuilder::build)
                 .peek(LirBuilder::log)
+                .map(LirBuilder::getLir)
+                .map(RegisterAlloc::new)
+                .map(RegisterAlloc::build)
                 .collect(Collectors.toList());
         System.exit(0);
         return HotSpotCompilationRequestResult.success(0);

@@ -7,8 +7,8 @@ import jdk.vm.ci.meta.JavaConstant;
 import jdk.vm.ci.meta.JavaKind;
 import jdk.vm.ci.meta.PrimitiveConstant;
 
-public class ArithmeticInstr extends Op2Instr {
-    public ArithmeticInstr(int opcode, HirInstr left, HirInstr right) {
+public class ArithmeticHirInstr extends Op2HirInstr {
+    public ArithmeticHirInstr(int opcode, HirInstr left, HirInstr right) {
         super(left.type, opcode, left, right);
         if (!right.isType(left.type())) {
             throw new YarrowError("Incompatible operand type");

@@ -2,19 +2,19 @@ package com.kelthuzadx.yarrow.optimize;
 
 import com.kelthuzadx.yarrow.hir.instr.*;
 
-public abstract class InstructionVisitor {
+public abstract class HirInstrVisitor {
 
     public abstract void visitMemBarrierInstr(MemBarrierInstr instr);
 
     public abstract void visitInstanceOfInstr(InstanceOfInstr instr);
 
-    public abstract void visitShiftInstr(ShiftInstr instr);
+    public abstract void visitShiftInstr(ShiftHirInstr instr);
 
     public abstract void visitBlockEndInstr(BlockEndInstr instr);
 
     public abstract void visitParamInstr(ParamInstr instr);
 
-    public abstract void visitLogicInstr(LogicInstr instr);
+    public abstract void visitLogicInstr(LogicHirInstr instr);
 
     public abstract void visitNewMultiArrayInstr(NewMultiArrayInstr instr);
 
@@ -28,7 +28,7 @@ public abstract class InstructionVisitor {
 
     public abstract void visitLoadFieldInstr(LoadFieldInstr instr);
 
-    public abstract void visitCompareInstr(CompareInstr instr);
+    public abstract void visitCompareInstr(CompareHirInstr instr);
 
     public abstract void visitNegateInstr(NegateInstr instr);
 
@@ -44,7 +44,7 @@ public abstract class InstructionVisitor {
 
     public abstract void visitLoadIndexInstr(LoadIndexInstr instr);
 
-    public abstract void visitArithmeticInstr(ArithmeticInstr instr);
+    public abstract void visitArithmeticInstr(ArithmeticHirInstr instr);
 
     public abstract void visitArrayLenInstr(ArrayLenInstr instr);
 
@@ -72,7 +72,7 @@ public abstract class InstructionVisitor {
 
     public abstract void visitReturnInstr(ReturnInstr instr);
 
-    public abstract void visitOp2Instr(Op2Instr instr);
+    public abstract void visitOp2Instr(Op2HirInstr instr);
 
     public abstract void visitThrowInstr(ThrowInstr instr);
 

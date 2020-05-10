@@ -9,13 +9,23 @@ import java.lang.invoke.MethodType;
 import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.TraceLIRGeneration;
 
 public interface Visitable {
-    default void visit(InstructionVisitor visitor) {
+    default void visit(HirInstrVisitor visitor) {
         MethodType mt = MethodType.methodType(void.class, this.getClass());
         try {
             MethodHandle mh = MethodHandles.lookup().findVirtual(visitor.getClass(), "visit" + this.getClass().getSimpleName(), mt);
             if (TraceLIRGeneration) {
                 Logger.logf("====={}=====>", this.getClass().getSimpleName());
             }
+            mh.invoke(visitor, this);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    default void visit(LirInstrVisitor visitor) {
+        MethodType mt = MethodType.methodType(void.class, this.getClass());
+        try {
+            MethodHandle mh = MethodHandles.lookup().findVirtual(visitor.getClass(), "visit" + this.getClass().getSimpleName(), mt);
             mh.invoke(visitor, this);
         } catch (Throwable e) {
             e.printStackTrace();
