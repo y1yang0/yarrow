@@ -6,6 +6,8 @@ import com.kelthuzadx.yarrow.util.Increment;
 import jdk.vm.ci.code.StackSlot;
 import jdk.vm.ci.meta.AllocatableValue;
 
+import java.util.Objects;
+
 public class LirInstr implements Visitable {
     protected int id;
     protected Mnemonic mnemonic;
@@ -38,5 +40,19 @@ public class LirInstr implements Visitable {
 
     public void resetId(int id) {
         this.id = id;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LirInstr)) return false;
+        LirInstr instr = (LirInstr) o;
+        return id == instr.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

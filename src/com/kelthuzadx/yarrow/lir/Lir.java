@@ -4,54 +4,57 @@ import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.lir.instr.LirInstr;
 import com.kelthuzadx.yarrow.util.Logger;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Lir {
-    private final HashMap<Integer, List<LirInstr>> instructions;
-    private final ArrayList<BlockStartInstr> blocks;
+    private final HashMap<Integer,BlockStartInstr> blocks;
 
     public Lir() {
-        this.instructions = new HashMap<>();
-        this.blocks = new ArrayList<>();
+        this.blocks = new HashMap<>();
+    }
+
+    public BlockStartInstr fromBlock(int lirId){
+        for(BlockStartInstr block:new ArrayList<>(blocks.values())){
+            for(LirInstr instr:block.getLirInstrList()){
+                if(lirId==instr.getId()){
+                    return block;
+                }
+            }
+        }
+        return null;
+    }
+
+    public LirInstr fromInstr(int lirId){
+        for(BlockStartInstr block:new ArrayList<>(blocks.values())){
+            for(LirInstr instr:block.getLirInstrList()){
+                if(lirId==instr.getId()){
+                    return instr;
+                }
+            }
+        }
+        return null;
     }
 
     public ArrayList<BlockStartInstr> getBlocks() {
-        return blocks;
+        return new ArrayList<>(blocks.values());
     }
 
-    public Set<Integer> getAllBlockId() {
-        return instructions.keySet();
-    }
-
-    public List<LirInstr> getAllLirInstr(int blockStartId) {
-        return instructions.get(blockStartId);
+    public BlockStartInstr getBlock(int id){
+        return blocks.get(id);
     }
 
     public void appendLirInstr(int blockStartId, LirInstr instr) {
-        var instrs = instructions.get(blockStartId);
-        if (instrs == null) {
-            instructions.put(blockStartId, new ArrayList<>() {
-                {
-                    add(instr);
-                }
-            });
-        } else {
-            instrs.add(instr);
-        }
+        blocks.get(blockStartId).appendLirInstrList(instr);
     }
 
     public void appendBlock(BlockStartInstr instr) {
-        blocks.add(instr);
+        blocks.put(instr.id(),instr);
     }
 
     public void printLir() {
         Logger.logf("=====Phase: Low level IR=====>");
-        instructions.forEach((id, list) -> {
-            Logger.logf("L" + id + ":");
-            for (LirInstr instr : list) {
+        blocks.forEach( (id,block)->{
+            for (LirInstr instr : block.getLirInstrList()) {
                 Logger.logf("{}", instr.toString());
             }
         });

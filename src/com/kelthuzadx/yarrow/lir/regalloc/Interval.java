@@ -1,16 +1,16 @@
 package com.kelthuzadx.yarrow.lir.regalloc;
 
-import jdk.vm.ci.meta.JavaKind;
+import java.util.ArrayList;
 
 public class Interval {
-    private final int virtualRegisterNum;
-    private final JavaKind type;
-    private int physicalRegisterNum;
-    private int from;  //inclusive
-    private int to;    // exclusive
+    private ArrayList<int[]> ranges;
 
-    public Interval(int virtualRegisterNum, JavaKind type) {
-        this.virtualRegisterNum = virtualRegisterNum;
-        this.type = type;
+    public Interval() {
+        this.ranges = new ArrayList<>();
+    }
+
+    public void addRange(int from, int to){
+        int[] range = new int[]{from,to};
+        ranges.add(range);
     }
 }

@@ -12,7 +12,17 @@ public class InstrStateVisitor extends LirInstrVisitor {
     private ArrayList<VirtualRegister> output;
     private ArrayList<VirtualRegister> temp;
 
+    private boolean hasCall;
+
+
+    public boolean hasCall() {
+        return hasCall;
+    }
+
     public InstrStateVisitor() {
+        input = new ArrayList<>();
+        output = new ArrayList<>();
+        temp = new ArrayList<>();
     }
 
     public void reset() {
@@ -35,7 +45,33 @@ public class InstrStateVisitor extends LirInstrVisitor {
 
     @Override
     public void visitAllocateArrayInstr(AllocateArrayInstr instr) {
+        if (instr.getKlassReg() instanceof VirtualRegister) {
+            input.add((VirtualRegister) instr.getKlassReg());
+        }
 
+        if (instr.getLength() instanceof VirtualRegister) {
+            input.add((VirtualRegister) instr.getLength());
+        }
+
+        if (instr.getTemp1() instanceof VirtualRegister) {
+            temp.add((VirtualRegister) instr.getTemp1());
+        }
+        if (instr.getTemp2() instanceof VirtualRegister) {
+            temp.add((VirtualRegister) instr.getTemp2());
+        }
+
+        if (instr.getTemp3() instanceof VirtualRegister) {
+            temp.add((VirtualRegister) instr.getTemp3());
+        }
+
+        if (instr.getTemp4() instanceof VirtualRegister) {
+            temp.add((VirtualRegister) instr.getTemp4());
+        }
+
+
+        if (instr.operandResult() instanceof VirtualRegister) {
+            output.add((VirtualRegister) instr.operandResult());
+        }
     }
 
     @Override
@@ -45,17 +81,45 @@ public class InstrStateVisitor extends LirInstrVisitor {
 
     @Override
     public void visitCallRtInstr(CallRtInstr instr) {
+        for(var value:instr.getArgument()){
+            if(value instanceof VirtualRegister){
+                input.add((VirtualRegister)value);
+            }
+        }
 
+        if (instr.operandResult() instanceof VirtualRegister) {
+            output.add((VirtualRegister) instr.operandResult());
+        }
+        hasCall = true;
     }
 
     @Override
     public void visitJavaCallInstr(JavaCallInstr instr) {
+        if(instr.getReceiver() instanceof VirtualRegister){
+            input.add((VirtualRegister)instr.getReceiver());
+        }
 
+        for(var value:instr.getArguments()){
+            if(value instanceof VirtualRegister){
+                input.add((VirtualRegister)value);
+            }
+        }
+
+        if (instr.operandResult() instanceof VirtualRegister) {
+            output.add((VirtualRegister) instr.operandResult());
+        }
+        hasCall = true;
     }
 
     @Override
     public void visitJavaCheckCastInstr(JavaCheckCastInstr instr) {
+        if(instr.getObject() instanceof VirtualRegister){
+            input.add((VirtualRegister) instr.getObject());
+        }
 
+        if (instr.operandResult() instanceof VirtualRegister) {
+            output.add((VirtualRegister) instr.operandResult());
+        }
     }
 
     @Override

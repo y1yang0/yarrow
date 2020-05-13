@@ -17,6 +17,14 @@ public class JavaCallInstr extends LirInstr {
         this.arguments = arguments;
     }
 
+    public AllocatableValue getReceiver() {
+        return receiver;
+    }
+
+
+    public AllocatableValue[] getArguments() {
+        return arguments;
+    }
 
     @Override
     public String toString() {

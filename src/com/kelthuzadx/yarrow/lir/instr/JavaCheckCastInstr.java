@@ -18,6 +18,9 @@ public class JavaCheckCastInstr extends LirInstr {
         this.stub = stub;
     }
 
+    public AllocatableValue getObject() {
+        return object;
+    }
 
     @Override
     public String toString() {

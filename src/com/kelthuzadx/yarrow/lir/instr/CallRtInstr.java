@@ -15,6 +15,10 @@ public class CallRtInstr extends LirInstr {
         this.argument = argument;
     }
 
+    public AllocatableValue[] getArgument() {
+        return argument;
+    }
+
     @Override
     public String toString() {
         return Logger.format("i{}: call_rt {}", super.id, stringify(routine));

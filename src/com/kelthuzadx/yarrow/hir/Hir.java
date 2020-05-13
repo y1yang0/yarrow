@@ -64,15 +64,17 @@ public class Hir {
         String temp = "";
         while (start != end) {
             temp = start.toString();
-            // escape "<" and ">" in graphviz record text
+            // escape "<", "\"" and ">" in graphviz record text
             temp = temp.replaceAll("<", "\\\\<");
             temp = temp.replaceAll(">", "\\\\>");
+            temp = temp.replaceAll("\"", "\\\\\"");
             content.append(temp).append("\\l"); //left align
             start = start.getNext();
         }
         temp = start.toString();
         temp = temp.replaceAll("<", "\\\\<");
         temp = temp.replaceAll(">", "\\\\>");
+        temp = temp.replaceAll("\"", "\\\\\"");
         content.append(temp).append("\\l");
         content.append("}\"];\n");
 

@@ -2,6 +2,7 @@ package com.kelthuzadx.yarrow.hir.instr;
 
 import com.kelthuzadx.yarrow.hir.BlockFlag;
 import com.kelthuzadx.yarrow.hir.VmState;
+import com.kelthuzadx.yarrow.lir.instr.LirInstr;
 import com.kelthuzadx.yarrow.util.CompilerErrors;
 import com.kelthuzadx.yarrow.util.Constraint;
 import com.kelthuzadx.yarrow.util.Logger;
@@ -29,6 +30,17 @@ public class BlockStartInstr extends StateInstr {
     private BlockFlag flag;
     // For instruction itself
     private BlockEndInstr blockEnd;
+    // For LIR
+    private List<LirInstr> lirInstrList;
+
+
+    public List<LirInstr> getLirInstrList() {
+        return lirInstrList;
+    }
+
+    public void appendLirInstrList(LirInstr instr) {
+        this.lirInstrList.add(instr);
+    }
 
     public BlockStartInstr(int blockId, int bci) {
         super(JavaKind.Illegal, null);
@@ -42,6 +54,7 @@ public class BlockStartInstr extends StateInstr {
         this.liveKill = new HashSet<>();
         this.livenIn = new HashSet<>();
         this.liveOut = new HashSet<>();
+        this.lirInstrList = new ArrayList<>();
     }
 
     public Set<Integer> liveGen() {

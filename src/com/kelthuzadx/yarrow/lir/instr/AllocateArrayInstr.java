@@ -28,6 +28,30 @@ public class AllocateArrayInstr extends LirInstr {
         this.elementType = elementType;
     }
 
+    public AllocatableValue getKlassReg() {
+        return klassReg;
+    }
+
+    public AllocatableValue getLength() {
+        return length;
+    }
+
+    public AllocatableValue getTemp1() {
+        return temp1;
+    }
+
+    public AllocatableValue getTemp2() {
+        return temp2;
+    }
+
+    public AllocatableValue getTemp3() {
+        return temp3;
+    }
+
+    public AllocatableValue getTemp4() {
+        return temp4;
+    }
+
     @Override
     public String toString() {
         return Logger.format("i{}: alloc_array {}*{}", super.id, elementType.getJavaName(), stringify(length));

@@ -1,5 +1,6 @@
 package com.kelthuzadx.yarrow.lir.regalloc;
 
+import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.lir.Lir;
 import com.kelthuzadx.yarrow.lir.instr.LirInstr;
@@ -7,7 +8,9 @@ import com.kelthuzadx.yarrow.lir.operand.VirtualRegister;
 import com.kelthuzadx.yarrow.optimize.Phase;
 import com.kelthuzadx.yarrow.util.Logger;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.stream.Collectors;
 
 import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.TraceRegisterAllocation;
 
@@ -20,9 +23,11 @@ import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.TraceRegisterAll
 
 public class RegisterAlloc implements Phase {
     private final Lir lir;
+    private HashMap<LirInstr,Interval> intervals;
 
     public RegisterAlloc(Lir lir) {
         this.lir = lir;
+        this.intervals = new HashMap<>();
     }
 
     @Override
@@ -30,6 +35,7 @@ public class RegisterAlloc implements Phase {
         numberingLirInstr();
         computeLocalLiveSet();
         computeGlobalLiveSet();
+        buildInterval();
         return null;
     }
 
@@ -44,8 +50,8 @@ public class RegisterAlloc implements Phase {
         int opId = 0;
         for (BlockStartInstr block : lir.getBlocks()) {
             int id = block.id();
-            for (int i = 0; i < lir.getAllLirInstr(id).size(); i++) {
-                LirInstr instr = lir.getAllLirInstr(id).get(i);
+            for (int i = 0; i < lir.getBlock(id).getLirInstrList().size(); i++) {
+                LirInstr instr = lir.getBlock(id).getLirInstrList().get(i);
                 instr.resetId(opId);
                 opId += 2;
             }
@@ -60,11 +66,10 @@ public class RegisterAlloc implements Phase {
          */
         var visitor = new InstrStateVisitor();
         for (BlockStartInstr block : lir.getBlocks()) {
-
             int id = block.id();
-            for (int i = 0; i < lir.getAllLirInstr(id).size(); i++) {
+            for (int i = 0; i < lir.getBlock(id).getLirInstrList().size(); i++) {
                 visitor.reset();
-                LirInstr instr = lir.getAllLirInstr(id).get(i);
+                LirInstr instr = lir.getBlock(id).getLirInstrList().get(i);
                 instr.visit(visitor);
                 for (VirtualRegister value : visitor.getInput()) {
                     if (value.isVirtualRegister() &&
@@ -106,7 +111,7 @@ public class RegisterAlloc implements Phase {
             changed = false;
             var blocks = lir.getBlocks();
             for (int i = blocks.size() - 1; i >= 0; i--) {
-                var block = blocks.get(i);
+                var block = lir.getBlocks().get(i);
                 var oldLiveOut = new HashSet<>(block.liveOut());
                 for (BlockStartInstr succ : block.getBlockEnd().getSuccessor()) {
                     block.liveOut().addAll(succ.livenIn());
@@ -130,6 +135,29 @@ public class RegisterAlloc implements Phase {
             }
             iterCount++;
         } while (changed);
+    }
+
+    private void buildInterval(){
+        for (int i = lir.getBlocks().size() - 1; i >= 0; i--) {
+            var block =  lir.getBlocks().get(i);
+            var instrList = block.getLirInstrList();
+            int blockFrom = instrList.get(0).getId();
+            int blockTo = instrList.get(instrList.size()-1).getId() + 2;
+            if(blockFrom>blockTo){
+                YarrowError.shouldNotReachHere();
+            }
+            for(Integer id:block.liveOut()){
+                var instr = lir.fromInstr(id);
+                var interval = new Interval();
+                interval.addRange(blockFrom,blockTo);
+                intervals.put(instr,interval);
+            }
+
+            for(int k=instrList.size()-1;k>=0;k--){
+                InstrStateVisitor visitor = new InstrStateVisitor();
+                instrList.get(k).visit(visitor);
+            }
+        }
     }
 
     @Override
