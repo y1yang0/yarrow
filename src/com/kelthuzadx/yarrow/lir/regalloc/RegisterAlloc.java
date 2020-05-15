@@ -10,7 +10,6 @@ import com.kelthuzadx.yarrow.util.Logger;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.stream.Collectors;
 
 import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.TraceRegisterAllocation;
 
@@ -23,7 +22,7 @@ import static com.kelthuzadx.yarrow.core.YarrowProperties.Debug.TraceRegisterAll
 
 public class RegisterAlloc implements Phase {
     private final Lir lir;
-    private HashMap<LirInstr,Interval> intervals;
+    private final HashMap<LirInstr, Interval> intervals;
 
     public RegisterAlloc(Lir lir) {
         this.lir = lir;
@@ -137,23 +136,23 @@ public class RegisterAlloc implements Phase {
         } while (changed);
     }
 
-    private void buildInterval(){
+    private void buildInterval() {
         for (int i = lir.getBlocks().size() - 1; i >= 0; i--) {
-            var block =  lir.getBlocks().get(i);
+            var block = lir.getBlocks().get(i);
             var instrList = block.getLirInstrList();
             int blockFrom = instrList.get(0).getId();
-            int blockTo = instrList.get(instrList.size()-1).getId() + 2;
-            if(blockFrom>blockTo){
+            int blockTo = instrList.get(instrList.size() - 1).getId() + 2;
+            if (blockFrom > blockTo) {
                 YarrowError.shouldNotReachHere();
             }
-            for(Integer id:block.liveOut()){
+            for (Integer id : block.liveOut()) {
                 var instr = lir.fromInstr(id);
                 var interval = new Interval();
-                interval.addRange(blockFrom,blockTo);
-                intervals.put(instr,interval);
+                interval.addRange(blockFrom, blockTo);
+                intervals.put(instr, interval);
             }
 
-            for(int k=instrList.size()-1;k>=0;k--){
+            for (int k = instrList.size() - 1; k >= 0; k--) {
                 InstrStateVisitor visitor = new InstrStateVisitor();
                 instrList.get(k).visit(visitor);
             }

@@ -4,19 +4,20 @@ import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.lir.instr.LirInstr;
 import com.kelthuzadx.yarrow.util.Logger;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Lir {
-    private final HashMap<Integer,BlockStartInstr> blocks;
+    private final HashMap<Integer, BlockStartInstr> blocks;
 
     public Lir() {
         this.blocks = new HashMap<>();
     }
 
-    public BlockStartInstr fromBlock(int lirId){
-        for(BlockStartInstr block:new ArrayList<>(blocks.values())){
-            for(LirInstr instr:block.getLirInstrList()){
-                if(lirId==instr.getId()){
+    public BlockStartInstr fromBlock(int lirId) {
+        for (BlockStartInstr block : new ArrayList<>(blocks.values())) {
+            for (LirInstr instr : block.getLirInstrList()) {
+                if (lirId == instr.getId()) {
                     return block;
                 }
             }
@@ -24,10 +25,10 @@ public class Lir {
         return null;
     }
 
-    public LirInstr fromInstr(int lirId){
-        for(BlockStartInstr block:new ArrayList<>(blocks.values())){
-            for(LirInstr instr:block.getLirInstrList()){
-                if(lirId==instr.getId()){
+    public LirInstr fromInstr(int lirId) {
+        for (BlockStartInstr block : new ArrayList<>(blocks.values())) {
+            for (LirInstr instr : block.getLirInstrList()) {
+                if (lirId == instr.getId()) {
                     return instr;
                 }
             }
@@ -39,7 +40,7 @@ public class Lir {
         return new ArrayList<>(blocks.values());
     }
 
-    public BlockStartInstr getBlock(int id){
+    public BlockStartInstr getBlock(int id) {
         return blocks.get(id);
     }
 
@@ -48,12 +49,12 @@ public class Lir {
     }
 
     public void appendBlock(BlockStartInstr instr) {
-        blocks.put(instr.id(),instr);
+        blocks.put(instr.id(), instr);
     }
 
     public void printLir() {
         Logger.logf("=====Phase: Low level IR=====>");
-        blocks.forEach( (id,block)->{
+        blocks.forEach((id, block) -> {
             for (LirInstr instr : block.getLirInstrList()) {
                 Logger.logf("{}", instr.toString());
             }

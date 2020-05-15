@@ -31,16 +31,8 @@ public class BlockStartInstr extends StateInstr {
     // For instruction itself
     private BlockEndInstr blockEnd;
     // For LIR
-    private List<LirInstr> lirInstrList;
+    private final List<LirInstr> lirInstrList;
 
-
-    public List<LirInstr> getLirInstrList() {
-        return lirInstrList;
-    }
-
-    public void appendLirInstrList(LirInstr instr) {
-        this.lirInstrList.add(instr);
-    }
 
     public BlockStartInstr(int blockId, int bci) {
         super(JavaKind.Illegal, null);
@@ -55,6 +47,14 @@ public class BlockStartInstr extends StateInstr {
         this.livenIn = new HashSet<>();
         this.liveOut = new HashSet<>();
         this.lirInstrList = new ArrayList<>();
+    }
+
+    public List<LirInstr> getLirInstrList() {
+        return lirInstrList;
+    }
+
+    public void appendLirInstrList(LirInstr instr) {
+        this.lirInstrList.add(instr);
     }
 
     public Set<Integer> liveGen() {
