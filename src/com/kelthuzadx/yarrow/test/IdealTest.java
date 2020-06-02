@@ -96,6 +96,4 @@ public class IdealTest {
         ret += k;
         return ret + (int) dd3;
     }
-
-
 }

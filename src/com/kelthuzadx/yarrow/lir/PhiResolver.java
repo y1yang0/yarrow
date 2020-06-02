@@ -4,7 +4,7 @@ import com.kelthuzadx.yarrow.hir.VmState;
 import com.kelthuzadx.yarrow.hir.instr.BlockStartInstr;
 import com.kelthuzadx.yarrow.hir.instr.HirInstr;
 import com.kelthuzadx.yarrow.hir.instr.PhiInstr;
-import com.kelthuzadx.yarrow.lir.operand.VirtualRegister;
+import com.kelthuzadx.yarrow.lir.operand.XRegister;
 import jdk.vm.ci.meta.AllocatableValue;
 import jdk.vm.ci.meta.JavaKind;
 
@@ -65,13 +65,13 @@ public class PhiResolver {
             if (cur != null && cur != phi) {
                 AllocatableValue source = cur.loadOperandRaw();
                 if (source == null) {
-                    cur.storeOperand(new VirtualRegister(cur.type()));
+                    cur.storeOperand(new XRegister(cur.type()));
                     source = cur.loadOperandRaw();
 
                 }
                 AllocatableValue dest = phi.loadOperandRaw();
                 if (dest == null) {
-                    phi.storeOperand(new VirtualRegister(phi.type()));
+                    phi.storeOperand(new XRegister(phi.type()));
                     dest = phi.loadOperandRaw();
                 }
                 createResolveNode(cur.type(), source, true).append(createResolveNode(sux.type(), dest, false));
@@ -82,8 +82,8 @@ public class PhiResolver {
     private ResolveNode createResolveNode(JavaKind type, AllocatableValue operand, boolean isSource) {
         ResolveNode resolveNode;
 
-        if (operand instanceof VirtualRegister) {
-            int vregId = ((VirtualRegister) operand).getVirtualRegisterId();
+        if (operand instanceof XRegister) {
+            int vregId = ((XRegister) operand).getVirtualRegisterId();
             resolveNode = new ResolveNode(type, operand);
             vregMap.put(vregId, resolveNode);
 
@@ -120,14 +120,14 @@ public class PhiResolver {
             }
         } else if (!dest.isStartNode()) {
             loop = dest;
-            temp = new VirtualRegister(src.getType());
+            temp = new XRegister(src.getType());
             gen.emitMov(temp, src.operand());
             return;
         }
 
         if (!dest.isAssigned()) {
             if (loop == dest) {
-                temp = new VirtualRegister(src.getType());
+                temp = new XRegister(src.getType());
                 gen.emitMov(temp, src.operand());
                 dest.setAssigned(true);
             } else if (src != null) {

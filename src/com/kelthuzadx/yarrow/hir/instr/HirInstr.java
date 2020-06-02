@@ -3,7 +3,7 @@ package com.kelthuzadx.yarrow.hir.instr;
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.lir.LirGenerator;
 import com.kelthuzadx.yarrow.lir.operand.ConstValue;
-import com.kelthuzadx.yarrow.lir.operand.VirtualRegister;
+import com.kelthuzadx.yarrow.lir.operand.XRegister;
 import com.kelthuzadx.yarrow.optimize.HirInstrVisitor;
 import com.kelthuzadx.yarrow.optimize.Visitable;
 import com.kelthuzadx.yarrow.util.Increment;
@@ -82,12 +82,12 @@ public abstract class HirInstr implements Visitable {
         }
         YarrowError.guarantee(operand != null, "Must be not null");
 
-        if (!(operand instanceof VirtualRegister)) {
-            VirtualRegister register = new VirtualRegister(type);
+        if (!(operand instanceof XRegister)) {
+            XRegister register = new XRegister(type);
             gen.emitMov(register, operand);
             operand = register;
         }
-        YarrowError.guarantee(operand instanceof ConstValue || operand instanceof VirtualRegister, "Operand should retain in virtual register");
+        YarrowError.guarantee(operand instanceof ConstValue || operand instanceof XRegister, "Operand should retain in virtual register");
 
         return operand;
     }
@@ -100,7 +100,7 @@ public abstract class HirInstr implements Visitable {
      * @param register specific register
      * @return operand
      */
-    public AllocatableValue loadOperandToReg(HirInstrVisitor visitor, LirGenerator gen, VirtualRegister register) {
+    public AllocatableValue loadOperandToReg(HirInstrVisitor visitor, LirGenerator gen, XRegister register) {
         if (operand == null) {
             this.visit(visitor);
         }
@@ -110,7 +110,7 @@ public abstract class HirInstr implements Visitable {
             gen.emitMov(register, operand);
             operand = register;
         }
-        YarrowError.guarantee(operand instanceof VirtualRegister, "Operand should retain in virtual register");
+        YarrowError.guarantee(operand instanceof XRegister, "Operand should retain in virtual register");
 
         return operand;
     }

@@ -2,15 +2,15 @@ package com.kelthuzadx.yarrow.lir.regalloc;
 
 import com.kelthuzadx.yarrow.core.YarrowError;
 import com.kelthuzadx.yarrow.lir.instr.*;
-import com.kelthuzadx.yarrow.lir.operand.VirtualRegister;
+import com.kelthuzadx.yarrow.lir.operand.XRegister;
 import com.kelthuzadx.yarrow.optimize.LirInstrVisitor;
 
 import java.util.ArrayList;
 
 public class InstrStateVisitor extends LirInstrVisitor {
-    private ArrayList<VirtualRegister> input;
-    private ArrayList<VirtualRegister> output;
-    private ArrayList<VirtualRegister> temp;
+    private ArrayList<XRegister> input;
+    private ArrayList<XRegister> output;
+    private ArrayList<XRegister> temp;
 
     private boolean hasCall;
 
@@ -31,46 +31,46 @@ public class InstrStateVisitor extends LirInstrVisitor {
         temp = new ArrayList<>();
     }
 
-    public ArrayList<VirtualRegister> getInput() {
+    public ArrayList<XRegister> getInput() {
         return input;
     }
 
-    public ArrayList<VirtualRegister> getOutput() {
+    public ArrayList<XRegister> getOutput() {
         return output;
     }
 
-    public ArrayList<VirtualRegister> getTemp() {
+    public ArrayList<XRegister> getTemp() {
         return temp;
     }
 
     @Override
     public void visitAllocateArrayInstr(AllocateArrayInstr instr) {
-        if (instr.getKlassReg() instanceof VirtualRegister) {
-            input.add((VirtualRegister) instr.getKlassReg());
+        if (instr.getKlassReg() instanceof XRegister) {
+            input.add((XRegister) instr.getKlassReg());
         }
 
-        if (instr.getLength() instanceof VirtualRegister) {
-            input.add((VirtualRegister) instr.getLength());
+        if (instr.getLength() instanceof XRegister) {
+            input.add((XRegister) instr.getLength());
         }
 
-        if (instr.getTemp1() instanceof VirtualRegister) {
-            temp.add((VirtualRegister) instr.getTemp1());
+        if (instr.getTemp1() instanceof XRegister) {
+            temp.add((XRegister) instr.getTemp1());
         }
-        if (instr.getTemp2() instanceof VirtualRegister) {
-            temp.add((VirtualRegister) instr.getTemp2());
-        }
-
-        if (instr.getTemp3() instanceof VirtualRegister) {
-            temp.add((VirtualRegister) instr.getTemp3());
+        if (instr.getTemp2() instanceof XRegister) {
+            temp.add((XRegister) instr.getTemp2());
         }
 
-        if (instr.getTemp4() instanceof VirtualRegister) {
-            temp.add((VirtualRegister) instr.getTemp4());
+        if (instr.getTemp3() instanceof XRegister) {
+            temp.add((XRegister) instr.getTemp3());
+        }
+
+        if (instr.getTemp4() instanceof XRegister) {
+            temp.add((XRegister) instr.getTemp4());
         }
 
 
-        if (instr.operandResult() instanceof VirtualRegister) {
-            output.add((VirtualRegister) instr.operandResult());
+        if (instr.operandResult() instanceof XRegister) {
+            output.add((XRegister) instr.operandResult());
         }
     }
 
@@ -82,43 +82,43 @@ public class InstrStateVisitor extends LirInstrVisitor {
     @Override
     public void visitCallRtInstr(CallRtInstr instr) {
         for (var value : instr.getArgument()) {
-            if (value instanceof VirtualRegister) {
-                input.add((VirtualRegister) value);
+            if (value instanceof XRegister) {
+                input.add((XRegister) value);
             }
         }
 
-        if (instr.operandResult() instanceof VirtualRegister) {
-            output.add((VirtualRegister) instr.operandResult());
+        if (instr.operandResult() instanceof XRegister) {
+            output.add((XRegister) instr.operandResult());
         }
         hasCall = true;
     }
 
     @Override
     public void visitJavaCallInstr(JavaCallInstr instr) {
-        if (instr.getReceiver() instanceof VirtualRegister) {
-            input.add((VirtualRegister) instr.getReceiver());
+        if (instr.getReceiver() instanceof XRegister) {
+            input.add((XRegister) instr.getReceiver());
         }
 
         for (var value : instr.getArguments()) {
-            if (value instanceof VirtualRegister) {
-                input.add((VirtualRegister) value);
+            if (value instanceof XRegister) {
+                input.add((XRegister) value);
             }
         }
 
-        if (instr.operandResult() instanceof VirtualRegister) {
-            output.add((VirtualRegister) instr.operandResult());
+        if (instr.operandResult() instanceof XRegister) {
+            output.add((XRegister) instr.operandResult());
         }
         hasCall = true;
     }
 
     @Override
     public void visitJavaCheckCastInstr(JavaCheckCastInstr instr) {
-        if (instr.getObject() instanceof VirtualRegister) {
-            input.add((VirtualRegister) instr.getObject());
+        if (instr.getObject() instanceof XRegister) {
+            input.add((XRegister) instr.getObject());
         }
 
-        if (instr.operandResult() instanceof VirtualRegister) {
-            output.add((VirtualRegister) instr.operandResult());
+        if (instr.operandResult() instanceof XRegister) {
+            output.add((XRegister) instr.operandResult());
         }
     }
 
@@ -129,11 +129,11 @@ public class InstrStateVisitor extends LirInstrVisitor {
 
     @Override
     public void visitJavaTypeCastInstr(JavaTypeCastInstr instr) {
-        if (instr.operand1() instanceof VirtualRegister) {
-            input.add((VirtualRegister) instr.operand1());
+        if (instr.operand1() instanceof XRegister) {
+            input.add((XRegister) instr.operand1());
         }
-        if (instr.operandResult() instanceof VirtualRegister) {
-            output.add((VirtualRegister) instr.operandResult());
+        if (instr.operandResult() instanceof XRegister) {
+            output.add((XRegister) instr.operandResult());
         }
     }
 
@@ -162,8 +162,8 @@ public class InstrStateVisitor extends LirInstrVisitor {
             case MEMBAR_STORE_STORE:
             case MEMBAR_ACQUIRE:
             case MEMBAR_RELEASE:
-                if (instr.operandResult() instanceof VirtualRegister) {
-                    output.add((VirtualRegister) instr.operandResult());
+                if (instr.operandResult() instanceof XRegister) {
+                    output.add((XRegister) instr.operandResult());
                 }
                 break;
             default:
@@ -176,11 +176,11 @@ public class InstrStateVisitor extends LirInstrVisitor {
         switch (instr.getMnemonic()) {
             case MOV:
             case RETURN:
-                if (instr.operand1() instanceof VirtualRegister) {
-                    input.add((VirtualRegister) instr.operand1());
+                if (instr.operand1() instanceof XRegister) {
+                    input.add((XRegister) instr.operand1());
                 }
-                if (instr.operandResult() instanceof VirtualRegister) {
-                    output.add((VirtualRegister) instr.operandResult());
+                if (instr.operandResult() instanceof XRegister) {
+                    output.add((XRegister) instr.operandResult());
                 }
                 break;
             default:
@@ -207,14 +207,14 @@ public class InstrStateVisitor extends LirInstrVisitor {
             case FCMPU:
             case LCMP:
             case CMP:
-                if (instr.operand1() instanceof VirtualRegister) {
-                    input.add((VirtualRegister) instr.operand1());
+                if (instr.operand1() instanceof XRegister) {
+                    input.add((XRegister) instr.operand1());
                 }
-                if (instr.operand2() instanceof VirtualRegister) {
-                    input.add((VirtualRegister) instr.operand2());
+                if (instr.operand2() instanceof XRegister) {
+                    input.add((XRegister) instr.operand2());
                 }
-                if (instr.operandResult() instanceof VirtualRegister) {
-                    output.add((VirtualRegister) instr.operandResult());
+                if (instr.operandResult() instanceof XRegister) {
+                    output.add((XRegister) instr.operandResult());
                 }
                 break;
             default:

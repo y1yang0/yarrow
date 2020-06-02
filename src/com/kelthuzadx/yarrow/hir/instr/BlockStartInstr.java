@@ -21,6 +21,8 @@ public class BlockStartInstr extends StateInstr {
     private final Set<Integer> liveKill;
     private final Set<Integer> livenIn;
     private final Set<Integer> liveOut;
+    // For LIR
+    private final List<LirInstr> lirInstrList;
     private int startBci;
     private int endBci;
     // Successor of this block, when HIR construction accomplish, it will be cleared
@@ -30,8 +32,6 @@ public class BlockStartInstr extends StateInstr {
     private BlockFlag flag;
     // For instruction itself
     private BlockEndInstr blockEnd;
-    // For LIR
-    private final List<LirInstr> lirInstrList;
 
 
     public BlockStartInstr(int blockId, int bci) {

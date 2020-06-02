@@ -55,8 +55,9 @@ public class Lir {
     public void printLir() {
         Logger.logf("=====Phase: Low level IR=====>");
         blocks.forEach((id, block) -> {
+            Logger.logf("B" + block.getBlockId() + ":");
             for (LirInstr instr : block.getLirInstrList()) {
-                Logger.logf("{}", instr.toString());
+                Logger.logf("\t{}", instr.toString());
             }
         });
     }

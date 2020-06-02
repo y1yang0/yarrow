@@ -1,13 +1,13 @@
 package com.kelthuzadx.yarrow.lir.stub;
 
-import com.kelthuzadx.yarrow.lir.operand.VirtualRegister;
+import com.kelthuzadx.yarrow.lir.operand.XRegister;
 
 public class NewArrayStub extends RuntimeStub {
-    private final VirtualRegister length;
-    private final VirtualRegister klass;
-    private final VirtualRegister ret;
+    private final XRegister length;
+    private final XRegister klass;
+    private final XRegister ret;
 
-    public NewArrayStub(VirtualRegister length, VirtualRegister klass, VirtualRegister ret) {
+    public NewArrayStub(XRegister length, XRegister klass, XRegister ret) {
         super(VmStub.StubNewArray);
         this.length = length;
         this.klass = klass;

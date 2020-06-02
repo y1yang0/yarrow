@@ -16,14 +16,11 @@ public class LVNTest {
     }
 
     public int lvn1(int n) {
-        { // KILL
-            int p = n;
-            int a = p + 5;
-            p = 11;
-            int b = p + 5;
-            int c = a + b;
-            return c;
-        }
+        int p = n;
+        int a = p + 5;
+        int b = p + 5;
+        int c = a + b;
+        return c;
     }
 
     public int lvn(int n) {
@@ -35,7 +32,7 @@ public class LVNTest {
             int e = a + 3;// can not be optimized by lvn
         }
 
-        {  // OK
+        {  // OKuuis
             double dd1 = d1;
             double dd2 = d1;
             double dd3 = dd1 + dd2;
