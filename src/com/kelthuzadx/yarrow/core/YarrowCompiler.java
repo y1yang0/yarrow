@@ -43,7 +43,6 @@ public class YarrowCompiler implements JVMCICompiler {
                 .map(RegisterAlloc::new)
                 .map(RegisterAlloc::build)
                 .collect(Collectors.toList());
-        System.exit(0);
         return HotSpotCompilationRequestResult.success(0);
     }
 }
